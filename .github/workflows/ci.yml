@@ -42,6 +42,96 @@ jobs:
         with:
           version: latest
 
+  # -------------------------------------------------------------------------
+  # Apache 2.0 license-header gate (AC-97-13 / LU-1 acceptance requirement).
+  # Every .go file under cmd/ and internal/ must start with an Apache 2.0
+  # SPDX identifier or the canonical Apache copyright header comment.
+  # New files that omit the header will fail CI.
+  # -------------------------------------------------------------------------
+  license-headers:
+    name: ci/license-headers
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check Apache 2.0 license headers on .go source files
+        run: |
+          set -euo pipefail
+          MISSING=()
+          while IFS= read -r -d '' f; do
+            # Accept either the SPDX short-form or the canonical Apache header.
+            if ! grep -qE \
+              'SPDX-License-Identifier: Apache-2\.0|Licensed under the Apache License' \
+              "$f"; then
+              MISSING+=("$f")
+            fi
+          done < <(find cmd internal -name '*.go' -print0)
+
+          if [ "${#MISSING[@]}" -gt 0 ]; then
+            echo "ERROR: The following .go files are missing Apache 2.0 license headers:"
+            printf '  %s\n' "${MISSING[@]}"
+            echo ""
+            echo "Add one of the following to the top of each file:"
+            echo "  // SPDX-License-Identifier: Apache-2.0"
+            echo "  // Licensed under the Apache License, Version 2.0 ..."
+            exit 1
+          fi
+          echo "All .go files have Apache 2.0 license headers."
+
+  # -------------------------------------------------------------------------
+  # No-default-network-call gate (AC-97-12 / Design Principle 4).
+  # The scanner must make zero outbound network calls during a default
+  # (non-hybrid) `lumen scan` run.  This job:
+  #   1. Builds the scanner binary.
+  #   2. Runs `lumen scan` under a network-namespace sandbox (unshare/firejail) OR
+  #      a Go test that asserts TestNoDefaultNetworkCalls.
+  #   3. Fails CI if any outbound call is detected.
+  #
+  # In LU-1 the probe stubs make no network calls, so the test passes trivially.
+  # The gate exists to prevent LU-4 probe work from accidentally adding calls.
+  # -------------------------------------------------------------------------
+  no-default-network-call:
+    name: ci/no-default-network-call
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+          cache: true
+
+      - name: Build lumen binary
+        run: go build -o lumen-ci ./cmd/lumen
+
+      - name: Run TestNoDefaultNetworkCalls
+        # The Go test in internal/netcheck asserts that running lumen scan
+        # produces zero outbound TCP connections.  In LU-1 this is a simple
+        # compile + run check since all probes are stubs.
+        run: go test -v -run TestNoDefaultNetworkCalls ./internal/netcheck/...
+
+  # -------------------------------------------------------------------------
+  # Version stub smoke test (AC-97-10).
+  # -------------------------------------------------------------------------
+  version-smoke:
+    name: ci/version-smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+          cache: true
+
+      - name: Build and check lumen --version
+        run: |
+          go build -o lumen-ci ./cmd/lumen
+          ./lumen-ci --version
+          ./lumen-ci version
+
   trivy:
     name: ci/trivy
     runs-on: ubuntu-latest

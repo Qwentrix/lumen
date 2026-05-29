@@ -50,10 +50,16 @@ jobs:
           GOOS: ${{ matrix.goos }}
           GOARCH: ${{ matrix.goarch }}
           CGO_ENABLED: "0"
+        # NOTE: this manual matrix build mirrors what .goreleaser.yaml does for
+        # the signing/packaging steps below. If goreleaser is adopted end-to-end
+        # (LU-5), this step can be removed and goreleaser's own build (which
+        # already injects BuiltAt via {{.Date}}) used instead.
+        shell: bash
         run: |
           go build -trimpath -ldflags="-s -w \
             -X main.Version=${{ github.ref_name }} \
-            -X main.Commit=${{ github.sha }}" \
+            -X main.Commit=${{ github.sha }} \
+            -X main.BuiltAt=$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
             -o lumen${{ matrix.ext }} ./cmd/lumen
 
       # -----------------------------------------------------------------------

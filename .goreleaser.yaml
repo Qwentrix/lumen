@@ -1,0 +1,133 @@
+# Copyright 2026 Qwentrix Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# .goreleaser.yaml — Lumen scanner CLI release configuration.
+#
+# GoReleaser is used for LU-1 scaffolding only.  The macOS notarisation and
+# Windows Authenticode signing stubs below are placeholders that will be
+# completed in LU-5 once the Apple Developer ID and EV code-signing
+# certificate are fully provisioned.
+#
+# To test locally: goreleaser release --snapshot --clean
+
+version: 2
+
+project_name: lumen
+
+before:
+  hooks:
+    - go mod tidy
+    - go generate ./...
+
+builds:
+  - id: lumen
+    main: ./cmd/lumen
+    binary: lumen
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+      - linux
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ignore:
+      - goos: windows
+        goarch: arm64
+    ldflags:
+      - -s -w
+      - -X main.Version={{.Version}}
+      - -X main.Commit={{.Commit}}
+      - -X main.BuiltAt={{.Date}}
+    flags:
+      - -trimpath
+
+archives:
+  - id: lumen-archives
+    builds:
+      - lumen
+    name_template: "lumen_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - LICENSE
+      - NOTICE
+      - README.md
+
+checksum:
+  name_template: "checksums.txt"
+  algorithm: sha256
+
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  use: github
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^chore:"
+      - Merge pull request
+      - Merge remote-tracking branch
+  groups:
+    - title: "New Features"
+      regexp: "^feat"
+      order: 0
+    - title: "Bug Fixes"
+      regexp: "^fix"
+      order: 1
+    - title: "Security"
+      regexp: "^security"
+      order: 2
+    - title: Other
+      order: 999
+
+release:
+  github:
+    owner: Qwentrix
+    name: lumen
+  draft: false
+  prerelease: auto
+  name_template: "Lumen {{ .Tag }}"
+
+# -------------------------------------------------------------------------
+# macOS: codesign + notarize + .pkg (TODO — LU-5 once Apple Developer ID
+# Application cert is loaded in CI secrets for Team T6K5H4JKXF).
+# -------------------------------------------------------------------------
+# signs:
+#   - cmd: codesign
+#     args:
+#       - "--sign"
+#       - "Developer ID Application: Qwentrix Inc (T6K5H4JKXF)"
+#       - "--options"
+#       - "runtime"
+#       - "--timestamp"
+#       - "${artifact}"
+#     artifacts: binary
+#     ids:
+#       - lumen
+
+# -------------------------------------------------------------------------
+# Linux: .deb and .rpm packaging via nfpm (TODO — LU-5).
+# -------------------------------------------------------------------------
+# nfpms:
+#   - id: lumen-packages
+#     package_name: lumen
+#     vendor: Qwentrix Inc
+#     homepage: https://lumen.micelium.com
+#     maintainer: Qwentrix Engineering <eng@qwentrix.com>
+#     description: Lumen open-source local security scanner
+#     license: Apache 2.0
+#     formats:
+#       - deb
+#       - rpm
+#     bindir: /usr/local/bin
