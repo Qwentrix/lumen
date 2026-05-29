@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lumen.micelium.com/schemas/findings-schema.json",
+  "title": "Lumen Scanner Hybrid Upload Payload",
+  "description": "The structured findings JSON sent by `lumen scan --hybrid` to lumen-api /api/v1/lumen/scanner/ingest. No file content, no PII, no hostnames.",
+  "type": "object",
+  "required": ["scanner_version", "findings", "signature"],
+  "properties": {
+    "scanner_version": {
+      "type": "string",
+      "description": "Semver of the lumen binary that produced this payload, e.g. 'v0.1.0'."
+    },
+    "content_bundle_sha": {
+      "type": "string",
+      "description": "SHA-256 of the rule+NVD bundle used during the scan."
+    },
+    "scanned_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of when the scan was run."
+    },
+    "findings": {
+      "type": "object",
+      "description": "Per-domain structured probe outputs. Each key is a domain ID.",
+      "properties": {
+        "vulnerabilities": { "$ref": "#/$defs/DomainFindings" },
+        "compliance":      { "$ref": "#/$defs/DomainFindings" },
+        "ai_governance":   { "$ref": "#/$defs/DomainFindings" },
+        "security_posture":{ "$ref": "#/$defs/DomainFindings" },
+        "privacy":         { "$ref": "#/$defs/DomainFindings" }
+      },
+      "additionalProperties": false
+    },
+    "signature": {
+      "type": "string",
+      "description": "ed25519 signature (hex) over the canonical JSON of the 'findings' field, computed using the per-install key generated on first `lumen consent`."
+    },
+    "install_key_fingerprint": {
+      "type": "string",
+      "description": "Hex fingerprint of the public key used to sign this payload. Not the private key — safe to transmit."
+    }
+  },
+  "$defs": {
+    "DomainFindings": {
+      "type": "object",
+      "required": ["hints"],
+      "properties": {
+        "hints": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/FindingHint" }
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Optional non-PII probe metadata (e.g. package counts, OS version)."
+        }
+      }
+    },
+    "FindingHint": {
+      "type": "object",
+      "required": ["rule_id"],
+      "properties": {
+        "rule_id": {
+          "type": "string",
+          "description": "YAML rule identifier this hint maps to, e.g. 'NO_MFA_ORG_WIDE'."
+        },
+        "value": {
+          "description": "Optional numeric or string value supporting the hint."
+        }
+      }
+    }
+  }
+}

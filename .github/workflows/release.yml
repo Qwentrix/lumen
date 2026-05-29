@@ -1,0 +1,166 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build ${{ matrix.goos }}/${{ matrix.goarch }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - goos: darwin
+            goarch: arm64
+            runner: macos-latest
+            ext: ""
+          - goos: darwin
+            goarch: amd64
+            runner: macos-latest
+            ext: ""
+          - goos: linux
+            goarch: amd64
+            runner: ubuntu-latest
+            ext: ""
+          - goos: linux
+            goarch: arm64
+            runner: ubuntu-latest
+            ext: ""
+          - goos: windows
+            goarch: amd64
+            runner: windows-latest
+            ext: ".exe"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+          cache: true
+
+      - name: Build binary
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: "0"
+        run: |
+          go build -trimpath -ldflags="-s -w \
+            -X main.Version=${{ github.ref_name }} \
+            -X main.Commit=${{ github.sha }}" \
+            -o lumen${{ matrix.ext }} ./cmd/lumen
+
+      # -----------------------------------------------------------------------
+      # macOS — sign and notarize, then package as .pkg
+      # TODO: replace stub with real codesign + notarytool steps once the
+      #       Apple Developer ID Application certificate is loaded in CI.
+      # -----------------------------------------------------------------------
+      - name: "[macOS] Sign binary (TODO: codesign with Team T6K5H4JKXF)"
+        if: matrix.goos == 'darwin'
+        env:
+          APPLE_DEVELOPER_ID_APPLICATION: ${{ secrets.APPLE_DEVELOPER_ID_APPLICATION }}
+        run: |
+          # TODO: Import certificate from APPLE_DEVELOPER_ID_APPLICATION secret
+          # codesign --sign "Developer ID Application: Qwentrix Inc (T6K5H4JKXF)" \
+          #   --options runtime --timestamp lumen
+          echo "TODO: macOS codesign stub — implement before v1 GA"
+
+      - name: "[macOS] Notarize binary (TODO)"
+        if: matrix.goos == 'darwin'
+        run: |
+          # TODO: xcrun notarytool submit lumen.zip --apple-id ... --team-id T6K5H4JKXF --wait
+          echo "TODO: macOS notarization stub — implement before v1 GA"
+
+      - name: "[macOS] Build .pkg installer (TODO)"
+        if: matrix.goos == 'darwin'
+        run: |
+          # TODO: pkgbuild --identifier com.qwentrix.lumen --install-location /usr/local/bin
+          #       --component lumen lumen_${{ github.ref_name }}_${{ matrix.goarch }}.pkg
+          echo "TODO: macOS .pkg stub — implement before v1 GA"
+
+      # -----------------------------------------------------------------------
+      # Windows — Authenticode sign + MSI
+      # TODO: replace stubs once EV code-signing certificate is procured (LU-3).
+      # -----------------------------------------------------------------------
+      - name: "[Windows] Authenticode sign binary (TODO)"
+        if: matrix.goos == 'windows'
+        run: |
+          # TODO: signtool sign /fd sha256 /tr http://timestamp.digicert.com /td sha256
+          #       /f certificate.pfx /p $env:WINDOWS_SIGN_PASS lumen.exe
+          echo "TODO: Windows Authenticode stub — implement in LU-5 (EV cert via LU-3)"
+
+      - name: "[Windows] Build .msi installer (TODO)"
+        if: matrix.goos == 'windows'
+        run: |
+          # TODO: use WiX or equivalent to produce lumen_${{ github.ref_name }}_amd64.msi
+          echo "TODO: Windows .msi stub — implement in LU-5"
+
+      # -----------------------------------------------------------------------
+      # Linux — .deb and .rpm
+      # -----------------------------------------------------------------------
+      - name: "[Linux] Build .deb and .rpm packages (TODO)"
+        if: matrix.goos == 'linux'
+        run: |
+          # TODO: use nfpm or fpm to produce .deb and .rpm from the binary
+          # nfpm package --config nfpm.yaml --target lumen_${{ github.ref_name }}_${{ matrix.goarch }}.deb
+          echo "TODO: Linux .deb/.rpm packaging stub — implement before v1 GA"
+
+      # -----------------------------------------------------------------------
+      # Archive + checksum
+      # -----------------------------------------------------------------------
+      - name: Create archive
+        shell: bash
+        run: |
+          ARCHIVE="lumen_${{ github.ref_name }}_${{ matrix.goos }}_${{ matrix.goarch }}"
+          if [ "${{ matrix.goos }}" = "windows" ]; then
+            zip "${ARCHIVE}.zip" lumen${{ matrix.ext }}
+            echo "ASSET=${ARCHIVE}.zip" >> "$GITHUB_ENV"
+          else
+            tar -czf "${ARCHIVE}.tar.gz" lumen${{ matrix.ext }}
+            echo "ASSET=${ARCHIVE}.tar.gz" >> "$GITHUB_ENV"
+          fi
+
+      - name: Compute checksum
+        shell: bash
+        run: |
+          if command -v sha256sum &>/dev/null; then
+            sha256sum "$ASSET" > "${ASSET}.sha256"
+          else
+            shasum -a 256 "$ASSET" > "${ASSET}.sha256"
+          fi
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: lumen_${{ matrix.goos }}_${{ matrix.goarch }}
+          path: |
+            ${{ env.ASSET }}
+            ${{ env.ASSET }}.sha256
+
+  release:
+    name: Publish GitHub Release
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: Merge checksums
+        run: cat artifacts/*.sha256 > checksums.txt
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/*
+            checksums.txt
+          generate_release_notes: true
+          fail_on_unmatched_files: false
