@@ -1,0 +1,41 @@
+id: VULN_NO_PATCH_SLA
+domain: vulnerabilities
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-VULN-DD-003 == no_sla
+title: "No documented SLA for applying high-severity patches"
+description_short: "No documented SLA defines the required timeframe for applying high-severity (CVSS 7.0–8.9) patches."
+description_long: "Without a documented patch SLA, there is no enforceable standard for how quickly high-severity vulnerabilities must be remediated. Teams default to 'as soon as possible' — which, under operational pressure, can mean months. A documented SLA creates accountability: it defines expectations, enables tracking, and provides the baseline for exception management. NIST SP 800-53 SI-2 requires timely correction of system flaws, with the definition of 'timely' specified by the organisation in its policies. PCI DSS Req 6.3.3 requires that critical patches are installed within one month of release. Without a documented SLA, SLA compliance cannot be measured, reported, or enforced. It is also a common finding in compliance audits — auditors ask for the documented SLA before evaluating whether it was met."
+frameworks:
+  - id: "NIST SP 800-53 SI-2"
+    text: "Flaw Remediation — install security-relevant software updates within organization-defined time periods"
+  - id: "PCI DSS Req 6.3.3"
+    text: "All vulnerabilities addressed within defined timeframes — at minimum, critical patches within one month"
+  - id: "CIS Control 7"
+    text: "Continuous Vulnerability Management — define remediation timelines for each vulnerability severity tier"
+  - id: "ISO 27001 A.12.6.1"
+    text: "Management of technical vulnerabilities — define timeframes for applying patches based on risk classification"
+micelium_product:
+  - product: Sovera
+    role: Tracks patch SLA compliance and generates audit evidence for documented remediation timeframe adherence
+  - product: Pulse
+    role: Automates SLA breach alerts and escalation workflows when patches approach their documented deadlines
+industry_overlays:
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  it_services:
+    weight_multiplier: 1.3
+  manufacturing:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Define and document a patch SLA for each severity tier. Without a documented SLA, there is no standard to hold your team to, no way to measure compliance, and no answer when an auditor asks how quickly you patch critical vulnerabilities."
+remediation_technical: "Define documented patch SLAs in your vulnerability management or patch management policy: critical (CVSS 9+/KEV) = 24-48 hours; high (CVSS 7-8.9) = 14 days; medium (CVSS 4-6.9) = 30-60 days; low = 90 days. Have the SLAs reviewed and signed off by the CISO and documented in a formal policy. Integrate SLA timers into your vulnerability management platform so that approaching and breached SLAs auto-escalate. Track SLA compliance rates as a KPI in your monthly security review."

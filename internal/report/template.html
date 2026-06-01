@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lumen Security Report — {{.OverallScore}} ({{.OverallGrade}})</title>
+  <style>{{.InlineCSS}}</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <!-- ================================================================
+       HEADER + OVERALL SCORE
+       ================================================================ -->
+  <div class="report-header">
+    <div class="report-title">
+      <h1>Lumen Security Report
+        {{- if .ScannerUsed}}<span class="scanner-badge active">SCANNER</span>{{else}}<span class="scanner-badge inactive">QUESTIONNAIRE</span>{{end -}}
+      </h1>
+      <div class="report-meta">
+        <span>Assessment ID: <code>{{.AssessmentID}}</code></span>
+        <span>Generated: {{.GeneratedAtFmt}}</span>
+        {{- if .Industry}}<span>Industry: {{.Industry}}</span>{{end}}
+        <span>Company size: {{.CompanySize}}</span>
+      </div>
+    </div>
+    <div class="overall-score-card grade-{{.OverallGrade}}">
+      <div class="score-circle grade-{{.OverallGrade}}">
+        <span class="num">{{.OverallScore}}</span>
+        <span class="lbl">/100</span>
+      </div>
+      <div>
+        <div class="score-grade">{{.OverallGrade}}</div>
+        <div class="score-desc">{{.GradeDesc}}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================
+       DOMAIN SCORE GRID
+       ================================================================ -->
+  <h2>Domain Scores</h2>
+  <div class="domain-grid">
+    {{- range .Domains}}
+    <div class="domain-card grade-{{.Grade}}">
+      <div class="d-name">{{.DomainLabel}}</div>
+      <div class="d-score grade-{{.Grade}}" style="color:{{.GradeColor}}">{{.Score}}</div>
+      <div class="d-grade">Grade {{.Grade}}</div>
+      <div class="d-count">{{len .Findings}} finding(s)</div>
+    </div>
+    {{- end}}
+  </div>
+
+  <!-- ================================================================
+       DOMAIN SCORE BAR CHART (inline SVG — no external assets)
+       ================================================================ -->
+  <div class="domain-bar-chart">
+    {{.BarChartSVG}}
+  </div>
+
+  <!-- ================================================================
+       WHAT TO FIX FIRST
+       ================================================================ -->
+  {{- if .WhatToFixFirst}}
+  <h2>What to Fix First</h2>
+  <ol class="fix-first-list">
+    {{- range .WhatToFixFirst}}
+    <li class="fix-first-item">
+      <div class="fix-rank">{{.Priority}}</div>
+      <div class="fix-body">
+        <div class="fix-title">{{.Title}}{{if .HasMicelium}}<span class="micelium-align">&#9733; Micelium</span>{{end}}</div>
+        <div class="fix-domain">{{.DomainLabel}} &mdash; contribution: {{printf "%.2f" .Contribution}}</div>
+        <div class="fix-text">{{.RemediationPlain}}</div>
+      </div>
+    </li>
+    {{- end}}
+  </ol>
+  {{- end}}
+
+  <!-- ================================================================
+       PER-DOMAIN FINDINGS WITH EXPLAIN TRACE
+       ================================================================ -->
+  <h2>Findings by Domain</h2>
+  {{- range .Domains}}
+  {{- if gt (len .Findings) 0}}
+  <h3>{{.DomainLabel}} &mdash; Score {{.Score}} ({{.Grade}}) &mdash; {{.PlainSummary}}</h3>
+
+  <!-- Why? explainability trace -->
+  {{- if .Explain.HasSteps}}
+  <div class="explain-section">
+    <div class="explain-toggle">Why this score?</div>
+    <div class="explain-box">
+      <div class="explain-formula">Formula: {{.Explain.Formula}}</div>
+      {{- range .Explain.Steps}}
+      <div class="explain-step">
+        <span class="es-rule">{{.FindingID}}</span>
+        <span class="es-calc">weight {{printf "%.2f" .DefaultWeight}} &times; overlay {{printf "%.2f" .IndustryMultiplier}} &times; severity {{printf "%.2f" .SeverityFactor}}</span>
+        <span class="es-result">&minus;{{printf "%.2f" .EffectiveContribution}}</span>
+      </div>
+      {{- end}}
+      <div class="explain-totals">
+        Raw loss: {{printf "%.4f" .Explain.RawLoss}} &rarr; Capped: {{printf "%.4f" .Explain.CappedLoss}} &rarr; Score: {{.Explain.DomainScore}}
+      </div>
+    </div>
+  </div>
+  {{- end}}
+
+  <div class="findings-section">
+    {{- range .Findings}}
+    <div class="finding-card">
+      <div class="finding-header">
+        <span class="severity-badge sev-{{.Severity}}">{{.Severity}}</span>
+        <div>
+          <div class="finding-title">{{.Title}}</div>
+          <div class="finding-id">{{.RuleID}}</div>
+        </div>
+        <span class="finding-contrib">contribution: {{printf "%.2f" .Contribution}}</span>
+      </div>
+      <div class="finding-remediation"><strong>Fix:</strong> {{.RemediationPlain}}</div>
+      {{- if .Frameworks}}
+      <div class="frameworks-list">
+        <div class="fw-label">Framework citations</div>
+        {{- range .Frameworks}}
+        <div class="framework-item"><span class="fw-id">{{.ID}}</span> &mdash; {{.Text}}</div>
+        {{- end}}
+      </div>
+      {{- end}}
+      {{- if .MiceliumProducts}}
+      <div class="micelium-products">
+        <span class="mp-label">Addressed by Micelium</span>
+        {{- range .MiceliumProducts}}
+        <span class="mp-tag">{{.}}</span>
+        {{- end}}
+      </div>
+      {{- end}}
+    </div>
+    {{- end}}
+  </div>
+  {{- else}}
+  <h3>{{.DomainLabel}} &mdash; Score {{.Score}} ({{.Grade}})</h3>
+  <p style="color:#718096; font-size:0.88rem; margin-left:4px;">No findings for this domain.</p>
+  {{- end}}
+  {{- end}}
+
+  <!-- ================================================================
+       FRAMEWORK SUMMARY
+       ================================================================ -->
+  {{- if .FrameworkSummary}}
+  <h2>Triggered Framework Controls</h2>
+  <div class="framework-summary">
+    {{- range .FrameworkSummary}}
+    <div class="fw-group">
+      <div class="fw-group-name">{{.FrameworkID}}</div>
+      {{- range .Controls}}
+      <div class="fw-control"><span class="fw-cid">{{.ID}}</span> &mdash; {{.Text}}</div>
+      {{- end}}
+    </div>
+    {{- end}}
+  </div>
+  {{- end}}
+
+  <!-- ================================================================
+       FOOTER
+       ================================================================ -->
+  <footer>
+    <p>This report was generated locally on your device. No data was sent to Micelium.</p>
+    <p>NVD data: curated subset (CVSS &ge; 7.0). Run <code>lumen update</code> for the full feed (coming soon).</p>
+    <p>{{.FooterMeta}}</p>
+  </footer>
+
+</div><!-- .page-wrap -->
+</body>
+</html>

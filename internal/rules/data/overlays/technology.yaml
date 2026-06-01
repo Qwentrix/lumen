@@ -1,0 +1,21 @@
+id: technology
+display_name: Technology
+domain_weight_multipliers:
+  vulnerabilities: 1.5
+  compliance: 1.0
+  ai_governance: 1.4
+  security_posture: 1.3
+  privacy: 1.1
+primary_frameworks:
+  - SOC 2 Type II
+  - ISO 27001
+  - OWASP Top 10
+  - NIST AI RMF
+  - EU AI Act (general purpose)
+lead_micelium_products:
+  - product: Sense
+    emphasis: Anomalous network traffic detection from developer machines
+  - product: Sigil
+    emphasis: AI governance for engineering teams using LLM tooling
+  - product: Share
+    emphasis: Code and IP sharing policy enforcement

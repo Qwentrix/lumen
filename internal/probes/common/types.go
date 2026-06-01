@@ -15,7 +15,11 @@
 // Package common defines the shared types and interfaces for all Lumen probes.
 package common
 
-import "context"
+import (
+	"context"
+
+	"github.com/Qwentrix/lumen-scoring/pkg/types"
+)
 
 // ManifestEntry declares what OS APIs and file paths a probe will access.
 // It is shown to the user during `lumen consent` before any scan runs.
@@ -26,11 +30,24 @@ type ManifestEntry struct {
 	NetworkCalls []string // empty for most probes; may list update URLs
 }
 
+// ScannerFields carries the typed probe output that feeds types.ScannerFindings.
+// Exactly one field is non-nil per ProbeResult, matching the probe's domain.
+// The offline scoring path uses ScannerFields (not FindingHints) for deterministic
+// scoring via the lumen-scoring engine.
+//
+// LU-5 will add AIGovernance, SecurityPosture, and Privacy fields.
+type ScannerFields struct {
+	Vulnerabilities *types.VulnerabilityFindings
+	Compliance      *types.ComplianceFindings
+	// AIGovernance, SecurityPosture, Privacy added in LU-5.
+}
+
 // ProbeResult is the structured output of a single probe run.
 type ProbeResult struct {
-	DomainID string
-	Findings []FindingHint
-	Metadata map[string]interface{}
+	DomainID      string
+	Findings      []FindingHint
+	Metadata      map[string]interface{}
+	ScannerFields ScannerFields
 }
 
 // FindingHint is a lightweight signal returned by a probe.

@@ -1,0 +1,23 @@
+id: COMP_STALE_POLICY
+domain: compliance
+severity: low
+default_weight: 0.25
+detect:
+  questionnaire:
+    - Q-COMP-002 == yes_stale
+title: "Security policy not reviewed annually"
+description_short: "An information security policy exists but has not been reviewed within 12 months."
+description_long: "Policies become outdated as the threat landscape, technology stack, and regulatory environment evolve. Most frameworks require at minimum an annual review cycle. A stale policy may fail to address current threats or regulatory changes."
+frameworks:
+  - id: "ISO 27001:2022 A.5.1"
+    text: "Policies for information security — reviewed at planned intervals"
+  - id: "SOC 2 CC2.2"
+    text: "Internal communication of information"
+micelium_product:
+  - product: Proof
+    role: Policy review scheduling and evidence tracking
+industry_overlays:
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Schedule an annual policy review cycle with assigned ownership. Update the document to reflect current technology and threat landscape."
+remediation_technical: "Tag policies with expiry dates in your GRC platform. Automate review-due notifications. Track review completion as a compliance metric."

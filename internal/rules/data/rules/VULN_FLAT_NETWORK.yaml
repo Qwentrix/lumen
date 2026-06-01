@@ -1,0 +1,40 @@
+id: VULN_FLAT_NETWORK
+domain: vulnerabilities
+severity: high
+default_weight: 0.80
+detect:
+  questionnaire:
+    - Q-VULN-024 == flat_network
+    - Q-VULN-024 == unknown
+title: "Flat network — CVE exploitation enables unconstrained lateral movement"
+description_short: "No network segmentation means a single exploited vulnerability or compromised endpoint provides an attacker with unrestricted east-west access to all systems."
+description_long: "When a vulnerability is exploited — whether a remote-code-execution CVE in a public-facing service, a phishing-delivered payload, or a supply-chain compromise — the absence of network segmentation converts that single foothold into full network access. Attackers pivot freely from the initially compromised host to databases, domain controllers, backup infrastructure, and financial systems without encountering a barrier. This dramatically amplifies the damage potential of every unpatched CVE in the environment. Ransomware actors and nation-state threat groups explicitly enumerate network topology after initial compromise and accelerate lateral movement when they encounter flat networks. In regulated industries, segmentation is often an explicit audit requirement tied to cardholder data environment (PCI DSS) or controlled unclassified information (FedRAMP) boundaries."
+frameworks:
+  - id: "NIST SP 800-53 SC-7"
+    text: "Boundary Protection — network segmentation"
+  - id: "CIS Control 12"
+    text: "Network Infrastructure Management and segmentation"
+  - id: "NIST SP 800-207"
+    text: "Zero Trust Architecture — network microsegmentation"
+  - id: "PCI DSS Req 1.3"
+    text: "Network access controls protecting the cardholder data environment"
+micelium_product:
+  - product: Sense
+    role: Detects lateral movement across unsegmented network zones in real time
+  - product: Sovera
+    role: Policy-based access controls to enforce data-zone boundaries
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  energy:
+    weight_multiplier: 1.6
+  manufacturing:
+    weight_multiplier: 1.5
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Segment your network so that a single exploited machine cannot reach everything else. A compromised workstation should never be able to directly connect to a database server or domain controller. Containment boundaries limit how far an attacker can move after they exploit a vulnerability."
+remediation_technical: "Prioritise segmentation decisions based on exploit impact: isolate internet-facing services and workstations from internal server tiers immediately. Implement VLAN separation with inter-VLAN firewall rules scoped to minimum required flows — audit firewall rules for any-any entries. Apply micro-segmentation using cloud-native security groups or a service mesh for workload-to-workload east-west traffic, ensuring each workload only allows inbound connections from its known upstream dependencies. Integrate network segmentation enforcement with your vulnerability management programme: when a critical CVE is disclosed for a service, the blast radius of exploitation should be bounded by the segment boundary. For high-value data assets, deploy ZTNA to require per-request authorisation regardless of network position."

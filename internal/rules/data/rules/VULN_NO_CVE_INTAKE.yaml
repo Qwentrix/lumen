@@ -1,0 +1,41 @@
+id: VULN_NO_CVE_INTAKE
+domain: vulnerabilities
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-VULN-014 == no_process
+title: "No defined process for CVE intake — no feed or advisory subscription"
+description_short: "No process exists for the organisation to learn about newly published CVEs relevant to its technology stack."
+description_long: "Without a CVE intake process, newly published vulnerabilities affecting the organisation's technology stack may never be acted upon. Attackers consistently exploit known CVEs within days of public disclosure — CISA data shows that weaponized exploit code for critical CVEs is frequently available within 24 hours of NVD publication. An organisation without any CVE intake mechanism is entirely reactive, learning about vulnerabilities only after systems are compromised or security news is encountered by chance. NIST SP 800-53 RA-5 mandates vulnerability monitoring as a baseline control. CIS Control 7 requires subscribing to vulnerability notification services. This is a foundational gap with direct, predictable consequences."
+frameworks:
+  - id: "NIST SP 800-53 RA-5"
+    text: "Vulnerability Monitoring and Scanning — employ automated mechanisms to receive notifications of new vulnerabilities"
+  - id: "CIS Control 7.6"
+    text: "Subscribe to vulnerability notification services for all enterprise software and hardware"
+  - id: "CISA Known Exploited Vulnerabilities Catalog"
+    text: "Organizations must monitor KEV and remediate listed vulnerabilities to reduce exploitation risk"
+micelium_product:
+  - product: Sense
+    role: Provides asset-correlated CVE feed integration so that new vulnerability disclosures are immediately mapped to the organisation's deployed systems
+  - product: Pulse
+    role: Routes incoming CVE alerts to appropriate triage queues with automated prioritization
+industry_overlays:
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  it_services:
+    weight_multiplier: 1.3
+  energy:
+    weight_multiplier: 1.4
+  manufacturing:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Implement a CVE intake process immediately — at minimum, subscribe to CISA KEV (free) and NIST NVD notifications for the software products you use. Without a feed, you will only find out about vulnerabilities after they have been exploited."
+remediation_technical: "Subscribe to: NIST NVD API for CPE identifiers matching your asset inventory; CISA Known Exploited Vulnerabilities catalog (free daily update); vendor security advisory mailing lists for all deployed products. Feed alerts into a monitored queue with an assigned triage owner. Integrate with your vulnerability scanner to correlate new CVEs against your scanned asset inventory automatically. Establish a daily triage cadence for critical and high severity new CVE notifications."

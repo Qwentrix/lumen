@@ -1,0 +1,39 @@
+id: COMP_NO_VENDOR_INCIDENT_PROTOCOL
+domain: compliance
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-COMP-DD-020 == no_formal_process
+title: "No protocol for responding to vendor security incidents"
+description_short: "No formal process exists for responding when a vendor experiences a breach or security incident affecting the organisation's data."
+description_long: "Vendor security incidents are an increasing source of downstream data breaches. When a vendor is breached, the time from initial vendor notification to the organisation taking protective action is critical — every hour of delay increases the risk of credential exposure being exploited, stolen data being used for fraud, or the breach propagating further. Without a formal vendor incident response protocol, organisations typically find out late, respond reactively, and miss their own regulatory notification obligations because they cannot rapidly assess what data was affected. HIPAA requires BAA provisions governing breach notification by business associates. GDPR Article 33 requires notification within 72 hours of becoming aware of a breach — but if a vendor takes days to notify the organisation, that window can expire. A formal protocol with defined escalation, investigation, and notification steps is required to manage this risk."
+frameworks:
+  - id: "HIPAA 164.314(a)(2)"
+    text: "Business associate contracts must require notification of breach to covered entity without unreasonable delay"
+  - id: "GDPR Art. 33"
+    text: "Controller must notify supervisory authority within 72 hours — vendor incident triggers the clock"
+  - id: "PCI DSS Req 12.10.2"
+    text: "Service provider incident response obligations and notification to customers"
+  - id: "SOC 2 CC7.3"
+    text: "Response to identified security incidents — includes vendor-reported incidents"
+micelium_product:
+  - product: Pulse
+    role: Automates vendor incident escalation workflows and tracks response actions to regulatory notification deadlines
+  - product: Proof
+    role: Evidences vendor incident response procedures as part of third-party risk compliance requirements
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.5
+  technology:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Define what you will do when a vendor tells you they have been breached. Who gets notified? What data was affected? When do you have to notify your own regulators? Write this down before it happens."
+remediation_technical: "Develop a vendor security incident response protocol covering: notification receipt and acknowledgement (SLA), initial scope assessment (what data, which systems, timeframe), internal escalation path, regulatory notification obligation assessment (GDPR 72h clock, HIPAA breach notification), customer notification decision, and vendor remediation tracking. Include the protocol in your vendor contracts as a required obligation. Test the protocol with a tabletop exercise annually. Integrate vendor incident feeds from threat intelligence sources to detect incidents before vendor notification."

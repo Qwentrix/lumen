@@ -1,0 +1,38 @@
+id: VULN_NO_EASM
+domain: vulnerabilities
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-VULN-023 == no_easm
+    - Q-VULN-023 == manual_port_scan_only
+title: "No external attack surface management"
+description_short: "No continuous visibility into internet-facing assets and exposed services."
+description_long: "Every internet-facing system, port, subdomain, and cloud asset represents an entry point an attacker can discover. Without External Attack Surface Management (EASM), organisations are unaware of shadow IT exposures, forgotten staging environments, or newly provisioned cloud assets that appear in attacker reconnaissance. NIST CSF ID.AM-3/4 and CIS Control 7 require continuous visibility into external exposure. Point-in-time or manual scans miss newly created exposures between scan cycles."
+frameworks:
+  - id: "NIST CSF ID.AM-3"
+    text: "External information systems are catalogued"
+  - id: "NIST CSF ID.AM-4"
+    text: "Connections from external systems are maintained and inventoried"
+  - id: "CIS Control 7"
+    text: "Continuous Vulnerability Management — external exposure"
+micelium_product:
+  - product: Sense
+    role: Monitors network behaviour for lateral movement from externally exposed entry points
+industry_overlays:
+  technology:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.3
+  retail:
+    weight_multiplier: 1.3
+  it_services:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Deploy an EASM tool to continuously monitor your internet-facing footprint and alert on new or unexpected exposures."
+remediation_technical: "Adopt an EASM platform (Censys, Shodan Monitor, Microsoft Defender EASM, or Cloudflare Radar) to continuously enumerate your external attack surface. Set alert policies for newly discovered open ports, expired certificates, and unrecognized domains or subdomains. Integrate findings into your vulnerability triage workflow for same-day review."

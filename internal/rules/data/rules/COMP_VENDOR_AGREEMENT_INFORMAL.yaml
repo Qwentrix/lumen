@@ -1,0 +1,35 @@
+id: COMP_VENDOR_AGREEMENT_INFORMAL
+domain: compliance
+severity: medium
+default_weight: 0.45
+detect:
+  questionnaire:
+    - Q-COMP-013 == informal_contracts_only
+title: "Vendor data-handling obligations captured only in informal contracts"
+description_short: "Data-handling vendors have informal contracts without formal data protection provisions such as BAAs or DPAs."
+description_long: "Informal contracts — service agreements, purchase orders, or email confirmations — that do not include explicit data protection provisions leave the organisation without enforceable rights regarding how vendors handle its data. HIPAA mandates specific BAA provisions that must appear in a formal agreement before PHI can be shared. GDPR Article 28 requires specific processor obligations to be contractually enshrined. PCI DSS requires written acknowledgements of service provider responsibility for cardholder data security. Without these provisions, the organisation cannot enforce breach notification obligations, cannot require the vendor to maintain specific controls, and cannot demonstrate to regulators that it took reasonable steps to protect the data it shares."
+frameworks:
+  - id: "HIPAA 164.308(b)(3)"
+    text: "Business associate contracts must include specific provisions — informal contracts do not satisfy the requirement"
+  - id: "GDPR Art. 28(3)"
+    text: "Processor contract must specify processing subject matter, duration, nature, purpose, and obligations — informal contracts are insufficient"
+  - id: "PCI DSS Req 12.8.2"
+    text: "Written acknowledgement of service provider responsibility — must be a formal, specific agreement"
+micelium_product:
+  - product: Proof
+    role: Tracks vendor agreement adequacy status and flags informal contracts lacking required data protection provisions
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.7
+  financial:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Upgrade your informal vendor contracts to include formal data protection provisions — a BAA for healthcare data, a DPA for EU personal data, and a data handling addendum for other sensitive data types."
+remediation_technical: "Identify all vendors with informal-only contracts and categorise by data type accessed. For HIPAA-covered data: obtain signed BAAs using standard HHS-aligned BAA templates. For GDPR data: execute DPAs containing all Art. 28(3) required provisions. For PCI data: execute written service provider acknowledgements. Build formal data protection addenda into all new vendor contracts by default. Prioritise renegotiation for Tier-1 (most sensitive data) vendors. Maintain the updated agreement register with agreement type, effective date, and renewal date."

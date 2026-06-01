@@ -1,0 +1,37 @@
+id: VULN_OT_EXCLUDED_FROM_VULN_MGMT
+domain: vulnerabilities
+severity: high
+default_weight: 0.80
+detect:
+  questionnaire:
+    - Q-VULN-DD-013 == ot_out_of_scope
+title: "OT/ICS systems explicitly excluded from vulnerability management"
+description_short: "Operational technology and industrial control systems are explicitly excluded from the vulnerability management programme."
+description_long: "Excluding OT and ICS/SCADA systems from vulnerability management creates a persistent, unmanaged attack surface with potentially catastrophic physical consequences. OT systems are increasingly internet-adjacent and targeted by nation-state and ransomware actors. The 2021 Oldsmar water treatment attack, Colonial Pipeline, and multiple energy sector incidents all exploited vulnerabilities in OT/IT boundary systems that were excluded from standard security programmes. NIST SP 800-82 (Guide to ICS Security) explicitly requires vulnerability management to extend to OT and ICS components. IEC 62443 (Industrial Cybersecurity) mandates vulnerability assessment as a core security process for industrial automation systems. CISA has issued specific guidance requiring critical infrastructure operators to include OT in vulnerability programmes."
+frameworks:
+  - id: "NIST SP 800-82 Rev 3"
+    text: "ICS Security — vulnerability management must extend to operational technology and industrial control systems"
+  - id: "IEC 62443-2-1"
+    text: "Industrial Cybersecurity — establish and maintain vulnerability assessment processes for IACS components"
+  - id: "CISA ICS Advisory Programme"
+    text: "Critical infrastructure operators must include OT/ICS in vulnerability monitoring and remediation programmes"
+  - id: "NERC CIP-007"
+    text: "Systems Security Management — apply security patches to applicable Cyber Assets including OT"
+micelium_product:
+  - product: Sense
+    role: Provides network behavioral monitoring for OT/ICS environments where agent-based vulnerability scanning is not feasible
+  - product: Sypher
+    role: Enforces encryption and access controls on OT/IT boundary communication paths
+  - product: Sovera
+    role: Tracks OT/ICS vulnerability findings and compensating controls for NERC CIP and IEC 62443 compliance reporting
+industry_overlays:
+  manufacturing:
+    weight_multiplier: 1.6
+  energy:
+    weight_multiplier: 1.6
+  government:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "OT and ICS systems are high-value attack targets with potentially life-safety consequences. Excluding them from vulnerability management is not an option — it is a regulatory violation in critical infrastructure sectors and a significant safety risk in manufacturing and energy environments."
+remediation_technical: "Extend your vulnerability management programme to OT/ICS: inventory all OT assets and establish an OT-specific vulnerability assessment process using passive, non-disruptive scanning techniques appropriate for operational environments (Nozomi Networks, Claroty, Dragos, or equivalent). Define separate OT patch SLAs accounting for maintenance windows and safety validation requirements. Establish OT/IT boundary controls and monitor for lateral movement between IT and OT networks. Engage ICS security specialists for initial assessment. Align the programme with IEC 62443, NIST SP 800-82, and NERC CIP where applicable."

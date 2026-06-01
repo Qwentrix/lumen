@@ -1,0 +1,40 @@
+id: COMP_NO_THIRD_PARTY_AUDIT
+domain: compliance
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-COMP-DD-004 == none
+    - Q-COMP-DD-010 == no_prior_audit
+title: "No third-party compliance audit or certification completed"
+description_short: "The organisation has never completed a third-party compliance audit or certification — all assessments are self-assessed only."
+description_long: "Self-assessments are subjective and unverifiable. Enterprise buyers, board members, regulators, and cyber insurers increasingly require independent third-party validation of security controls — not just a self-attested checklist. Organisations without any third-party audit history cannot prove to these stakeholders that their controls actually work as claimed. In regulated industries such as healthcare and financial services, the absence of any third-party assessment often disqualifies an organisation from enterprise contracts or regulatory approval. It also signals that management has not committed to verifying its own security posture."
+frameworks:
+  - id: "SOC 2 (AICPA)"
+    text: "Third-party attestation of Trust Services Criteria controls"
+  - id: "ISO 27001"
+    text: "Third-party certification of information security management system"
+  - id: "PCI DSS Req 12.8"
+    text: "Service provider compliance programme — third-party validation"
+  - id: "HIPAA 164.308(a)(8)"
+    text: "Evaluation — periodic technical and non-technical evaluation by qualified assessors"
+micelium_product:
+  - product: Proof
+    role: Prepares organisations for third-party audit by automating evidence collection and control mapping
+industry_overlays:
+  technology:
+    weight_multiplier: 1.5
+  it_services:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.5
+  healthcare:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Commission your first independent compliance audit or certification — even a readiness assessment by a qualified third party gives you credible evidence to share with prospects and regulators."
+remediation_technical: "Select a certification pathway appropriate to your primary market: SOC 2 Type II for technology/IT services buyers; ISO 27001 for international or enterprise buyers; HIPAA assessment for healthcare. Engage a readiness consultant to perform a gap assessment first. Build a remediation roadmap with 12-18 month certification timeline. Use the gap assessment findings to prioritise investment. Retain all audit evidence artefacts in a compliance evidence repository."

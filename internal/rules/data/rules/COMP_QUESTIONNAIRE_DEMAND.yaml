@@ -1,0 +1,31 @@
+id: COMP_QUESTIONNAIRE_DEMAND
+domain: compliance
+severity: low
+default_weight: 0.10
+detect:
+  questionnaire:
+    - Q-COMP-DD-006 == yes_frequently
+title: "High customer security questionnaire volume — audit-readiness demand signal"
+description_short: "Enterprise customers frequently send security questionnaires, indicating strong buyer demand for documented audit-readiness."
+description_long: "Frequent security questionnaires from enterprise customers are a leading indicator that your buyers have mature procurement security requirements and that a formal compliance certification — particularly SOC 2 Type II — would eliminate a recurring bottleneck and accelerate sales cycles. Each questionnaire represents manual effort that a SOC 2 report or compliance automation platform would replace with a single trusted artefact. This is a positive demand signal, not a gap: the market is telling you that investment in audit-readiness has direct commercial return. Organisations in this position typically see the ROI on SOC 2 within one to two enterprise sales cycles."
+frameworks:
+  - id: "SOC 2 Type II (AICPA)"
+    text: "The certification that most frequently satisfies enterprise security questionnaire requirements"
+  - id: "ISO 27001"
+    text: "International alternative accepted by global enterprise buyers"
+micelium_product:
+  - product: Proof
+    role: Automates questionnaire responses and continuous compliance evidence collection, converting questionnaire volume into a solved problem
+industry_overlays:
+  technology:
+    weight_multiplier: 1.5
+  it_services:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.3
+  legal:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Invest in SOC 2 Type II or an equivalent certification — it converts recurring questionnaire effort into a single shareable report and is often the fastest path to reducing your sales cycle for enterprise deals."
+remediation_technical: "Evaluate compliance automation platforms (Vanta, Drata, Secureframe) that provide a shared security profile portal for answering questionnaires automatically from your control evidence. Pursue SOC 2 Type II as the primary instrument. Use the platform's questionnaire-import features to map customer questionnaire items directly to your SOC 2 controls. Track questionnaire volume and response time as a business metric before and after certification to quantify the ROI."

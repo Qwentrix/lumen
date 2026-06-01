@@ -1,0 +1,43 @@
+id: COMP_VENDOR_OVERPROVISIONED
+domain: compliance
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-COMP-DD-021 == broad_access_granted
+title: "Vendors granted broad access without least-privilege scoping"
+description_short: "Vendors have been granted broad, unscoped access to systems or data beyond what their service function requires."
+description_long: "Over-provisioned vendor access is one of the highest-impact supply chain risks. When a vendor is compromised, an attacker inherits the full scope of that vendor's access — and broad, unscoped vendor access translates directly into broad attacker access. Major supply chain breaches (SolarWinds, Kaseya) illustrated how attackers leverage vendor over-provisioning to pivot from a compromised vendor into all of the vendor's customers simultaneously. Least privilege applied at vendor onboarding, and reviewed periodically, is the primary mitigating control. Broad access granted without scoping also means the organisation cannot demonstrate to regulators or auditors that vendor access was appropriately controlled — a common compliance failure in healthcare and financial services examinations."
+frameworks:
+  - id: "PCI DSS Req 7.2"
+    text: "Access to system components is restricted to only what is needed to perform the job"
+  - id: "ISO 27001 A.15.1.3"
+    text: "Information and communication technology supply chain — control and limit supplier access"
+  - id: "SOC 2 CC6.3"
+    text: "Logical access — vendor and third-party access authorised based on minimum necessary principle"
+  - id: "HIPAA 164.308(a)(4)"
+    text: "Information access management — access to ePHI limited to minimum necessary for business function"
+  - id: "NIST SP 800-161r1"
+    text: "C-SCRM — apply least-privilege principle to all supply chain access"
+micelium_product:
+  - product: Sense
+    role: Monitors vendor access patterns to detect activity outside expected scope and flag over-privileged vendor accounts"
+  - product: Proof
+    role: Tracks vendor access scope as a compliance evidence requirement with periodic access reviews
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.6
+  government:
+    weight_multiplier: 1.6
+  technology:
+    weight_multiplier: 1.4
+  it_services:
+    weight_multiplier: 1.4
+  manufacturing:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Review every vendor's access and cut it back to only what they actually need for the service they provide. Broad vendor access is one of the highest-impact supply chain risks you can remediate."
+remediation_technical: "Conduct a vendor access right-sizing exercise: for each vendor, define the minimum access scope required for their service function; compare against current grants; revoke excess permissions. Implement network segmentation to restrict vendor lateral movement — vendors should only be able to reach the systems they need, not traverse the broader environment. Create vendor-specific RBAC roles or IAM policies scoped to their function. Implement network ACLs, API gateway rate limiting and scoping, and IdP group membership controls to enforce least-privilege technically rather than relying on policy. Review vendor access rights on the same annual cycle as internal access reviews."

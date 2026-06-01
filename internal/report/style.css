@@ -1,0 +1,193 @@
+/* Lumen Report Stylesheet — fully inlined, no external resources.
+   All CSS is embedded via go:embed and written into a <style> block.
+   Print-friendly: single self-contained file, works offline and as PDF. */
+
+/* ---- Reset / base -------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #1a202c;
+  background: #f7fafc;
+  padding: 0;
+}
+
+.page-wrap {
+  max-width: 980px;
+  margin: 0 auto;
+  background: #fff;
+  padding: 40px 48px 60px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.08);
+}
+
+/* ---- Typography ---------------------------------------------------- */
+h1 { font-size: 1.8rem; font-weight: 700; color: #1a202c; margin-bottom: 4px; }
+h2 { font-size: 1.2rem; font-weight: 700; color: #2d3748; margin-top: 36px; margin-bottom: 12px;
+     padding-bottom: 6px; border-bottom: 2px solid #e2e8f0; }
+h3 { font-size: 1rem; font-weight: 600; color: #4a5568; margin-top: 20px; margin-bottom: 6px; }
+p  { margin-bottom: 8px; }
+code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+       font-size: 0.85em; background: #edf2f7; padding: 1px 5px; border-radius: 3px; }
+
+/* ---- Header / score block ----------------------------------------- */
+.report-header { display: flex; align-items: flex-start; justify-content: space-between;
+                 gap: 24px; flex-wrap: wrap; margin-bottom: 32px; }
+.report-title { flex: 1; }
+.report-meta  { font-size: 0.82rem; color: #718096; margin-top: 4px; }
+.report-meta span { display: inline-block; margin-right: 16px; }
+
+.overall-score-card {
+  display: flex; align-items: center; gap: 20px;
+  background: #ebf8ff; border: 1px solid #bee3f8; border-radius: 10px;
+  padding: 18px 24px; min-width: 220px;
+}
+.score-circle {
+  width: 72px; height: 72px; border-radius: 50%; display: flex;
+  flex-direction: column; align-items: center; justify-content: center;
+  font-weight: 700; flex-shrink: 0;
+}
+.score-circle .num  { font-size: 1.5rem; line-height: 1; }
+.score-circle .lbl  { font-size: 0.7rem; text-transform: uppercase; letter-spacing: .05em; }
+.score-grade { font-size: 2.4rem; font-weight: 800; }
+.score-desc  { font-size: 0.82rem; color: #4a5568; margin-top: 2px; }
+
+/* Grade colours */
+.grade-A { background: #c6f6d5; color: #22543d; }
+.grade-A .score-grade { color: #276749; }
+.grade-B { background: #e9f5d0; color: #2f5116; }
+.grade-B .score-grade { color: #3a6013; }
+.grade-C { background: #fefcbf; color: #744210; }
+.grade-C .score-grade { color: #b7791f; }
+.grade-D { background: #feebc8; color: #7b341e; }
+.grade-D .score-grade { color: #c05621; }
+.grade-F { background: #fed7d7; color: #63171b; }
+.grade-F .score-grade { color: #c53030; }
+
+/* ---- Scanner mode badge -------------------------------------------- */
+.scanner-badge {
+  display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 2px 8px;
+  border-radius: 999px; letter-spacing: 0.04em; vertical-align: middle; margin-left: 8px;
+}
+.scanner-badge.active   { background: #9ae6b4; color: #22543d; }
+.scanner-badge.inactive { background: #e2e8f0; color: #4a5568; }
+
+/* ---- Domain score grid -------------------------------------------- */
+.domain-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+               gap: 12px; margin: 16px 0; }
+.domain-card {
+  border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 14px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.domain-card .d-name   { font-size: 0.78rem; font-weight: 600; color: #718096;
+                          text-transform: uppercase; letter-spacing: 0.05em; }
+.domain-card .d-score  { font-size: 1.5rem; font-weight: 700; }
+.domain-card .d-grade  { font-size: 0.85rem; font-weight: 600; }
+.domain-card .d-count  { font-size: 0.78rem; color: #718096; }
+.domain-card.grade-A { border-color: #9ae6b4; }
+.domain-card.grade-B { border-color: #c6e17a; }
+.domain-card.grade-C { border-color: #f6e05e; }
+.domain-card.grade-D { border-color: #f6ad55; }
+.domain-card.grade-F { border-color: #fc8181; }
+
+/* ---- Score bar chart (SVG) ----------------------------------------- */
+.domain-bar-chart { margin: 16px 0; }
+
+/* ---- Findings ------------------------------------------------------ */
+.findings-section { margin-top: 8px; }
+.finding-card {
+  border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px;
+  margin-bottom: 10px; background: #fff;
+}
+.finding-header { display: flex; align-items: flex-start; gap: 10px; flex-wrap: wrap; }
+.finding-title  { font-weight: 600; font-size: 0.95rem; color: #2d3748; }
+.finding-id     { font-size: 0.72rem; color: #718096; font-family: monospace; }
+.severity-badge {
+  display: inline-block; font-size: 0.7rem; font-weight: 700; padding: 1px 8px;
+  border-radius: 999px; text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap;
+}
+.sev-critical { background: #fc8181; color: #63171b; }
+.sev-high     { background: #f6ad55; color: #7b341e; }
+.sev-medium   { background: #f6e05e; color: #744210; }
+.sev-low      { background: #bee3f8; color: #2a4365; }
+
+.finding-contrib { font-size: 0.78rem; color: #718096; }
+.finding-remediation { margin-top: 8px; font-size: 0.88rem; color: #4a5568; }
+.finding-remediation strong { color: #2d3748; }
+
+.frameworks-list { margin-top: 8px; }
+.frameworks-list .fw-label { font-size: 0.72rem; font-weight: 600; color: #718096;
+                               text-transform: uppercase; letter-spacing: 0.05em; }
+.framework-item { font-size: 0.8rem; color: #4a5568; margin-left: 12px; margin-top: 2px; }
+.framework-item .fw-id { font-weight: 600; color: #2b6cb0; }
+
+.micelium-products { margin-top: 6px; }
+.micelium-products .mp-label { font-size: 0.72rem; font-weight: 600; color: #718096;
+                                 text-transform: uppercase; letter-spacing: 0.05em; }
+.mp-tag {
+  display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 1px 7px;
+  border-radius: 999px; background: #e9d8fd; color: #44337a; margin: 2px 2px 0;
+}
+
+/* ---- Explain / Why trace ------------------------------------------ */
+.explain-section { margin-top: 12px; }
+.explain-toggle  { font-size: 0.82rem; color: #2b6cb0; cursor: default; font-weight: 600; }
+.explain-box {
+  background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 6px;
+  padding: 12px 14px; margin-top: 8px; font-size: 0.82rem;
+}
+.explain-formula { font-size: 0.78rem; color: #718096; margin-bottom: 8px; font-family: monospace; }
+.explain-step { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+.explain-step .es-rule  { font-family: monospace; font-size: 0.8rem; color: #553c9a; min-width: 220px; }
+.explain-step .es-calc  { font-size: 0.78rem; color: #4a5568; }
+.explain-step .es-result { font-weight: 600; color: #1a202c; }
+.explain-totals { margin-top: 8px; font-size: 0.8rem; border-top: 1px dashed #e2e8f0;
+                  padding-top: 6px; color: #4a5568; }
+
+/* ---- What to fix first -------------------------------------------- */
+.fix-first-list { list-style: none; padding: 0; }
+.fix-first-item {
+  counter-increment: fix-counter;
+  display: flex; align-items: flex-start; gap: 12px;
+  background: #fff; border: 1px solid #e2e8f0; border-radius: 8px;
+  padding: 12px 14px; margin-bottom: 8px;
+}
+.fix-first-list { counter-reset: fix-counter; }
+.fix-rank {
+  width: 26px; height: 26px; border-radius: 50%; background: #2b6cb0;
+  color: #fff; font-size: 0.78rem; font-weight: 700; display: flex;
+  align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+}
+.fix-body .fix-title    { font-weight: 600; font-size: 0.92rem; color: #2d3748; }
+.fix-body .fix-domain   { font-size: 0.75rem; color: #718096; margin-bottom: 4px; }
+.fix-body .fix-text     { font-size: 0.85rem; color: #4a5568; }
+.fix-body .fix-contrib  { font-size: 0.75rem; color: #718096; margin-top: 4px; }
+
+/* Micelium alignment badge on fix item */
+.micelium-align { font-size: 0.72rem; font-weight: 600; color: #553c9a; margin-left: 6px; }
+
+/* ---- Framework summary -------------------------------------------- */
+.framework-summary { }
+.fw-group { margin-bottom: 14px; }
+.fw-group-name { font-size: 0.82rem; font-weight: 700; color: #2d3748;
+                 text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+.fw-control { font-size: 0.82rem; color: #4a5568; padding: 2px 0 2px 12px;
+              border-left: 2px solid #bee3f8; margin-bottom: 3px; }
+.fw-control .fw-cid { font-weight: 600; color: #2b6cb0; }
+
+/* ---- Footer -------------------------------------------------------- */
+footer {
+  margin-top: 56px; padding-top: 16px; border-top: 2px solid #e2e8f0;
+  font-size: 0.78rem; color: #a0aec0;
+  display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between;
+}
+footer p { margin: 0; }
+
+/* ---- Print --------------------------------------------------------- */
+@media print {
+  body { background: #fff; }
+  .page-wrap { box-shadow: none; padding: 20px 24px 32px; }
+  .finding-card, .fix-first-item { break-inside: avoid; }
+  h2 { break-after: avoid; }
+}

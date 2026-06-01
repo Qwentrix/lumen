@@ -1,0 +1,39 @@
+id: COMP_NO_VENDOR_INVENTORY
+domain: compliance
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-COMP-DD-019 == no_inventory
+title: "No inventory of vendors with access to sensitive data"
+description_short: "No inventory exists of third parties with access to the organisation's sensitive data."
+description_long: "An organisation cannot manage what it cannot see. Without a vendor inventory that maps which third parties have access to sensitive data — and under what contractual basis — the organisation cannot enforce data agreements, perform periodic reviews, or respond effectively when a vendor is breached. GDPR Article 30 requires a record of processing activities that includes processors. PCI DSS Req 12.8.1 explicitly requires maintaining a list of all service providers with access to cardholder data. HIPAA requires a register of business associates. Without an inventory, the organisation may be sharing data with vendors it has forgotten about, vendors whose contracts have expired, or vendors that have been acquired and changed their security posture."
+frameworks:
+  - id: "GDPR Art. 30"
+    text: "Records of processing activities — must include processors and recipients of personal data"
+  - id: "PCI DSS Req 12.8.1"
+    text: "Maintain a list of all service providers sharing or accessing cardholder data"
+  - id: "HIPAA 164.308(b)"
+    text: "Business associate identification — covered entities must identify all business associates"
+  - id: "ISO 27001 A.15.1.1"
+    text: "Information security policy for supplier relationships — maintain inventory of suppliers with access to data"
+micelium_product:
+  - product: Proof
+    role: Maintains a vendor register mapped to data access scope, agreement status, and review dates
+  - product: Share
+    role: Tracks all outbound data sharing relationships, providing the technical source of truth for the vendor inventory
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Create and maintain a list of every third party that has access to your sensitive data — including what data they can access, under what agreement, and when that agreement expires."
+remediation_technical: "Build a vendor data access register covering: vendor name, data categories accessed, systems with access, contractual basis (BAA/DPA/PCI agreement), agreement execution and renewal dates, criticality tier, and last review date. Source the inventory from: OAuth and API integrations in your IdP, data sharing records in your DLP or CASB tool, and procurement contract records. Review and reconcile the inventory quarterly. Use the register as the input for your annual vendor risk review cycle. For GDPR compliance, expand the register to serve as your Article 30 records of processing activities."

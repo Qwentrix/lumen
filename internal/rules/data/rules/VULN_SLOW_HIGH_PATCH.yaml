@@ -1,0 +1,38 @@
+id: VULN_SLOW_HIGH_PATCH
+domain: vulnerabilities
+severity: medium
+default_weight: 0.40
+detect:
+  questionnaire:
+    - Q-VULN-DD-003 == within_month
+    - Q-VULN-DD-015 == within_quarter
+title: "High-severity patches applied within 30–90 days — SLA is slower than industry best practice"
+description_short: "High-severity vulnerabilities are remediated within 30 to 90 days, which exceeds industry best practice timelines for this severity tier."
+description_long: "A 30-90 day SLA for high-severity patches (CVSS 7.0–8.9) significantly extends exposure beyond industry best practice. CISA guidance recommends high-severity CVEs be remediated within 14-30 days; PCI DSS recommends critical patches (which includes CVSS 7+ in scope) within one month. More importantly, exploit code for high-severity vulnerabilities becomes publicly available quickly — often within weeks of CVE publication — dramatically reducing the safe remediation window. A 90-day SLA for a CVSS 8.5 vulnerability means the organisation may be operating with an exploitable, publicly known vulnerability for three months. This finding is a lower-tier variant of VULN_CVE_SLOW_HIGH for organisations that remediate within the quarter but slower than the recommended 14-day window."
+frameworks:
+  - id: "PCI DSS Req 6.3.3"
+    text: "Protect all system components — critical patches should be applied within one month of release"
+  - id: "NIST SP 800-53 SI-2"
+    text: "Flaw Remediation — install security-relevant software updates within organization-defined time periods; define time periods that reflect risk"
+  - id: "CIS Control 7"
+    text: "Continuous Vulnerability Management — define remediation timelines aligned to exploitation risk, not administrative convenience"
+micelium_product:
+  - product: Sense
+    role: Provides continuous monitoring during extended patch windows to detect exploitation of known high-severity CVEs before remediation
+  - product: Pulse
+    role: Automates SLA countdown alerts and escalation to motivate faster remediation of high-severity findings
+industry_overlays:
+  financial:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.2
+  technology:
+    weight_multiplier: 1.2
+  it_services:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "30-90 days to patch a high-severity vulnerability is longer than the window before exploit code becomes publicly available. Tighten your high-severity SLA to 14 days — that is the standard most mature programmes operate to."
+remediation_technical: "Revise your documented patch SLA for high-severity (CVSS 7-8.9) findings from 30-90 days to 14 days. Identify the root cause of the current SLA breach: change window frequency, testing requirements, approval bottlenecks, or resource constraints. Consider emergency out-of-band patching processes for CVEs with publicly available exploit code or CISA KEV listings. Automate SLA tracking so high-severity findings are escalated 7 days before the SLA expires. Report SLA compliance rates monthly."

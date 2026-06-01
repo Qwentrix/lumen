@@ -1,0 +1,39 @@
+id: VULN_VDP_NO_POLICY
+domain: vulnerabilities
+severity: medium
+default_weight: 0.45
+detect:
+  questionnaire:
+    - Q-VULN-010 == general_support_inbox
+title: "No formal VDP policy — vulnerability reports land in a general support inbox"
+description_short: "External vulnerability reports are not handled by a formal VDP; they land in a general support or contact inbox without defined scope, response commitments, or process."
+description_long: "Routing external vulnerability reports through a general support inbox rather than a dedicated VDP process is operationally unreliable and legally insufficient. Support inboxes are not monitored by security teams, reports may be closed as user errors, and the absence of a formal policy means researchers have no clarity on scope, safe-harbor protections, or expected response times. This creates two risks: genuine security vulnerabilities go unaddressed, and good-faith researchers who do not receive a response may escalate through public disclosure channels. CISA's CVD guidance explicitly states that a formal policy with published scope and response commitments is the minimum standard for responsible vulnerability disclosure. Without a formal policy, the organisation also cannot demonstrate due care in managing external vulnerability intelligence."
+frameworks:
+  - id: "CISA Coordinated Vulnerability Disclosure"
+    text: "A formal VDP with published policy, defined scope, and response commitments is the minimum standard"
+  - id: "ISO 29147"
+    text: "Vulnerability disclosure — organisations must implement a formal disclosure process with documented policies"
+  - id: "NIST SP 800-53 RA-5"
+    text: "Vulnerability Monitoring and Scanning — include external vulnerability intelligence sources in the vulnerability management process"
+micelium_product:
+  - product: Sovera
+    role: Provides structured VDP intake workflow, finding tracking, and compliance evidence for vulnerability disclosure programme maturity
+  - product: Proof
+    role: Maintains tamper-evident records of externally reported vulnerability handling for legal and compliance purposes
+industry_overlays:
+  financial:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.3
+  it_services:
+    weight_multiplier: 1.3
+  manufacturing:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Create a formal VDP policy page that defines what external researchers should report, how to report it, and what they can expect in return. Routing reports through a general support inbox does not meet the standard and risks losing real vulnerability intelligence."
+remediation_technical: "Draft and publish a formal VDP policy page (security.txt, dedicated /security URL, or HackerOne Disclosure Assistance). Define: reporting scope (in-scope assets and vulnerability types), out-of-scope activities, expected response timeline for initial acknowledgement, and the organisation's commitment to coordinate remediation before public disclosure. Create a dedicated security reporting channel (dedicated email alias, bug bounty platform, or web form) monitored by the security team. Assign a named owner for VDP triage and response. Consider platforms such as HackerOne, Bugcrowd, or Intigriti to manage the programme operationally."

@@ -1,0 +1,37 @@
+id: COMP_OFFBOARD_DELAYED
+domain: compliance
+severity: medium
+default_weight: 0.45
+detect:
+  questionnaire:
+    - Q-COMP-DD-016 == within_week
+title: "Access deprovisioning takes up to a week after departure"
+description_short: "Departing or role-changing employees retain access for up to a week before deprovisioning is completed."
+description_long: "A week of residual access after an employee departs creates meaningful insider threat exposure. A disgruntled employee, or an external attacker who has already compromised a departing user's credentials, can use that window to exfiltrate data, sabotage systems, or establish persistence mechanisms. Most security frameworks expect same-day or next-business-day deprovisioning as a baseline. The risk is compounded when the departing individual holds elevated or privileged access. While week-level delay is better than no deprovisioning process, it represents an unacceptable gap for any system handling sensitive data — particularly in regulated industries where access control is a specific compliance requirement."
+frameworks:
+  - id: "HIPAA 164.312(a)(1)"
+    text: "Access control — procedures for terminating access when employment ends"
+  - id: "PCI DSS Req 8.3.4"
+    text: "Remove or disable inactive user accounts within 90 days — immediate termination upon departure"
+  - id: "SOC 2 CC6.3"
+    text: "Logical access removed promptly when no longer authorised"
+  - id: "ISO 27001 A.7.3.1"
+    text: "Termination or change of employment responsibilities — return assets and remove access"
+micelium_product:
+  - product: Sense
+    role: Monitors access activity from accounts pending deprovisioning to detect anomalous activity during the gap period
+  - product: Proof
+    role: Tracks offboarding access removal as a compliance evidence checkpoint
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Reduce your offboarding timeline to same-day or next-business-day deprovisioning for departing employees. Integrate your HR system with your identity provider so offboarding triggers automatic account suspension."
+remediation_technical: "Integrate your HR system (Workday, BambooHR, SAP) with your IdP (Okta, Entra ID) using SCIM provisioning to automate account suspension on the termination date. Define an offboarding checklist that includes: IdP account suspension, SaaS application revocation, VPN certificate revocation, hardware token deactivation, SSH key removal, and service account rotation for shared credentials. For privileged accounts, implement immediate manual revocation as a parallel step. Target same-day completion for all Tier-1 access. Review offboarding compliance monthly by auditing accounts against HR termination records."

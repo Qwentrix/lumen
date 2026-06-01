@@ -1,0 +1,39 @@
+id: VULN_NO_CVE_PRIORITY
+domain: vulnerabilities
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-VULN-016 == no_prioritization
+title: "No structured CVE prioritization — vulnerabilities not risk-ranked before remediation"
+description_short: "No structured method is used to prioritize CVE remediation; vulnerabilities are addressed without risk-based ordering."
+description_long: "Without structured CVE prioritization, remediation effort is misallocated: low-risk vulnerabilities may be patched ahead of critical, actively exploited ones because they are easier or faster to fix. The consequence is that the highest-risk vulnerabilities remain open the longest. Modern vulnerability management requires contextual prioritization that accounts for CVSS severity, asset criticality, threat intelligence (active exploitation in the wild), and exploitability (EPSS score). NIST SP 800-53 RA-3 requires risk-based prioritization of identified vulnerabilities. CIS Control 7.5 mandates using threat intelligence to prioritize remediation. Organisations that do not prioritize are treating a CVSS 3.0 informational finding the same as a CVSS 9.8 remotely exploitable vulnerability."
+frameworks:
+  - id: "NIST SP 800-53 RA-3"
+    text: "Risk Assessment — prioritize identified vulnerabilities based on risk level and mission impact"
+  - id: "CIS Control 7.5"
+    text: "Use automated patch management tools prioritizing remediation based on risk scoring"
+  - id: "CISA Known Exploited Vulnerabilities Catalog"
+    text: "Prioritize remediation of vulnerabilities with known active exploitation — requires a prioritization process"
+micelium_product:
+  - product: Sense
+    role: Provides threat intelligence context for CVEs to enable exploitation-likelihood-based prioritization
+  - product: Sovera
+    role: Tracks prioritization decisions and risk acceptance rationale for audit evidence
+industry_overlays:
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  it_services:
+    weight_multiplier: 1.3
+  energy:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Without prioritization, you are spending the same effort on a low-risk informational finding as on a critical remotely exploitable CVE. Implement risk-based prioritization so your team patches the highest-risk issues first."
+remediation_technical: "Implement a CVE prioritization framework combining: (1) CVSS base score, (2) EPSS probability score for exploit likelihood, (3) CISA KEV status for active exploitation, and (4) asset criticality tier. Configure your vulnerability management platform to auto-score findings on these dimensions. Establish SLA tiers: CVSS 9+ in CISA KEV = 24-hour emergency response; CVSS 7+ = 7 days; CVSS 4-6.9 = 30 days. Review the prioritization methodology quarterly and calibrate against actual breach trends."

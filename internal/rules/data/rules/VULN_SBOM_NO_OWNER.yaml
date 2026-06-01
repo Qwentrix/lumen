@@ -1,0 +1,35 @@
+id: VULN_SBOM_NO_OWNER
+domain: vulnerabilities
+severity: medium
+default_weight: 0.35
+detect:
+  questionnaire:
+    - Q-VULN-DD-006b == no_owner
+title: "SBOM maintained but no named owner for vulnerability remediation"
+description_short: "An SBOM exists but no individual or team is accountable for acting on newly discovered vulnerabilities in tracked components."
+description_long: "An SBOM without a named remediation owner is an inventory without accountability. When a new CVE is published against a tracked component, there must be a defined path from discovery to remediation assignment. Without a named owner, CVE alerts fall through the cracks — teams assume someone else will act. NIST SP 800-161 supply-chain risk management guidance and EO 14028 SBOM requirements both implicitly require operational accountability, not just inventory maintenance."
+frameworks:
+  - id: "NIST SP 800-161r1"
+    text: "Cybersecurity Supply Chain Risk Management — SBOM operational accountability"
+  - id: "EO 14028"
+    text: "Executive Order on Improving the Nation's Cybersecurity — SBOM with operational use"
+  - id: "NTIA SBOM Minimum Elements"
+    text: "SBOM as an operational tool, not just a static artifact"
+micelium_product:
+  - product: Pulse
+    role: Workflow automation for routing SBOM CVE alerts to the correct remediation owner
+industry_overlays:
+  technology:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.2
+  it_services:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Designate a named person or team responsible for monitoring new CVEs against your SBOM components and assign them a documented escalation path for remediation."
+remediation_technical: "Define a SBOM vulnerability owner role (typically within the platform engineering or application security team). Integrate your SBOM tool with your CVE feed (NVD API, OSV, or commercial) to auto-create tickets assigned to the named owner. Document the escalation path in your vulnerability management runbook. Review open CVE tickets in your weekly security standup."

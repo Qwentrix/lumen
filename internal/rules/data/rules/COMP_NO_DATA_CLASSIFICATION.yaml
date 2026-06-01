@@ -1,0 +1,43 @@
+id: COMP_NO_DATA_CLASSIFICATION
+domain: compliance
+severity: high
+default_weight: 0.75
+detect:
+  questionnaire:
+    - Q-COMP-016 == none
+title: "No data classification scheme exists"
+description_short: "The organisation has no data classification scheme — sensitive data is not labelled, tiered, or assigned handling requirements."
+description_long: "Without a data classification scheme, the organisation has no systematic basis for applying different levels of protection to different types of data. All data is implicitly treated as equivalent, which in practice means either over-spending on protection of low-sensitivity data or under-protecting high-sensitivity data. ISO 27001 A.8.2 requires classification of information based on its value, sensitivity, and criticality. HIPAA's minimum-necessary standard implicitly requires knowing which data is PHI. PCI DSS's CDE scoping depends on correctly identifying cardholder data. GDPR's proportionality principle in Art. 32 requires security measures appropriate to the risk, which requires knowing the risk associated with different data types. Without classification, the organisation cannot meaningfully scope its compliance obligations."
+frameworks:
+  - id: "ISO 27001 A.8.2.1"
+    text: "Classification of information — based on value, sensitivity, and criticality"
+  - id: "HIPAA 164.514(b)"
+    text: "Minimum necessary — requires knowing which data constitutes PHI"
+  - id: "PCI DSS Req 3.1"
+    text: "Keep cardholder data storage to a minimum — requires identifying and scoping CHD"
+  - id: "GDPR Art. 32"
+    text: "Security of processing — measures appropriate to the risk require knowing the risk"
+micelium_product:
+  - product: Share
+    role: Enforces classification-based access and sharing controls once a scheme is defined
+  - product: Sypher
+    role: Applies encryption policies mapped to classification tiers
+  - product: Sovera
+    role: Provides a classification taxonomy framework and monitors policy adherence
+  - product: Sense
+    role: Detects and classifies sensitive data automatically to accelerate scheme deployment
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.3
+  retail:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Define a data classification scheme with clear tiers, written criteria for each tier, and documented handling requirements. Train all staff. This is the foundation for almost every other data protection control."
+remediation_technical: "Define a classification taxonomy — recommended minimum: Public, Internal, Confidential, Restricted. Document: definition, examples, and handling requirements (encryption, sharing, retention) for each tier. Map existing data types (PII, PHI, PCI CHD, CUI, IP, trade secrets) to classification tiers. Publish as a formal policy reviewed and approved by legal and security leadership. Deploy labelling tooling (Microsoft Purview, Varonis, BigID) for automated and manual classification. Wire classification to DLP and IRM policies. Review annually."

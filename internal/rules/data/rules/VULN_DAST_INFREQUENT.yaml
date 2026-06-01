@@ -1,0 +1,35 @@
+id: VULN_DAST_INFREQUENT
+domain: vulnerabilities
+severity: medium
+default_weight: 0.40
+detect:
+  questionnaire:
+    - Q-VULN-025 == pentest_substitutes
+title: "DAST only via annual penetration test — no ongoing scanning"
+description_short: "Web application testing relies solely on an annual penetration test with no ongoing dynamic scanning."
+description_long: "Using an annual penetration test as the sole substitute for dynamic application testing leaves up to 12 months of continuous development releases unvalidated. New features, dependencies, or configuration changes introduced between tests are untested. OWASP ASVS and PCI DSS both expect ongoing or release-cycle testing rather than a single annual engagement. The security posture between annual tests is effectively unknown for new code paths."
+frameworks:
+  - id: "OWASP ASVS"
+    text: "Continuous testing cadence requirement — not annual-only"
+  - id: "PCI DSS Req 6.6"
+    text: "Ongoing web application security review requirement"
+  - id: "NIST CSF PR.IP-12"
+    text: "A vulnerability management plan is developed and implemented"
+micelium_product:
+  - product: Sense
+    role: Fills gaps between annual tests by detecting anomalous application-layer traffic patterns
+industry_overlays:
+  technology:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.3
+  retail:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.2
+  it_services:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Supplement your annual penetration test with automated DAST scanning that runs on each release or on a regular schedule — don't leave months of new code untested."
+remediation_technical: "Add OWASP ZAP or equivalent as a CI/CD pipeline step triggered on every release to production. Run targeted, authenticated scans against critical application paths. Maintain the annual penetration test for deep manual review while using DAST to provide continuous coverage between engagements."

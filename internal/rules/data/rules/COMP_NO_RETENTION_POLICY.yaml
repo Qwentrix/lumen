@@ -1,0 +1,39 @@
+id: COMP_NO_RETENTION_POLICY
+domain: compliance
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-COMP-010 == no_policy
+title: "No data retention policy in place"
+description_short: "No documented data retention policy exists specifying how long data must be kept or when it must be deleted."
+description_long: "Organisations without a data retention policy face dual risk: they may retain data longer than required (increasing breach exposure and regulatory liability) or delete data too early (destroying evidence required by law or audit). GDPR Article 5(1)(e) mandates that personal data not be kept longer than necessary. HIPAA requires retention for at least 6 years. PCI DSS defines retention requirements for cardholder data. SOC 2 requires that retention policies exist and are enforced. Without a policy, organisations cannot demonstrate compliance with any of these requirements, cannot properly scope their data protection programme, and face unpredictable regulatory exposure in both directions — over-retention and under-retention."
+frameworks:
+  - id: "GDPR Art. 5(1)(e)"
+    text: "Storage limitation — personal data must not be kept longer than necessary for the purpose collected"
+  - id: "HIPAA 164.316(b)(2)(i)"
+    text: "Time limit — retain required documentation for at least 6 years from creation or last effective date"
+  - id: "PCI DSS Req 3.2.1"
+    text: "Data storage minimisation — retain cardholder data only as long as business or legal need requires"
+  - id: "SOC 2 CC6.5"
+    text: "Logical and physical access controls — assets disposed of or removed using formal processes"
+micelium_product:
+  - product: Ark
+    role: Enforces retention schedules across backup and storage systems with automated lifecycle management
+  - product: Proof
+    role: Tracks retention policy as a compliance evidence requirement and maps retention obligations to regulatory citations
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.4
+  retail:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Create a data retention policy that defines minimum and maximum retention periods for each data type you hold. Include what triggers deletion and who is responsible for enforcing it."
+remediation_technical: "Develop a data retention schedule that covers: personal data (GDPR minimum/maximum by category), financial records (typically 7 years), medical records (HIPAA 6 years minimum), employee records (varies by jurisdiction), and system logs (typically 1-3 years for compliance frameworks). Map each category to the regulatory obligation that governs it. Implement technical controls to enforce the schedule — cloud lifecycle policies, database archival jobs, or backup expiry settings. Review the retention schedule annually and after material regulatory changes."

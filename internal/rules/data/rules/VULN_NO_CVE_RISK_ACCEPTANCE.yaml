@@ -1,0 +1,37 @@
+id: VULN_NO_CVE_RISK_ACCEPTANCE
+domain: vulnerabilities
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-VULN-DD-017 == no_process
+title: "No formal risk acceptance process for unremediable CVEs"
+description_short: "No process exists to formally accept and document risk when a CVE cannot be remediated within its defined SLA."
+description_long: "Without a formal risk acceptance process, unremediable CVEs exist in a limbo state: they are not patched, but they are also not formally acknowledged and documented as accepted risk. This creates regulatory and liability exposure. Regulators and auditors require documented evidence of risk-based decisions, including when the organisation chooses to accept risk. An unacknowledged vulnerability that remains open indefinitely is indistinguishable from a missed finding in an audit. NIST SP 800-53 RA-3 requires that residual risk from identified vulnerabilities be explicitly accepted and documented by appropriate organisational officials. ISO 27001 A.12.6.1 and SOC 2 CC3.2 both require formal risk treatment decisions including acceptance. Without this process, organisations also lack the data to report risk acceptance inventory to leadership."
+frameworks:
+  - id: "NIST SP 800-53 RA-3"
+    text: "Risk Assessment — document risk acceptance decisions with appropriate official sign-off"
+  - id: "ISO 27001 A.12.6.1"
+    text: "Management of technical vulnerabilities — requires documented risk treatment decisions for identified vulnerabilities"
+  - id: "SOC 2 CC3.2"
+    text: "COSO — risk management decisions including acceptance must be documented and reviewed"
+micelium_product:
+  - product: Sovera
+    role: Provides formal risk acceptance workflow with approver sign-off, compensating control documentation, and audit evidence generation
+  - product: Proof
+    role: Maintains tamper-evident records of risk acceptance decisions for regulatory and legal purposes
+industry_overlays:
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  technology:
+    weight_multiplier: 1.2
+  it_services:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "When a CVE cannot be patched within your SLA, you need to formally accept and document that risk — with owner sign-off and a review date. An undocumented unpatched vulnerability looks the same as a missed finding to an auditor."
+remediation_technical: "Implement a formal exception and risk acceptance process: define a risk acceptance request form requiring vulnerability ID, asset affected, rationale for deferral, compensating controls in place, risk owner (VP or above) signature, and review/expiry date. Integrate with your vulnerability management platform to flag SLA-breached findings and route them to the risk acceptance workflow. Report open risk acceptance items monthly to the CISO and quarterly to leadership. Require re-approval when the expiry date lapses."

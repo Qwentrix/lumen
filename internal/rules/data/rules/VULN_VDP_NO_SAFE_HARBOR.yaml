@@ -1,0 +1,37 @@
+id: VULN_VDP_NO_SAFE_HARBOR
+domain: vulnerabilities
+severity: medium
+default_weight: 0.35
+detect:
+  questionnaire:
+    - Q-VULN-DD-011 == no_safe_harbor
+title: "VDP has no safe-harbor language protecting good-faith security researchers"
+description_short: "The vulnerability disclosure programme or bug bounty scope does not include safe-harbor language to protect researchers who conduct good-faith security research."
+description_long: "Vulnerability disclosure programmes without safe-harbor language expose good-faith security researchers to legal risk under the Computer Fraud and Abuse Act (CFAA) and equivalent laws in other jurisdictions. This deters researchers from reporting vulnerabilities and reduces the effectiveness of the VDP as an external intelligence source. The security research community expects safe-harbor language as a baseline condition for participation: researchers need assurance that they will not face legal action for authorised testing activities within the defined scope. CISA CVD guidance, the Department of Justice CFAA policy, and the draft EU Cyber Resilience Act safe-harbor provisions all recommend or require safe-harbor language in VDP policies for organisations engaging with the research community."
+frameworks:
+  - id: "CISA Coordinated Vulnerability Disclosure"
+    text: "VDP policies should include safe-harbor language to encourage good-faith reporting by security researchers"
+  - id: "US DOJ CFAA Policy (Jan 2022)"
+    text: "Authorised security research should not be prosecuted — organisations should provide clear authorisation through safe-harbor language"
+  - id: "ISO 29147"
+    text: "Vulnerability disclosure — policies should define the relationship with and protections for reporting researchers"
+micelium_product:
+  - product: Sovera
+    role: Provides VDP programme governance tracking including safe-harbor policy review status as a compliance maturity indicator
+industry_overlays:
+  financial:
+    weight_multiplier: 1.3
+  technology:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.3
+  it_services:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.2
+  manufacturing:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Add legal safe-harbor language to your VDP policy. Without it, researchers who find real vulnerabilities may choose not to report them rather than risk legal action — depriving you of external vulnerability intelligence."
+remediation_technical: "Have your legal team draft and approve safe-harbor language for your VDP policy. At minimum it should: (1) define authorised testing activities within the stated scope as explicitly permitted, (2) commit to not pursuing legal action against researchers who comply with the VDP scope and rules, (3) request that researchers maintain confidentiality until remediation is complete. Reference standard language from disclose.io's legal templates or HackerOne's policy generator as a starting point. Publish the approved safe-harbor language on your public VDP policy page and have legal review it annually."

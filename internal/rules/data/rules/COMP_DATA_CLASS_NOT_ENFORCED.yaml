@@ -1,0 +1,39 @@
+id: COMP_DATA_CLASS_NOT_ENFORCED
+domain: compliance
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-COMP-DD-018 == classification_exists_no_enforcement
+title: "Data classification scheme exists but no enforcement controls are in place"
+description_short: "A data classification scheme is documented, but no technical controls enforce protection requirements based on classification."
+description_long: "A classification policy without enforcement is a paper control — it provides no actual data protection and creates a false impression of compliance. When controls such as IRM, DLP, or encryption policies are not wired to the classification scheme, classified data travels across channels, is shared externally, and is stored without the protection its tier demands. Regulators consistently reject paper-only controls as adequate safeguards. ISO 27001 A.8.2.3 requires handling procedures aligned with the classification scheme. HIPAA's addressable implementation specifications require that, where a safeguard is reasonable, it must be applied. PCI DSS Req 3 requires that cardholder data identified by scope is actually protected — not just labelled."
+frameworks:
+  - id: "ISO 27001 A.8.2.3"
+    text: "Handling of assets — consistent with the classification scheme"
+  - id: "HIPAA 164.312(a)(2)(iv)"
+    text: "Encryption and decryption — addressable specification requiring reasonable safeguards"
+  - id: "PCI DSS Req 3.1"
+    text: "Keep cardholder data storage to a minimum — requires enforcement of retention and protection"
+  - id: "GDPR Art. 32"
+    text: "Security of processing — appropriate technical measures"
+micelium_product:
+  - product: Share
+    role: Enforces classification-based sharing restrictions and IRM policies on data in motion
+  - product: Sypher
+    role: Applies encryption and key access controls mapped to classification tier
+  - product: Sense
+    role: Detects when classified data is handled outside approved controls
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Wire your classification labels to actual technical controls. Every classification tier should have a defined, enforced protection rule — such as automatic encryption for Confidential data and IRM restrictions for Restricted data."
+remediation_technical: "Map each classification tier to a concrete policy set: encryption-at-rest tier, IRM/DRM policy, DLP egress rules, and allowed sharing channels. Deploy Microsoft Purview sensitivity labels, Varonis policies, or a similar enforcement layer. Integrate with your email gateway (Proofpoint, Mimecast) to enforce external sharing rules by label. Test enforcement quarterly by attempting to share classified data outside policy — confirm blocks fire. Document enforcement gaps as formal risks."

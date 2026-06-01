@@ -1,0 +1,39 @@
+id: VULN_NO_PATCH_PRIORITY
+domain: vulnerabilities
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-VULN-005 == no_prioritization
+title: "No formal patch prioritization method"
+description_short: "Patches are applied without any formal risk-based prioritization, meaning critical vulnerabilities may be deprioritized behind trivial ones."
+description_long: "Without formal patch prioritization, critical vulnerabilities may be remediated after minor ones because they are more convenient or less disruptive to apply. The consequence is extended exposure to the highest-risk vulnerabilities — the ones attackers exploit most aggressively. NIST SP 800-53 RA-5 and SI-2 both require risk-based triage and prioritization of identified vulnerabilities. CIS Control 7 specifies that organizations should prioritize remediation based on risk to the enterprise. Effective prioritization combines CVSS base score, exploitability (EPSS), active exploitation status (CISA KEV), and the criticality of the affected asset. Without this framework, patch effort is allocated on convenience rather than risk."
+frameworks:
+  - id: "NIST SP 800-53 SI-2"
+    text: "Flaw Remediation — prioritize flaw remediation based on risk assessments"
+  - id: "NIST SP 800-53 RA-5"
+    text: "Vulnerability Monitoring and Scanning — prioritize identified vulnerabilities by risk level"
+  - id: "CIS Control 7"
+    text: "Continuous Vulnerability Management — remediate vulnerabilities based on risk to the enterprise, not convenience"
+micelium_product:
+  - product: Sense
+    role: Provides threat intelligence context and asset criticality signals to enable risk-based patch prioritization
+  - product: Pulse
+    role: Automates patch prioritization scoring and routes high-priority patches to expedited remediation queues
+industry_overlays:
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  it_services:
+    weight_multiplier: 1.3
+  energy:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Implement a risk-based patch prioritization method. Critical remotely exploitable vulnerabilities should always be patched before minor ones — even if the minor ones are easier to apply."
+remediation_technical: "Define a patch prioritization tiering system using: (1) CVSS base score as the primary severity signal, (2) EPSS probability score for exploit likelihood, (3) CISA KEV status for known active exploitation, and (4) asset criticality tier (crown jewels vs standard). Assign SLA targets to each tier: critical/KEV = 24-48 hours; CVSS 9+ = 7 days; CVSS 7-8.9 = 14-30 days; CVSS 4-6.9 = 30-90 days. Configure your patch management platform to auto-score and queue patches by priority tier. Review and calibrate the model quarterly against actual exploitation trends."

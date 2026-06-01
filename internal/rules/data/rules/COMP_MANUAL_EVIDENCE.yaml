@@ -1,0 +1,36 @@
+id: COMP_MANUAL_EVIDENCE
+domain: compliance
+severity: medium
+default_weight: 0.50
+detect:
+  questionnaire:
+    - Q-COMP-024 == fully_manual
+    - Q-COMP-024 == no_process
+title: "Compliance evidence collection is fully manual"
+description_short: "Compliance evidence is gathered manually via spreadsheets and file shares with no automation platform."
+description_long: "Manual evidence collection is brittle, time-consuming, and error-prone. It concentrates audit preparation effort into a high-stress, last-minute scramble that consumes significant engineering and operations time. It also produces point-in-time evidence that regulators and sophisticated auditors increasingly scrutinise — asking whether controls were working only when the screenshot was taken or continuously throughout the audit period. Compliance automation platforms (Vanta, Drata, Secureframe) collect evidence continuously and map it automatically to control frameworks, dramatically reducing audit preparation time and providing stronger continuous-monitoring evidence."
+frameworks:
+  - id: "SOC 2 CC4.1"
+    text: "Risk assessment and monitoring — continuous control evidence preferred"
+  - id: "ISO 27001 A.18.2"
+    text: "Compliance reviews — regular and systematic"
+  - id: "NIST SP 800-137"
+    text: "Information Security Continuous Monitoring — automated evidence collection"
+micelium_product:
+  - product: Proof
+    role: Automates continuous compliance evidence collection mapped to SOC 2, ISO 27001, and other frameworks
+industry_overlays:
+  technology:
+    weight_multiplier: 1.5
+  it_services:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Adopt a compliance automation platform to collect evidence continuously — manual spreadsheet processes scale poorly, break at audit time, and provide weaker evidence than continuous monitoring."
+remediation_technical: "Evaluate compliance automation platforms (Vanta, Drata, Secureframe, Tugboat Logic). Connect your cloud provider, IdP, HR system, and ticketing system via API integrations to enable automated evidence collection. Map collected evidence to your target framework controls. The investment in automation typically pays back within the first audit cycle through reduced engineering hours and faster close times."

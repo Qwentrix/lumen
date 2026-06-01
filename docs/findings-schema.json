@@ -1,48 +1,456 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://lumen.micelium.com/schemas/findings-schema.json",
-  "title": "Lumen Scanner Hybrid Upload Payload",
-  "description": "The structured findings JSON sent by `lumen scan --hybrid` to lumen-api /api/v1/lumen/scanner/ingest. No file content, no PII, no hostnames.",
-  "type": "object",
-  "required": ["scanner_version", "findings", "signature"],
-  "properties": {
-    "scanner_version": {
-      "type": "string",
-      "description": "Semver of the lumen binary that produced this payload, e.g. 'v0.1.0'."
-    },
-    "content_bundle_sha": {
-      "type": "string",
-      "description": "SHA-256 of the rule+NVD bundle used during the scan."
-    },
-    "scanned_at": {
-      "type": "string",
-      "format": "date-time",
-      "description": "ISO 8601 timestamp of when the scan was run."
-    },
-    "findings": {
-      "type": "object",
-      "description": "Per-domain structured probe outputs. Each key is a domain ID.",
-      "properties": {
-        "vulnerabilities": { "$ref": "#/$defs/DomainFindings" },
-        "compliance":      { "$ref": "#/$defs/DomainFindings" },
-        "ai_governance":   { "$ref": "#/$defs/DomainFindings" },
-        "security_posture":{ "$ref": "#/$defs/DomainFindings" },
-        "privacy":         { "$ref": "#/$defs/DomainFindings" }
-      },
-      "additionalProperties": false
-    },
-    "signature": {
-      "type": "string",
-      "description": "ed25519 signature (hex) over the canonical JSON of the 'findings' field, computed using the per-install key generated on first `lumen consent`."
-    },
-    "install_key_fingerprint": {
-      "type": "string",
-      "description": "Hex fingerprint of the public key used to sign this payload. Not the private key — safe to transmit."
-    }
-  },
+  "title": "Lumen Scanner Output Schema",
+  "description": "JSON Schema for the Lumen scanner output formats.\n\nCovers two shapes:\n  1. The `ReportPayload` produced by `lumen scan` / `lumen report` (the full scored report).\n  2. The hybrid upload payload sent by `lumen scan --hybrid` to lumen-api.\n\nDownstream tooling (lumen-api, qwen-web) should use this schema to consume scanner output.",
+  "oneOf": [
+    { "$ref": "#/$defs/ReportPayload" },
+    { "$ref": "#/$defs/HybridUploadPayload" }
+  ],
   "$defs": {
-    "DomainFindings": {
+
+    "ReportPayload": {
       "type": "object",
+      "title": "ReportPayload",
+      "description": "The complete scored output written to ~/.lumen/last-scan.json and rendered as ~/lumen-report.html.",
+      "required": ["assessment_id", "generated_at", "overall_score", "overall_grade", "domains"],
+      "properties": {
+        "assessment_id": {
+          "type": "string",
+          "description": "UUID assigned by the scanner (generated locally, no network)."
+        },
+        "generated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "UTC timestamp of when scoring was performed."
+        },
+        "industry": {
+          "type": "string",
+          "description": "Industry vertical used for overlay selection, e.g. 'healthcare'. Empty string = neutral/all-1.0 overlay."
+        },
+        "company_size": {
+          "type": "string",
+          "enum": ["individual", "smb", "mid", "enterprise"],
+          "description": "Company-size bucket used for question applicability."
+        },
+        "overall_score": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Weighted mean of all domain scores."
+        },
+        "overall_grade": {
+          "type": "string",
+          "enum": ["A", "B", "C", "D", "F"],
+          "description": "Letter grade for the overall score (A=90+, B=75+, C=60+, D=45+, F=<45)."
+        },
+        "scanner_used": {
+          "type": "boolean",
+          "description": "Whether scanner probe findings contributed to the score."
+        },
+        "domains": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/DomainResult" },
+          "description": "Per-domain scoring results, ordered by overlay weight descending."
+        },
+        "top_risks": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/FindingResult" },
+          "description": "Top-3 findings sorted by contribution desc, then severity desc."
+        },
+        "what_to_fix_first": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Remediation" },
+          "description": "Top-5 prioritised remediation steps. Items with Micelium product alignment are ordered with a 1.2× bonus."
+        },
+        "framework_summary": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/FrameworkCoverage" },
+          "description": "All triggered framework references grouped by family."
+        }
+      }
+    },
+
+    "DomainResult": {
+      "type": "object",
+      "title": "DomainResult",
+      "description": "Per-domain scoring output.",
+      "required": ["domain_id", "score", "grade"],
+      "properties": {
+        "domain_id": {
+          "type": "string",
+          "enum": ["vulnerabilities", "compliance", "ai_governance", "security_posture", "privacy"],
+          "description": "The scoring domain identifier."
+        },
+        "score": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "grade": {
+          "type": "string",
+          "enum": ["A", "B", "C", "D", "F"]
+        },
+        "plain_summary": {
+          "type": "string",
+          "description": "One-sentence narrative of the domain result."
+        },
+        "findings": {
+          "type": ["array", "null"],
+          "items": { "$ref": "#/$defs/FindingResult" }
+        },
+        "explain": {
+          "$ref": "#/$defs/DomainExplain"
+        }
+      }
+    },
+
+    "FindingResult": {
+      "type": "object",
+      "title": "FindingResult",
+      "description": "A single triggered rule and its score contribution.",
+      "required": ["rule_id", "domain", "title", "severity", "contribution"],
+      "properties": {
+        "rule_id": {
+          "type": "string",
+          "description": "Rule identifier, e.g. 'COMP_NO_HOST_FIREWALL'."
+        },
+        "domain": {
+          "type": "string",
+          "enum": ["vulnerabilities", "compliance", "ai_governance", "security_posture", "privacy"]
+        },
+        "title": {
+          "type": "string"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["critical", "high", "medium", "low"]
+        },
+        "default_weight": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "industry_multiplier": {
+          "type": "number",
+          "minimum": 0
+        },
+        "severity_factor": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "contribution": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "default_weight × industry_multiplier × severity_factor."
+        },
+        "triggered_by": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Question IDs or scanner probe keys that fired this rule."
+        },
+        "frameworks": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/FrameworkRef" }
+        },
+        "remediation_plain": {
+          "type": "string"
+        },
+        "micelium_products": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Micelium products that address this finding. Non-empty → 1.2× alignment bonus in what-to-fix-first ordering."
+        }
+      }
+    },
+
+    "DomainExplain": {
+      "type": "object",
+      "title": "DomainExplain",
+      "description": "Full explainability trace for the 'Why?' panel.",
+      "properties": {
+        "domain_id": {
+          "type": "string",
+          "enum": ["vulnerabilities", "compliance", "ai_governance", "security_posture", "privacy"]
+        },
+        "formula": {
+          "type": "string",
+          "description": "Human-readable scoring formula, e.g. '100 * (1 - min(1.0, Σ contributions))'."
+        },
+        "steps": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/ExplainStep" },
+          "description": "Per-finding contributions, sorted by effective_contribution descending."
+        },
+        "raw_loss": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Sum of all contributions before capping."
+        },
+        "capped_loss": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "min(1.0, raw_loss)."
+        },
+        "domain_score": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "round(100 * (1 - capped_loss))."
+        }
+      }
+    },
+
+    "ExplainStep": {
+      "type": "object",
+      "title": "ExplainStep",
+      "description": "One term in the explainability trace for a domain.",
+      "properties": {
+        "finding_id": { "type": "string" },
+        "title":      { "type": "string" },
+        "severity":   { "type": "string", "enum": ["critical", "high", "medium", "low"] },
+        "default_weight":         { "type": "number" },
+        "industry_multiplier":    { "type": "number" },
+        "severity_factor":        { "type": "number" },
+        "effective_contribution": { "type": "number" },
+        "triggered_by": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "frameworks": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/FrameworkRef" }
+        }
+      }
+    },
+
+    "Remediation": {
+      "type": "object",
+      "title": "Remediation",
+      "description": "A prioritised fix recommendation in the 'What to Fix First' section.",
+      "required": ["rule_id", "title", "domain", "priority"],
+      "properties": {
+        "rule_id":            { "type": "string" },
+        "title":              { "type": "string" },
+        "domain":             { "type": "string" },
+        "priority":           { "type": "integer", "minimum": 1 },
+        "remediation_plain":  { "type": "string" },
+        "contribution":       { "type": "number" }
+      }
+    },
+
+    "FrameworkRef": {
+      "type": "object",
+      "title": "FrameworkRef",
+      "description": "A single compliance/regulatory control reference.",
+      "required": ["id"],
+      "properties": {
+        "id":   { "type": "string", "description": "Canonical citation, e.g. 'HIPAA 164.312(a)(2)(iii)'." },
+        "text": { "type": "string", "description": "Short control description." }
+      }
+    },
+
+    "FrameworkCoverage": {
+      "type": "object",
+      "title": "FrameworkCoverage",
+      "description": "All controls triggered for one framework family.",
+      "properties": {
+        "framework_id": { "type": "string", "description": "Framework family, e.g. 'HIPAA' or 'CIS'." },
+        "controls": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/FrameworkRef" }
+        }
+      }
+    },
+
+    "ScannerFindings": {
+      "type": "object",
+      "title": "ScannerFindings",
+      "description": "Structured probe outputs from the offline scanner. Used as input to the lumen-scoring engine's evalScannerCondition path. Fields match the json tags in types.ScannerFindings.",
+      "properties": {
+        "vulnerabilities": { "$ref": "#/$defs/VulnerabilityFindings" },
+        "compliance":      { "$ref": "#/$defs/ComplianceFindings" },
+        "ai_governance":   { "$ref": "#/$defs/AIGovernanceFindings" },
+        "security_posture":{ "$ref": "#/$defs/SecurityPostureFindings" },
+        "privacy":         { "$ref": "#/$defs/PrivacyFindings" }
+      }
+    },
+
+    "VulnerabilityFindings": {
+      "type": "object",
+      "title": "VulnerabilityFindings",
+      "description": "Outputs from the vulnerabilities probe. JSON tags match ScannerFindings.Vulnerabilities field names for lumen-scoring engine reflection.",
+      "properties": {
+        "total_packages": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of installed packages/applications enumerated."
+        },
+        "critical_cve_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of matched critical-severity CVEs (CVSS ≥ 9.0)."
+        },
+        "high_cve_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of matched high-severity CVEs (CVSS 7.0–8.9)."
+        },
+        "days_since_last_update": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Days since the last OS/package update was applied. 0 if unknown."
+        }
+      }
+    },
+
+    "ComplianceFindings": {
+      "type": "object",
+      "title": "ComplianceFindings",
+      "description": "Outputs from the compliance probe. JSON tags match ScannerFindings.Compliance for lumen-scoring engine reflection.",
+      "properties": {
+        "mfa_enabled": {
+          "type": "boolean",
+          "description": "Whether org-wide MFA is enforced. Always false from the scanner (cannot be determined locally); populated by questionnaire Q-COMP-MFA-001."
+        },
+        "disk_encryption_enabled": {
+          "type": "boolean",
+          "description": "Whether full-disk encryption (FileVault / LUKS / BitLocker) is active."
+        },
+        "firewall_enabled": {
+          "type": "boolean",
+          "description": "Whether the host firewall is active and configured."
+        },
+        "screen_lock_enabled": {
+          "type": "boolean",
+          "description": "Whether automatic screen lock is configured."
+        },
+        "screen_lock_timeout_seconds": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Idle timeout in seconds before the screen locks. 0 if screen lock is disabled or timeout is unknown."
+        }
+      }
+    },
+
+    "AIGovernanceFindings": {
+      "type": "object",
+      "title": "AIGovernanceFindings",
+      "description": "Outputs from the ai_governance probe. LU-5 — all fields are zero-valued in v0.1.x.",
+      "properties": {
+        "shadow_ai_apps_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of detected local LLM or AI-assistant applications."
+        },
+        "browser_extensions_ai_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of detected AI-assistant browser extensions."
+        },
+        "llm_egress_processes_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of processes with active connections to LLM API endpoints."
+        },
+        "mcp_servers_running": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Count of detected Model Context Protocol server processes."
+        }
+      }
+    },
+
+    "SecurityPostureFindings": {
+      "type": "object",
+      "title": "SecurityPostureFindings",
+      "description": "Outputs from the security_posture probe. LU-5 — all fields are zero-valued in v0.1.x.",
+      "properties": {
+        "ssh_keys_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "weak_ssh_key_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "password_manager_detected": {
+          "type": "boolean"
+        },
+        "listening_ports_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+
+    "PrivacyFindings": {
+      "type": "object",
+      "title": "PrivacyFindings",
+      "description": "Outputs from the privacy probe. LU-5 — all fields are zero-valued in v0.1.x.",
+      "properties": {
+        "pii_match_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "files_scanned_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+
+    "HybridUploadPayload": {
+      "type": "object",
+      "title": "HybridUploadPayload",
+      "description": "The structured findings JSON sent by `lumen scan --hybrid` to lumen-api /api/v1/lumen/scanner/ingest. No file content, no PII, no hostnames.",
+      "required": ["scanner_version", "findings", "signature"],
+      "properties": {
+        "scanner_version": {
+          "type": "string",
+          "description": "Semver of the lumen binary, e.g. 'v0.1.0'."
+        },
+        "content_bundle_sha": {
+          "type": "string",
+          "description": "SHA-256 of the rule+NVD bundle used during the scan."
+        },
+        "scanned_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "findings": {
+          "type": "object",
+          "description": "Per-domain structured probe outputs.",
+          "properties": {
+            "vulnerabilities": { "$ref": "#/$defs/DomainHybridFindings" },
+            "compliance":      { "$ref": "#/$defs/DomainHybridFindings" },
+            "ai_governance":   { "$ref": "#/$defs/DomainHybridFindings" },
+            "security_posture":{ "$ref": "#/$defs/DomainHybridFindings" },
+            "privacy":         { "$ref": "#/$defs/DomainHybridFindings" }
+          },
+          "additionalProperties": false
+        },
+        "scanner_findings": {
+          "$ref": "#/$defs/ScannerFindings",
+          "description": "Typed structured probe outputs for lumen-scoring engine consumption."
+        },
+        "signature": {
+          "type": "string",
+          "description": "ed25519 signature (hex) over canonical JSON of the 'findings' field."
+        },
+        "install_key_fingerprint": {
+          "type": "string",
+          "description": "Hex fingerprint of the public key used to sign. Not the private key."
+        }
+      }
+    },
+
+    "DomainHybridFindings": {
+      "type": "object",
+      "description": "Domain findings in hybrid upload format.",
       "required": ["hints"],
       "properties": {
         "hints": {
@@ -55,8 +463,11 @@
         }
       }
     },
+
     "FindingHint": {
       "type": "object",
+      "title": "FindingHint",
+      "description": "A lightweight hint used in the hybrid upload path. Maps to a rule ID.",
       "required": ["rule_id"],
       "properties": {
         "rule_id": {
@@ -68,5 +479,6 @@
         }
       }
     }
+
   }
 }

@@ -1,0 +1,39 @@
+id: COMP_NO_DATA_HANDLING_TRAINING
+domain: compliance
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-COMP-DD-025 == no_training
+title: "No training on data classification and handling requirements"
+description_short: "Employees receive no training on data classification and handling requirements relevant to the sensitive data they work with."
+description_long: "Without data handling training, employees make ad hoc decisions about how to store, share, and dispose of sensitive data — often in ways that violate policy and create compliance gaps. Human error is the leading cause of data breaches globally (IBM Cost of a Data Breach 2024). HIPAA 164.308(a)(5) requires workforce training on security policies and procedures. PCI DSS Req 12.6 requires an ongoing security awareness programme. SOC 2 CC2.2 requires communicating information necessary to enable internal parties to fulfil their responsibilities. The absence of data handling training means that even a well-designed classification scheme and robust technical controls will be undermined by employees who don't know what they are supposed to do."
+frameworks:
+  - id: "HIPAA 164.308(a)(5)"
+    text: "Security awareness and training — periodic reminders and training on security procedures"
+  - id: "PCI DSS Req 12.6"
+    text: "Implement a formal security awareness programme for all personnel"
+  - id: "SOC 2 CC2.2"
+    text: "Communicating information — information needed to carry out internal control responsibilities"
+  - id: "GDPR Art. 32(4)"
+    text: "Security of processing — ensuring personnel authorised to process act only on instructions"
+micelium_product:
+  - product: Proof
+    role: Tracks data handling training completion and generates compliance attestation records
+  - product: Sovera
+    role: Provides role-based data handling policy guidance integrated with the classification framework
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.3
+  retail:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Implement role-specific training on how to classify, handle, share, and dispose of the types of sensitive data each employee works with. Track completion and require annual re-attestation."
+remediation_technical: "Develop and deploy a role-specific data handling training programme. Content should include: classification scheme tiers, handling requirements per tier, permitted and prohibited sharing channels, retention and disposal procedures, and incident reporting process. Deliver via an LMS (KnowBe4, Proofpoint Security Awareness, Mimecast Awareness Training). Require completion on hire and annually. Track completion rates and report to compliance leadership. For high-risk roles (those handling PHI, CHD, or CUI), consider quarterly refreshers."

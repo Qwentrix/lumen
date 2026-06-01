@@ -1,0 +1,37 @@
+id: COMP_NO_VENDOR_ASSESSMENT
+domain: compliance
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-COMP-014 == no_assessment
+title: "No security assessment performed before vendor onboarding"
+description_short: "Vendors are onboarded without any pre-onboarding security assessment or evaluation of their security posture."
+description_long: "Onboarding a vendor without assessing their security posture transfers unknown risk into the organisation's supply chain. Third-party breaches have become one of the primary vectors for large-scale data incidents — attackers compromise a vendor with weaker controls to reach the vendor's customers. PCI DSS Req 12.8.1-12.8.3, ISO 27001 A.15.1.1, and SOC 2 CC9.2 require that organisations assess service providers before engaging them. Without pre-onboarding assessment, organisations have no baseline understanding of whether a vendor can be trusted with their data, no contractual leverage to require remediation before access is granted, and no record of due diligence if something goes wrong."
+frameworks:
+  - id: "PCI DSS Req 12.8.1"
+    text: "Maintain a list of all service providers and due diligence before engagement"
+  - id: "ISO 27001 A.15.1.1"
+    text: "Information security policy for supplier relationships — assess before engagement"
+  - id: "SOC 2 CC9.2"
+    text: "Risk assessment of vendor and business partner activities prior to engagement"
+  - id: "NIST SP 800-161r1"
+    text: "C-SCRM — assess suppliers before selection and engagement"
+micelium_product:
+  - product: Proof
+    role: Streamlines vendor pre-assessment by tracking evidence of vendor certifications and questionnaire responses
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  technology:
+    weight_multiplier: 1.3
+  it_services:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Before you give any vendor access to your data or systems, ask them about their security — at minimum, request their SOC 2 report or ISO 27001 certificate, or send them a security questionnaire. Document your findings."
+remediation_technical: "Implement a vendor security assessment process as part of procurement: define a tiered assessment approach (Tier 1 data-handling vendors require full security questionnaire + certification review; Tier 2 system-access vendors require certification review; Tier 3 others require self-attestation). Use a standardised questionnaire (SIG Lite, CAIQ, or NIST SCRM). Document assessment results, open findings, and accepted risks. Gate data access on satisfactory completion of assessment. Maintain assessment records as compliance evidence for PCI DSS and ISO 27001."

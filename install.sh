@@ -111,7 +111,8 @@ if command -v sha256sum > /dev/null 2>&1; then
 elif command -v shasum > /dev/null 2>&1; then
   grep "${ARCHIVE}" checksums.txt | shasum -a 256 --check --status
 else
-  echo "Warning: no sha256sum or shasum found; skipping checksum verification." >&2
+  echo "ERROR: no sha256sum or shasum available; cannot verify download integrity" >&2
+  exit 1
 fi
 
 # ---------------------------------------------------------------------------

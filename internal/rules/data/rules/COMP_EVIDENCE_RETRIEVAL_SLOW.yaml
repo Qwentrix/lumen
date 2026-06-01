@@ -1,0 +1,39 @@
+id: COMP_EVIDENCE_RETRIEVAL_SLOW
+domain: compliance
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-COMP-008 == more_than_month_or_unknown
+title: "Audit evidence retrieval takes more than a month or is unknown"
+description_short: "Producing specific control evidence for an auditor would take more than a month, or the organisation does not know how long it would take."
+description_long: "An evidence retrieval time exceeding one month — or an inability to estimate it — is a strong signal that compliance evidence is not systematically managed and may not exist in a retrievable form. Auditors treat this as a high-risk indicator: controls that cannot be evidenced are treated as controls that did not operate. SOC 2 auditors will qualify or refuse opinions where evidence cannot be produced for the observation period. In breach investigations, regulators require evidence of control operation on timelines much shorter than a month. This gap also means that post-breach investigations, insurance claims, and litigation responses will be significantly impaired. An unknown retrieval time is particularly concerning — it suggests the organisation has not tested its own evidence retrieval capability."
+frameworks:
+  - id: "SOC 2 CC4.1"
+    text: "Monitoring activities — controls must be evidenced as operating during the review period"
+  - id: "HIPAA 164.316(b)(2)(i)"
+    text: "Documentation — retain documentation for six years and make available to those responsible"
+  - id: "PCI DSS Req 10.7"
+    text: "Retain audit logs for at least 12 months with at least three months available for immediate analysis"
+  - id: "FedRAMP CA-7"
+    text: "Continuous monitoring — assessments and evidence available on demand"
+micelium_product:
+  - product: Proof
+    role: Centralises all compliance evidence with instant retrieval by control, date, or framework
+  - product: Sovera
+    role: Provides a structured evidence repository with auditor-ready package generation
+  - product: Pulse
+    role: Automates evidence collection workflows to ensure artefacts exist before they are needed
+industry_overlays:
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.3
+  legal:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Make compliance evidence retrieval a routine capability, not an emergency effort. Organise evidence centrally, tag it by control and time period, and test your ability to produce it on demand."
+remediation_technical: "Implement a compliance evidence management platform (Vanta, Drata, Secureframe, or a GRC tool such as ServiceNow GRC) to centralise evidence. Define the authoritative evidence artefact for each control and automate collection where possible. Conduct a quarterly fire-drill: receive a simulated auditor evidence request and measure time-to-produce. Set a 24-hour SLA for evidence production. Resolve any gaps where no evidence exists by implementing the underlying control first, then its collection mechanism."

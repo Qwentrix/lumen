@@ -42,6 +42,7 @@ Trust promises: https://lumen.micelium.com/trust`,
 		newConsentCmd(),
 		newUpdateCmd(),
 		newVersionCmd(),
+		newReportCmd(),
 	)
 
 	return root

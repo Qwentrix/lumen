@@ -1,0 +1,21 @@
+id: government
+display_name: Government & Public Sector
+domain_weight_multipliers:
+  vulnerabilities: 1.3
+  compliance: 1.7
+  ai_governance: 1.8
+  security_posture: 1.4
+  privacy: 1.4
+primary_frameworks:
+  - FedRAMP
+  - FISMA
+  - NIST SP 800-53
+  - EU AI Act (high-risk public authority)
+  - ISO 27001
+lead_micelium_products:
+  - product: Proof
+    emphasis: FedRAMP audit evidence and POA&M management
+  - product: Sigil
+    emphasis: AI governance for public-authority AI systems
+  - product: Sypher
+    emphasis: CUI protection under NIST SP 800-171

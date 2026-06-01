@@ -1,0 +1,39 @@
+id: COMP_DATA_DETECT_MANUAL_ONLY
+domain: compliance
+severity: medium
+default_weight: 0.50
+detect:
+  questionnaire:
+    - Q-COMP-DD-024 == log_review_only
+title: "Sensitive data movement detection relies on manual log review only"
+description_short: "Detection of sensitive data access, movement, or exfiltration depends solely on manual log review with no automated alerting."
+description_long: "Manual log review is reactive, selective, and cannot scale to the volume of events in a modern environment. An attacker exfiltrating data gradually — or a malicious insider copying files over days — will not trigger any alert until someone happens to review the right log at the right time. HIPAA 164.312(b) requires automatic audit log review for access to ePHI. PCI DSS Req 10.6 requires review of security events at least daily. SOC 2 CC7.2 requires that system anomalies be detected and responded to. Manual-only log review means the organisation is effectively blind between review cycles — a gap attackers actively exploit."
+frameworks:
+  - id: "HIPAA 164.312(b)"
+    text: "Audit controls — hardware, software, and procedural mechanisms to record and examine activity"
+  - id: "PCI DSS Req 10.6"
+    text: "Review logs of all system components at least daily"
+  - id: "SOC 2 CC7.2"
+    text: "System monitoring — detection of and response to system anomalies"
+  - id: "ISO 27001 A.12.4.1"
+    text: "Event logging — generating and reviewing logs of user activities"
+micelium_product:
+  - product: Sense
+    role: Provides automated behavioural anomaly detection for data access and movement patterns
+  - product: Share
+    role: Generates real-time alerts when classified data is shared outside expected patterns
+  - product: Pulse
+    role: Automates alert triage and escalation workflows for data exfiltration signals
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.3
+  technology:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Replace manual log review with automated alerting for abnormal data access and movement. Set thresholds for data volume, off-hours access, and unusual destinations that trigger immediate notification."
+remediation_technical: "Deploy a UEBA solution (Splunk UBA, Microsoft Sentinel UEBA, Varonis) to baseline normal data access patterns and alert on deviations. Implement DLP with real-time policy enforcement (Symantec DLP, Forcepoint, Purview DLP). Configure SIEM correlation rules for: bulk data downloads, after-hours access, access from unusual locations, and data transfers to personal cloud storage. Set SLA for alert review and response. Test detection with red team data exfil scenarios quarterly."

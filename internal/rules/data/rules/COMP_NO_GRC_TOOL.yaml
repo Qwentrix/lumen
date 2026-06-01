@@ -1,0 +1,35 @@
+id: COMP_NO_GRC_TOOL
+domain: compliance
+severity: high
+default_weight: 0.60
+detect:
+  questionnaire:
+    - Q-COMP-DD-008 == none
+title: "No GRC or evidence management tooling in place"
+description_short: "The organisation has no tooling to organise compliance evidence or map it to control requirements."
+description_long: "Without a GRC platform or structured evidence management system, compliance programmes rely entirely on human memory and ad hoc file organisation. Evidence cannot be systematically mapped to framework controls, review deadlines are missed, and audit preparation becomes a major time sink. As frameworks require more frequent evidence collection and broader control coverage, the manual approach breaks down under the volume. Organisations without any tooling are also unable to report on compliance posture to management, satisfy continuous-monitoring requirements, or demonstrate readiness on demand to enterprise buyers. Even a well-intentioned programme will appear disorganised and immature without tooling infrastructure."
+frameworks:
+  - id: "SOC 2 CC2.2"
+    text: "Information and communication — internal communication of control obligations and status"
+  - id: "ISO 27001 A.18.2.3"
+    text: "Technical compliance review — tooling to assess and evidence control operation"
+  - id: "FedRAMP CA-7"
+    text: "Continuous monitoring — requires systematic tracking of control status over time"
+micelium_product:
+  - product: Proof
+    role: Serves as the GRC platform — maps evidence to controls, tracks gaps, and generates audit-ready reports
+industry_overlays:
+  technology:
+    weight_multiplier: 1.5
+  it_services:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Adopt a GRC or compliance management tool to organise your evidence and map it to control requirements. Even a structured shared drive with a consistent naming convention is a starting point — a purpose-built tool will save significant time at audit."
+remediation_technical: "Evaluate and deploy a compliance management platform matched to your framework and size: Vanta, Drata, or Secureframe for SOC 2 / ISO 27001 automation; AuditBoard or Hyperproof for enterprise multi-framework programmes; ServiceNow GRC for large enterprises. At minimum, implement a control-evidence mapping spreadsheet with defined owners, review dates, and artefact links. Integrate the tool with your cloud provider, IdP, and code repository to automate evidence collection where possible."

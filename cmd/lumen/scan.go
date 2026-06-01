@@ -16,6 +16,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -23,7 +24,10 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/Qwentrix/lumen/internal/consent"
+	"github.com/Qwentrix/lumen/internal/manifest"
 	"github.com/Qwentrix/lumen/internal/probes/ai_governance"
+	"github.com/Qwentrix/lumen/internal/probes/common"
 	"github.com/Qwentrix/lumen/internal/probes/compliance"
 	"github.com/Qwentrix/lumen/internal/probes/privacy"
 	"github.com/Qwentrix/lumen/internal/probes/security_posture"
@@ -34,9 +38,12 @@ import (
 
 func newScanCmd() *cobra.Command {
 	var (
-		domain string
-		hybrid bool
-		output string
+		domain      string
+		hybrid      bool
+		output      string
+		industry    string
+		companySize string
+		skipConsent bool
 	)
 
 	cmd := &cobra.Command{
@@ -46,9 +53,11 @@ func newScanCmd() *cobra.Command {
 domain with --domain) and write a self-contained HTML report.
 
 Zero network calls are made in the default mode. Use --hybrid to upload
-structured findings to lumen.micelium.com after reviewing a preview.`,
+structured findings to lumen.micelium.com after reviewing a preview.
+
+Run 'lumen consent' before scanning to review and accept the access manifest.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return runScan(cmd.Context(), domain, hybrid, output)
+			return runScan(cmd.Context(), domain, hybrid, output, industry, companySize, skipConsent)
 		},
 	}
 
@@ -58,6 +67,9 @@ structured findings to lumen.micelium.com after reviewing a preview.`,
 	cmd.Flags().StringVar(&domain, "domain", "", "Scan a single domain: vulnerabilities, compliance, ai_governance, security_posture, privacy")
 	cmd.Flags().BoolVar(&hybrid, "hybrid", false, "Upload structured findings to lumen.micelium.com (preview shown before upload)")
 	cmd.Flags().StringVar(&output, "output", defaultOutput, "Output path for the HTML report")
+	cmd.Flags().StringVar(&industry, "industry", "", "Industry vertical for overlay selection (healthcare, financial, technology, …)")
+	cmd.Flags().StringVar(&companySize, "company-size", "smb", "Company size bucket: individual, smb, mid, enterprise")
+	cmd.Flags().BoolVar(&skipConsent, "skip-consent", false, "Skip the consent gate (for CI/install-time-consent scenarios); prints a prominent warning")
 
 	return cmd
 }
@@ -102,8 +114,37 @@ func validateOutputPath(raw string) (string, error) {
 	return abs, nil
 }
 
-func runScan(ctx context.Context, domain string, hybrid bool, outputPath string) error {
+func runScan(ctx context.Context, domain string, hybrid bool, outputPath, industry, companySize string, skipConsent bool) error {
 	fmt.Println("Lumen scan starting...")
+
+	// C-1: Enforce consent before running any probes.
+	// Load the stored consent record; abort if absent or not accepted.
+	if skipConsent {
+		// --skip-consent is intended for CI pipelines where consent was
+		// accepted at install time. Print a prominent warning so operators
+		// are aware the gate is bypassed.
+		fmt.Fprintln(os.Stderr, "WARNING: --skip-consent bypasses the consent gate.")
+		fmt.Fprintln(os.Stderr, "WARNING: Ensure 'lumen consent' was already accepted for this installation.")
+	} else {
+		c, err := consent.Load()
+		if err != nil {
+			return fmt.Errorf("consent: could not load consent record: %w", err)
+		}
+		if c == nil {
+			return fmt.Errorf("run 'lumen consent' to review and accept the access manifest before scanning")
+		}
+		// Verify at least one domain was actually accepted.
+		anyAccepted := false
+		for _, d := range c.Domains {
+			if d.Accepted {
+				anyAccepted = true
+				break
+			}
+		}
+		if !anyAccepted {
+			return fmt.Errorf("run 'lumen consent' to review and accept the access manifest before scanning")
+		}
+	}
 
 	// Validate --output before doing any work.
 	validatedPath, err := validateOutputPath(outputPath)
@@ -112,10 +153,13 @@ func runScan(ctx context.Context, domain string, hybrid bool, outputPath string)
 	}
 	outputPath = validatedPath
 
-	// Collect probe results for each requested domain.
-	results := map[string]interface{}{}
+	// Initialise the runtime manifest recorder.
+	manifest.Default = manifest.New(Version)
 
-	runDomain := func(name string, fn func(context.Context) (interface{}, error)) error {
+	// Collect probe results for each requested domain.
+	results := map[string]*common.ProbeResult{}
+
+	runDomain := func(name string, fn func(context.Context) (*common.ProbeResult, error)) error {
 		if domain != "" && domain != name {
 			return nil
 		}
@@ -129,13 +173,13 @@ func runScan(ctx context.Context, domain string, hybrid bool, outputPath string)
 
 	probes := []struct {
 		name string
-		fn   func(context.Context) (interface{}, error)
+		fn   func(context.Context) (*common.ProbeResult, error)
 	}{
-		{"vulnerabilities", func(c context.Context) (interface{}, error) { return vulnerabilities.Run(c) }},
-		{"compliance", func(c context.Context) (interface{}, error) { return compliance.Run(c) }},
-		{"ai_governance", func(c context.Context) (interface{}, error) { return ai_governance.Run(c) }},
-		{"security_posture", func(c context.Context) (interface{}, error) { return security_posture.Run(c) }},
-		{"privacy", func(c context.Context) (interface{}, error) { return privacy.Run(c) }},
+		{"vulnerabilities", vulnerabilities.Run},
+		{"compliance", compliance.Run},
+		{"ai_governance", ai_governance.Run},
+		{"security_posture", security_posture.Run},
+		{"privacy", privacy.Run},
 	}
 
 	for _, p := range probes {
@@ -144,10 +188,23 @@ func runScan(ctx context.Context, domain string, hybrid bool, outputPath string)
 		}
 	}
 
-	// Score results.
-	payload, err := scoring.Score(results)
+	// Write the runtime manifest.
+	manifestPath := manifest.DefaultManifestPath()
+	if err := manifest.Default.Write(manifestPath); err != nil {
+		fmt.Fprintf(os.Stderr, "warning: could not write manifest: %v\n", err)
+	} else {
+		fmt.Printf("Access manifest written to: %s\n", manifestPath)
+	}
+
+	// Score results using the real lumen-scoring engine.
+	payload, err := scoring.ScoreScan(results, industry, companySize)
 	if err != nil {
 		return fmt.Errorf("scoring: %w", err)
+	}
+
+	// Cache the scored payload for `lumen report` to consume.
+	if err := cachePayload(payload); err != nil {
+		fmt.Fprintf(os.Stderr, "warning: could not cache scan payload: %v\n", err)
 	}
 
 	// Render report.
@@ -156,10 +213,31 @@ func runScan(ctx context.Context, domain string, hybrid bool, outputPath string)
 	}
 
 	fmt.Printf("Report written to: %s\n", outputPath)
+	fmt.Printf("Overall score: %d (%s)\n", payload.OverallScore, payload.OverallGrade)
 
 	if hybrid {
-		fmt.Println("--hybrid: TODO — implement preview + upload in LU-4")
+		fmt.Println("--hybrid: TODO — implement preview + upload in LU-5")
 	}
 
 	return nil
+}
+
+// lastScanPath returns the path where the cached scan payload is stored.
+func lastScanPath() string {
+	home, _ := os.UserHomeDir()
+	return filepath.Join(home, ".lumen", "last-scan.json")
+}
+
+// cachePayload writes the scored payload to ~/.lumen/last-scan.json for
+// `lumen report` to re-render without re-scanning.
+func cachePayload(payload interface{}) error {
+	path := lastScanPath()
+	if err := os.MkdirAll(filepath.Dir(path), 0700); err != nil {
+		return err
+	}
+	data, err := json.MarshalIndent(payload, "", "  ")
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(path, data, 0600)
 }

@@ -1,0 +1,33 @@
+id: VULN_NO_MTTR_TRACKING
+domain: vulnerabilities
+severity: medium
+default_weight: 0.45
+detect:
+  questionnaire:
+    - Q-VULN-029 == not_tracked
+title: "Vulnerability remediation time not tracked"
+description_short: "Mean time to remediate (MTTR) vulnerabilities is not systematically tracked."
+description_long: "Without MTTR tracking, a vulnerability management program cannot objectively measure its effectiveness, identify backlogs, or demonstrate continuous improvement to auditors and leadership. MTTR by severity tier is a key operational metric required by CIS Control 7 and NIST SP 800-137 continuous monitoring guidance. Organisations that do not track remediation time often discover during audits or incident investigations that known vulnerabilities were open far longer than assumed."
+frameworks:
+  - id: "CIS Control 7"
+    text: "Continuous Vulnerability Management — metrics and improvement tracking"
+  - id: "NIST SP 800-137"
+    text: "Information Security Continuous Monitoring — operational metrics"
+  - id: "NIST CSF ID.RA-1"
+    text: "Asset vulnerabilities are identified and documented"
+micelium_product:
+  - product: Pulse
+    role: Provides operational metrics and dashboards to track remediation velocity by severity
+industry_overlays:
+  financial:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.2
+  technology:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Start tracking the time from vulnerability discovery to remediation, broken down by severity level. Use this metric to identify backlog trends and drive program improvements."
+remediation_technical: "Export open and closed vulnerability data from your scanner with creation and resolution timestamps. Calculate MTTR per CVSS severity band using a SIEM, BI tool, or vulnerability management platform reporting. Set up a monthly dashboard for leadership review. Define improvement targets for each severity tier and track progress quarter over quarter."

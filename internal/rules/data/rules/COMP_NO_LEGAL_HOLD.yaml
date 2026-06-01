@@ -1,0 +1,37 @@
+id: COMP_NO_LEGAL_HOLD
+domain: compliance
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-COMP-DD-013 == no_legal_hold
+title: "No legal hold capability — automated deletion may destroy evidence"
+description_short: "No legal hold process exists to suspend automated data deletion when records are subject to litigation or regulatory inquiry."
+description_long: "Organisations that automate data deletion without a legal hold mechanism risk destroying evidence relevant to ongoing or anticipated litigation, regulatory investigations, or audits. This is called spoliation of evidence, and courts can issue severe sanctions including adverse inference instructions, striking pleadings, or default judgment against the responsible party. FRCP Rule 37(e) in the US, and equivalent rules in other jurisdictions, create significant legal exposure when electronically stored information (ESI) is lost due to the failure to suspend routine deletion. Healthcare organisations under HIPAA and financial organisations subject to SEC/FINRA regulations are particularly exposed. Any organisation subject to litigation or regulatory inquiry must be able to issue a legal hold that overrides automated retention schedules."
+frameworks:
+  - id: "FRCP Rule 37(e)"
+    text: "Failure to preserve electronically stored information — sanctions for spoliation"
+  - id: "HIPAA 164.316(b)(2)"
+    text: "Documentation retention — retain records for at least 6 years and protect from destruction during legal proceedings"
+  - id: "SEC Rule 17a-4"
+    text: "Books and records requirements — preservation obligations during examination or investigation"
+  - id: "ISO 27001 A.18.1.3"
+    text: "Protection of records — protect records from loss, destruction, falsification, or unauthorized access"
+micelium_product:
+  - product: Ark
+    role: Provides legal hold capabilities that suspend automated deletion for designated data sets under litigation or regulatory hold
+  - product: Proof
+    role: Tracks legal hold status as a compliance evidence artefact and alerts when held data approaches automated deletion
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.6
+  legal:
+    weight_multiplier: 1.8
+  government:
+    weight_multiplier: 1.5
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Implement a legal hold process that can freeze data deletion for specific records or custodians when your legal team identifies litigation risk. Without this, your automated retention system could destroy exactly the evidence you need."
+remediation_technical: "Implement a legal hold workflow: define the process for legal team to issue hold notices, identify custodians and data locations in scope, and trigger technical holds in storage systems. Integrate with your data retention platform to prevent lifecycle policies from deleting held content. Document the hold issuance, scope, custodians notified, and release process. Test the hold mechanism at least annually. For M365 or Google Workspace, use eDiscovery hold features. For custom storage, implement hold flags in your data management layer that override deletion jobs."

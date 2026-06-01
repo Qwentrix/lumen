@@ -1,0 +1,33 @@
+id: VULN_THREAT_INTEL_NOT_INTEGRATED
+domain: vulnerabilities
+severity: medium
+default_weight: 0.40
+detect:
+  questionnaire:
+    - Q-VULN-028 == reviewed_but_not_integrated
+title: "Threat intelligence reviewed but not integrated into vulnerability triage"
+description_short: "Threat intelligence sources are reviewed but are not systematically integrated into vulnerability prioritization."
+description_long: "Reviewing threat intelligence sources without systematically incorporating them into the vulnerability triage workflow introduces a human bottleneck that breaks down under volume and time pressure. Ad hoc awareness does not scale: an analyst reviewing the KEV list manually may miss a newly added CVE on a busy day. Integration means the triage system automatically escalates exploited CVEs — removing human judgment as the sole gate. Without this, the operational benefit of threat intelligence is substantially reduced."
+frameworks:
+  - id: "NIST SP 800-150"
+    text: "Operationalizing cyber threat intelligence"
+  - id: "NIST CSF ID.RA-2"
+    text: "Cyber threat intelligence integrated into risk identification"
+  - id: "CISA BOD 22-01"
+    text: "Operational integration of KEV for timely remediation"
+micelium_product:
+  - product: Sense
+    role: Automatically correlates known exploitation patterns with monitored network behaviour
+industry_overlays:
+  financial:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.2
+  technology:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Connect your threat intelligence sources directly to your vulnerability management platform so that known-exploited CVEs are automatically escalated — don't rely on manual review."
+remediation_technical: "Configure your vulnerability management platform (Tenable, Qualys, Wiz) to automatically apply a 'known exploited' tag and escalated SLA when a CVE appears in the CISA KEV feed or your commercial threat intelligence integration. Use Qualys ThreatPROT, Tenable Lumin, or a SOAR playbook to automate the escalation. Measure integration effectiveness via the ratio of KEV CVEs remediated within SLA."

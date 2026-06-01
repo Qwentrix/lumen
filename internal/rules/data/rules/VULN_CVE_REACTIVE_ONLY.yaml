@@ -1,0 +1,39 @@
+id: VULN_CVE_REACTIVE_ONLY
+domain: vulnerabilities
+severity: medium
+default_weight: 0.40
+detect:
+  questionnaire:
+    - Q-VULN-014 == periodic_manual_review
+title: "CVE intake is reactive — periodic manual review only, no automated feed"
+description_short: "New CVEs are identified only through periodic manual review of NVD or security news, not through automated alerts filtered to the organisation's technology stack."
+description_long: "Periodic manual review of CVE feeds means an organisation may be unaware of newly published critical vulnerabilities for days, weeks, or until the next scheduled review. Attackers move faster: CISA data shows that exploitation of known CVEs frequently begins within 24-48 hours of public disclosure. Without automated feeds filtered to the organisation's specific asset inventory, the review process is also inefficient — analysts must manually filter hundreds of irrelevant CVEs to find the ones that matter. NIST SP 800-53 RA-5 and CIS Control 7 both expect timely, automated notification of new vulnerabilities affecting the organisation's technology stack."
+frameworks:
+  - id: "NIST SP 800-53 RA-5"
+    text: "Vulnerability Monitoring and Scanning — employ tools that provide timely notification of new vulnerabilities"
+  - id: "CIS Control 7.6"
+    text: "Subscribe to vulnerability notification services for components used in the enterprise"
+  - id: "CISA Known Exploited Vulnerabilities"
+    text: "Automate monitoring of CISA KEV to ensure prompt awareness of actively exploited CVEs"
+micelium_product:
+  - product: Sense
+    role: Correlates asset inventory with incoming CVE feeds to surface only the findings relevant to deployed systems
+  - product: Pulse
+    role: Automates CVE notification routing and prioritization workflows
+industry_overlays:
+  financial:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.3
+  technology:
+    weight_multiplier: 1.2
+  it_services:
+    weight_multiplier: 1.2
+  energy:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Subscribe to automated CVE notification feeds filtered to your technology stack. Manual periodic reviews leave you exposed during the window between checks — which is precisely when attackers exploit newly disclosed vulnerabilities."
+remediation_technical: "Integrate your asset inventory with an automated CVE feed (NIST NVD API, CISA KEV, vendor advisory mailing lists, or a commercial threat intel feed). Configure alerts for CVEs matching your installed software versions. Use a vulnerability management platform that correlates scanner results with NVD data to surface prioritised findings automatically. Review CISA KEV daily as a minimum no-cost baseline."

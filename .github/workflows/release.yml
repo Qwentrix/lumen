@@ -8,6 +8,13 @@ on:
 permissions:
   contents: write
 
+# Required secrets (GitHub repo → Settings → Secrets):
+#   APPLE_DEVELOPER_ID_APPLICATION  — base64-encoded Developer ID Application .p12 certificate
+#   APPLE_DEVELOPER_ID_PASSWORD     — passphrase for the .p12 (used for keychain import)
+#   APPLE_ID                        — Apple ID email (amarendra.samal@qwentrix.com)
+#   APP_SPECIFIC_PW                 — App-specific password generated at appleid.apple.com
+#   (Apple Team ID T6K5H4JKXF is a constant — no secret)
+
 jobs:
   build:
     name: Build ${{ matrix.goos }}/${{ matrix.goarch }}
@@ -37,23 +44,38 @@ jobs:
             ext: ".exe"
 
     steps:
-      - uses: actions/checkout@v4
+      # -----------------------------------------------------------------------
+      # Checkout main repo (into ./lumen/) and lumen-scoring sibling (./lumen-scoring/)
+      # The go.mod replace directive requires ../lumen-scoring to exist relative
+      # to the scanner repo.  See LU4-BUILD-BLUEPRINT.md §8.
+      # -----------------------------------------------------------------------
+      - name: Checkout lumen (scanner)
+        uses: actions/checkout@v4
+        with:
+          path: lumen
+
+      - name: Checkout lumen-scoring (replace dependency)
+        uses: actions/checkout@v4
+        with:
+          repository: Qwentrix/lumen-scoring
+          path: lumen-scoring
+          # Pin to the SHA embedded in internal/rules/data/content-snapshot.meta.json.
+          # Update this ref when re-embedding content or upgrading lumen-scoring.
+          ref: main
 
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version: "1.22"
           cache: true
+          cache-dependency-path: lumen/go.sum
 
       - name: Build binary
+        working-directory: lumen
         env:
           GOOS: ${{ matrix.goos }}
           GOARCH: ${{ matrix.goarch }}
           CGO_ENABLED: "0"
-        # NOTE: this manual matrix build mirrors what .goreleaser.yaml does for
-        # the signing/packaging steps below. If goreleaser is adopted end-to-end
-        # (LU-5), this step can be removed and goreleaser's own build (which
-        # already injects BuiltAt via {{.Date}}) used instead.
         shell: bash
         run: |
           go build -trimpath -ldflags="-s -w \
@@ -63,36 +85,119 @@ jobs:
             -o lumen${{ matrix.ext }} ./cmd/lumen
 
       # -----------------------------------------------------------------------
-      # macOS — sign and notarize, then package as .pkg
-      # TODO: replace stub with real codesign + notarytool steps once the
-      #       Apple Developer ID Application certificate is loaded in CI.
+      # macOS — codesign + notarize + .pkg (ENT-106)
+      #
+      # Step 1: Import the Developer ID Application .p12 into a temporary keychain
+      #         so codesign can find the identity.
+      # Step 2: Sign the binary with hardened runtime + secure timestamp.
+      #         Required for Gatekeeper acceptance and notarization.
+      # Step 3: Wrap in a .pkg installer (notarization of bare CLI binaries
+      #         cannot be stapled; .pkg CAN be stapled).
+      #         Bundle ID: com.qwentrix.lumen (consistent with miceliumone.* family)
+      # Step 4: Notarize the .pkg with xcrun notarytool.  --wait blocks until
+      #         Apple returns an approval (typically 30–120 s).
+      # Step 5: Staple the notarization ticket to the .pkg so Gatekeeper accepts
+      #         the package even on hosts without internet access at install time.
+      # Step 6: Clean up the ephemeral keychain to avoid leaving secrets on disk.
       # -----------------------------------------------------------------------
-      - name: "[macOS] Sign binary (TODO: codesign with Team T6K5H4JKXF)"
+      - name: "[macOS] Import Developer ID certificate"
         if: matrix.goos == 'darwin'
+        working-directory: lumen
         env:
-          APPLE_DEVELOPER_ID_APPLICATION: ${{ secrets.APPLE_DEVELOPER_ID_APPLICATION }}
+          P12_BASE64:   ${{ secrets.APPLE_DEVELOPER_ID_APPLICATION }}
+          P12_PASSWORD: ${{ secrets.APPLE_DEVELOPER_ID_PASSWORD }}
         run: |
-          # TODO: Import certificate from APPLE_DEVELOPER_ID_APPLICATION secret
-          # codesign --sign "Developer ID Application: Qwentrix Inc (T6K5H4JKXF)" \
-          #   --options runtime --timestamp lumen
-          echo "TODO: macOS codesign stub — implement before v1 GA"
+          # Create a temporary ephemeral keychain.
+          KEYCHAIN_NAME="lumen-build-${{ github.run_id }}.keychain"
+          KEYCHAIN_PASS="$(openssl rand -hex 16)"
+          echo "KEYCHAIN_NAME=$KEYCHAIN_NAME" >> "$GITHUB_ENV"
 
-      - name: "[macOS] Notarize binary (TODO)"
-        if: matrix.goos == 'darwin'
-        run: |
-          # TODO: xcrun notarytool submit lumen.zip --apple-id ... --team-id T6K5H4JKXF --wait
-          echo "TODO: macOS notarization stub — implement before v1 GA"
+          security create-keychain -p "$KEYCHAIN_PASS" "$KEYCHAIN_NAME"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_NAME"
+          security unlock-keychain -p "$KEYCHAIN_PASS" "$KEYCHAIN_NAME"
 
-      - name: "[macOS] Build .pkg installer (TODO)"
+          # Decode the base64 .p12 and import it.
+          echo "$P12_BASE64" | base64 --decode > /tmp/cert.p12
+          security import /tmp/cert.p12 \
+            -k "$KEYCHAIN_NAME" \
+            -P "$P12_PASSWORD" \
+            -T /usr/bin/codesign \
+            -T /usr/bin/security
+          rm -f /tmp/cert.p12
+
+          # Allow codesign to access the key without a prompt.
+          security set-key-partition-list \
+            -S apple-tool:,apple: \
+            -k "$KEYCHAIN_PASS" \
+            "$KEYCHAIN_NAME"
+
+          # Add the ephemeral keychain to the search list.
+          security list-keychains -d user -s "$KEYCHAIN_NAME" login.keychain
+
+      - name: "[macOS] Sign binary"
         if: matrix.goos == 'darwin'
+        working-directory: lumen
         run: |
-          # TODO: pkgbuild --identifier com.qwentrix.lumen --install-location /usr/local/bin
-          #       --component lumen lumen_${{ github.ref_name }}_${{ matrix.goarch }}.pkg
-          echo "TODO: macOS .pkg stub — implement before v1 GA"
+          codesign \
+            --sign "Developer ID Application: Qwentrix Inc (T6K5H4JKXF)" \
+            --options runtime \
+            --timestamp \
+            --force \
+            lumen
+          # Verify the signature before proceeding.
+          codesign --verify --verbose lumen
+          echo "codesign: OK"
+
+      - name: "[macOS] Build .pkg installer"
+        if: matrix.goos == 'darwin'
+        working-directory: lumen
+        run: |
+          PKG_NAME="lumen_${{ github.ref_name }}_${{ matrix.goarch }}.pkg"
+          pkgbuild \
+            --identifier com.qwentrix.lumen \
+            --version "${{ github.ref_name }}" \
+            --install-location /usr/local/bin \
+            --component lumen \
+            "$PKG_NAME"
+          echo "PKG_NAME=$PKG_NAME" >> "$GITHUB_ENV"
+          echo ".pkg built: $PKG_NAME"
+
+      - name: "[macOS] Notarize .pkg"
+        if: matrix.goos == 'darwin'
+        working-directory: lumen
+        env:
+          APPLE_ID:      ${{ secrets.APPLE_ID }}
+          APP_SPECIFIC_PW: ${{ secrets.APP_SPECIFIC_PW }}
+        run: |
+          # Submit to Apple notarization service and wait for result.
+          # --wait blocks until the service returns success or failure (~30–120 s).
+          xcrun notarytool submit "$PKG_NAME" \
+            --apple-id     "$APPLE_ID" \
+            --team-id      "T6K5H4JKXF" \
+            --password     "$APP_SPECIFIC_PW" \
+            --wait \
+            --output-format plist \
+            | tee /tmp/notarize-result.plist
+          # Fail if notarization status is not "Accepted".
+          STATUS=$(plutil -extract status raw /tmp/notarize-result.plist 2>/dev/null || echo "unknown")
+          echo "Notarization status: $STATUS"
+          [ "$STATUS" = "Accepted" ] || { echo "Notarization FAILED"; exit 1; }
+
+      - name: "[macOS] Staple notarization ticket"
+        if: matrix.goos == 'darwin'
+        working-directory: lumen
+        run: |
+          xcrun stapler staple "$PKG_NAME"
+          xcrun stapler validate "$PKG_NAME"
+          echo "Staple: OK"
+
+      - name: "[macOS] Clean up ephemeral keychain"
+        if: matrix.goos == 'darwin' && always()
+        run: |
+          security delete-keychain "${{ env.KEYCHAIN_NAME }}" 2>/dev/null || true
 
       # -----------------------------------------------------------------------
-      # Windows — Authenticode sign + MSI
-      # TODO: replace stubs once EV code-signing certificate is procured (LU-3).
+      # Windows — Authenticode sign + MSI (stub — LU-5 EV cert via LU-3)
       # -----------------------------------------------------------------------
       - name: "[Windows] Authenticode sign binary (TODO)"
         if: matrix.goos == 'windows'
@@ -104,36 +209,37 @@ jobs:
       - name: "[Windows] Build .msi installer (TODO)"
         if: matrix.goos == 'windows'
         run: |
-          # TODO: use WiX or equivalent to produce lumen_${{ github.ref_name }}_amd64.msi
           echo "TODO: Windows .msi stub — implement in LU-5"
 
       # -----------------------------------------------------------------------
-      # Linux — .deb and .rpm
+      # Linux — .deb and .rpm (deferred to LU-5)
       # -----------------------------------------------------------------------
       - name: "[Linux] Build .deb and .rpm packages (TODO)"
         if: matrix.goos == 'linux'
         run: |
-          # TODO: use nfpm or fpm to produce .deb and .rpm from the binary
-          # nfpm package --config nfpm.yaml --target lumen_${{ github.ref_name }}_${{ matrix.goarch }}.deb
-          echo "TODO: Linux .deb/.rpm packaging stub — implement before v1 GA"
+          echo "TODO: Linux .deb/.rpm packaging stub — implement in LU-5"
 
       # -----------------------------------------------------------------------
-      # Archive + checksum
+      # Archive + checksum (all platforms)
+      # For macOS, include the .pkg alongside the .tar.gz archive.
       # -----------------------------------------------------------------------
       - name: Create archive
         shell: bash
+        working-directory: ${{ matrix.goos != 'windows' && 'lumen' || 'lumen' }}
         run: |
           ARCHIVE="lumen_${{ github.ref_name }}_${{ matrix.goos }}_${{ matrix.goarch }}"
           if [ "${{ matrix.goos }}" = "windows" ]; then
             zip "${ARCHIVE}.zip" lumen${{ matrix.ext }}
             echo "ASSET=${ARCHIVE}.zip" >> "$GITHUB_ENV"
           else
+            tar -czf "${ARCHIVE}.tar.gz" lumen${{ matrix.ext }} LICENSE NOTICE README.md SCANNER_MANIFEST.md 2>/dev/null || \
             tar -czf "${ARCHIVE}.tar.gz" lumen${{ matrix.ext }}
             echo "ASSET=${ARCHIVE}.tar.gz" >> "$GITHUB_ENV"
           fi
 
       - name: Compute checksum
         shell: bash
+        working-directory: lumen
         run: |
           if command -v sha256sum &>/dev/null; then
             sha256sum "$ASSET" > "${ASSET}.sha256"
@@ -146,8 +252,9 @@ jobs:
         with:
           name: lumen_${{ matrix.goos }}_${{ matrix.goarch }}
           path: |
-            ${{ env.ASSET }}
-            ${{ env.ASSET }}.sha256
+            lumen/${{ env.ASSET }}
+            lumen/${{ env.ASSET }}.sha256
+            ${{ matrix.goos == 'darwin' && format('lumen/{0}', env.PKG_NAME) || '' }}
 
   release:
     name: Publish GitHub Release

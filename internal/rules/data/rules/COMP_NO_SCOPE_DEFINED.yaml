@@ -1,0 +1,39 @@
+id: COMP_NO_SCOPE_DEFINED
+domain: compliance
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-COMP-005 == not_defined
+title: "Compliance scope not defined — systems and data in scope are unknown"
+description_short: "The organisation has not defined which systems, data, and processes are in scope for its compliance obligations."
+description_long: "Scope definition is the prerequisite for every other compliance activity. Without knowing which systems, data flows, and business processes fall within the compliance boundary, it is impossible to assess gaps, collect evidence, or demonstrate compliance. Auditors require a clearly defined scope as the first deliverable in any certification engagement. Undefined scope also means security resources may be invested in the wrong areas while actual in-scope systems remain unprotected. Organisations with undefined scope often dramatically underestimate their compliance obligations or spend effort on systems that do not need to be in scope — both are wasteful and risky."
+frameworks:
+  - id: "ISO 27001 Clause 4.3"
+    text: "Determining the scope of the ISMS — define boundaries and applicability of the management system"
+  - id: "PCI DSS Req 12.5.2"
+    text: "Cardholder data environment scope — document and confirm scope at least annually"
+  - id: "SOC 2 (AICPA)"
+    text: "System description — auditor requires a defined scope before any engagement proceeds"
+  - id: "FedRAMP SSP"
+    text: "System Security Plan — system boundary and scope must be defined before ATO process begins"
+micelium_product:
+  - product: Proof
+    role: Guides scope definition by mapping data flows and systems to applicable framework requirements
+  - product: Sense
+    role: Provides data discovery to identify systems processing sensitive data that belong in scope
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  technology:
+    weight_multiplier: 1.4
+  it_services:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Define the boundary of your compliance programme — which systems, services, data types, and business processes are in scope. Write it down. Without this, you cannot run a compliance programme."
+remediation_technical: "Produce a formal scope definition document covering: in-scope systems and services (with system inventory), in-scope data types (PHI, PII, cardholder data, CUI as applicable), in-scope business processes, network boundaries and segmentation, and third-party connections in scope. Review and re-certify scope annually and after significant infrastructure or product changes. For PCI DSS, engage a QSA to validate scope definition. Store the scope document in your compliance evidence repository and make it accessible to auditors."

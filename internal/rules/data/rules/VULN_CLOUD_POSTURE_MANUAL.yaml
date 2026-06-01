@@ -1,0 +1,39 @@
+id: VULN_CLOUD_POSTURE_MANUAL
+domain: vulnerabilities
+severity: medium
+default_weight: 0.45
+detect:
+  questionnaire:
+    - Q-VULN-017 == manual_review
+title: "Cloud misconfiguration monitoring relies on manual reviews only"
+description_short: "Cloud configuration is reviewed manually rather than with automated continuous monitoring, leaving misconfiguration gaps between reviews."
+description_long: "Manual cloud configuration reviews cannot keep pace with the rate of change in dynamic cloud environments. Cloud resources are provisioned and modified continuously, and a misconfiguration introduced after a manual review may persist until the next scheduled review — days, weeks, or months later. Automated CSPM tools are designed precisely to fill this gap, providing continuous visibility into policy drift, public exposure, insecure defaults, and compliance violations. NIST SP 800-53 CA-7 expects continuous monitoring proportional to the risk of the system. CIS Cloud Foundations Benchmarks presuppose automated alerting, not manual inspection."
+frameworks:
+  - id: "NIST SP 800-53 CA-7"
+    text: "Continuous Monitoring — automate monitoring of security controls to detect configuration drift"
+  - id: "CIS Cloud Foundations Benchmark"
+    text: "Use automated tools to continuously assess cloud security posture against benchmark controls"
+  - id: "CSA CCM v4 IVS-04"
+    text: "Cloud infrastructure is monitored to detect misconfigurations and policy violations"
+micelium_product:
+  - product: Sense
+    role: Provides behavioral anomaly detection that complements CSPM findings with runtime signals
+  - product: Sovera
+    role: Aggregates CSPM findings into compliance posture dashboards for audit reporting
+industry_overlays:
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.3
+  technology:
+    weight_multiplier: 1.3
+  it_services:
+    weight_multiplier: 1.3
+  retail:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Replace manual configuration reviews with an automated cloud security posture management (CSPM) tool that continuously checks your environment against security benchmarks and alerts you the moment a misconfiguration is detected."
+remediation_technical: "Deploy a CSPM platform (Wiz, Orca Security, Prisma Cloud, AWS Security Hub with CIS Benchmarks, or equivalent). Enable real-time alerting on critical findings (public buckets, unrestricted security groups, disabled MFA, unencrypted volumes). Integrate CSPM findings into your ticketing workflow for rapid remediation. Retain manual reviews as a complement to automated monitoring, not as the sole mechanism."

@@ -1,0 +1,37 @@
+id: COMP_NO_VENDOR_PERIODIC_REVIEW
+domain: compliance
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-COMP-015 == never
+title: "Critical vendors never reviewed after initial onboarding"
+description_short: "Critical vendors have not been reviewed for security or compliance posture since they were onboarded."
+description_long: "A vendor that passed a security assessment at onboarding may be a very different organisation years later. They may have lost their SOC 2 or ISO 27001 certification, experienced an unreported breach, changed their subprocessors, reduced their security investment, or been acquired by a higher-risk parent. Without periodic reviews, these changes are invisible to the organisation until something goes wrong. PCI DSS 12.8.4 explicitly requires at least annual monitoring of service providers' compliance status. ISO 27001 A.15.2.2 requires regular reviews of supplier services. Organisations that have never reviewed vendors post-onboarding have effectively abandoned supply chain risk management after the initial due diligence."
+frameworks:
+  - id: "PCI DSS Req 12.8.4"
+    text: "Monitor critical service providers' compliance status at least annually"
+  - id: "ISO 27001 A.15.2.2"
+    text: "Managing changes to supplier services — review supplier performance and security regularly"
+  - id: "SOC 2 CC9.2"
+    text: "Ongoing monitoring of vendor and business partner risk"
+  - id: "NIST SP 800-161r1"
+    text: "C-SCRM — continuous monitoring of supply chain risk"
+micelium_product:
+  - product: Proof
+    role: Schedules and tracks vendor periodic reviews, collecting compliance evidence at each review cycle
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.4
+  retail:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Schedule an annual review for every critical vendor — at minimum, request their current SOC 2 report or ISO 27001 certificate and confirm nothing material has changed in how they handle your data."
+remediation_technical: "Establish an annual vendor review cycle for all Tier-1 (data-handling) vendors: request updated compliance certification reports, confirm subprocessor list has not materially changed, re-evaluate contract provisions, and assess any publicly disclosed incidents or advisories. Document review outcomes and any accepted residual risk. For vendors that cannot produce evidence of current certification, escalate to procurement for contract review or termination. Integrate vendor review scheduling into your GRC tool with automated reminders 60 days before review due dates."

@@ -1,0 +1,21 @@
+id: financial
+display_name: Financial Services
+domain_weight_multipliers:
+  vulnerabilities: 1.3
+  compliance: 1.5
+  ai_governance: 1.0
+  security_posture: 1.4
+  privacy: 1.2
+primary_frameworks:
+  - PCI DSS
+  - SOX
+  - GLBA
+  - NIST CSF
+  - ISO 27001
+lead_micelium_products:
+  - product: Proof
+    emphasis: Compliance reporting for PCI DSS and SOX obligations
+  - product: Sypher
+    emphasis: Cardholder data and financial record encryption
+  - product: Sense
+    emphasis: Insider-threat detection for financial data access

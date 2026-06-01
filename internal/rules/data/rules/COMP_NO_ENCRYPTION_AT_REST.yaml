@@ -1,0 +1,43 @@
+id: COMP_NO_ENCRYPTION_AT_REST
+domain: compliance
+severity: critical
+default_weight: 0.95
+detect:
+  questionnaire:
+    - Q-COMP-021 == no
+  scanner:
+    - compliance.disk_encryption_enabled == false
+title: "Sensitive data not encrypted at rest"
+description_short: "Sensitive data stores including databases, backups, and primary storage are not encrypted at rest."
+description_long: "Storing sensitive data unencrypted means that any attacker who gains access to storage — through misconfigured cloud storage, stolen backup media, or physical access — obtains data in plaintext. Encryption at rest is mandated by HIPAA 164.312(a)(2)(iv), PCI DSS Req 3.5, SOC 2 CC6.7, and FedRAMP SC-28. It is also one of the most basic controls that regulators look for when assessing negligence following a breach. The absence of encryption at rest is rarely defensible and typically results in the maximum regulatory penalty."
+frameworks:
+  - id: "HIPAA 164.312(a)(2)(iv)"
+    text: "Encryption and decryption of ePHI at rest"
+  - id: "PCI DSS Req 3.5"
+    text: "Protection of stored account data"
+  - id: "SOC 2 CC6.7"
+    text: "Encryption controls protecting data at rest"
+  - id: "FedRAMP SC-28"
+    text: "Protection of information at rest"
+  - id: "GDPR Art. 32"
+    text: "Security of processing — encryption as an appropriate technical measure"
+micelium_product:
+  - product: Sypher
+    role: Provides data-level encryption at rest with centralised key management
+  - product: Ark
+    role: Ensures backups are encrypted with the same protection level as primary data
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.4
+  retail:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Enable encryption at rest for all databases, object storage, backups, and disk volumes that contain sensitive data. Use your cloud provider's native encryption or a dedicated key management solution."
+remediation_technical: "Enable transparent data encryption (TDE) for databases (SQL Server, PostgreSQL, MySQL). Enable EBS/Azure Disk/GCS encryption for all volumes. Encrypt object storage (S3 SSE-KMS, GCS CMEK, Azure Blob with CMK). Encrypt backup volumes and confirm backup restore processes work correctly with encrypted data. Manage keys in a dedicated KMS (AWS KMS, Azure Key Vault, HashiCorp Vault) with key rotation policy."

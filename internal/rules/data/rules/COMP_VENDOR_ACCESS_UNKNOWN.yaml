@@ -1,0 +1,39 @@
+id: COMP_VENDOR_ACCESS_UNKNOWN
+domain: compliance
+severity: medium
+default_weight: 0.50
+detect:
+  questionnaire:
+    - Q-COMP-DD-021 == unknown
+title: "Vendor access permissions to systems or data are unknown"
+description_short: "The organisation does not know what level of access vendors have to its systems or data."
+description_long: "If an organisation does not know what access its vendors have, it cannot assess whether that access is appropriately scoped, whether it remains necessary, or whether a vendor has accumulated more access than originally granted. Unknown vendor access is a variant of the unknown standing that creates significant supply chain risk — vendor access that was granted for a specific project or integration and never reviewed may have expanded, never been revoked, or been used in ways outside the original scope. This is a particular concern for vendors with technical access to production systems or databases. Most compliance frameworks require that organisations maintain visibility over what access third parties have been granted."
+frameworks:
+  - id: "PCI DSS Req 12.8.1"
+    text: "Maintain a list of all service providers and what cardholder data they can access"
+  - id: "ISO 27001 A.15.1.3"
+    text: "Information and communication technology supply chain — understand supplier access to organisation's systems"
+  - id: "SOC 2 CC6.3"
+    text: "Access is removed when no longer authorised — requires knowing what access exists in the first place"
+  - id: "NIST SP 800-161r1"
+    text: "C-SCRM — maintain visibility over third-party access to systems and data"
+micelium_product:
+  - product: Proof
+    role: Tracks vendor access grants in the vendor register alongside periodic access reviews
+  - product: Sense
+    role: Identifies anomalous access patterns from vendor-attributed accounts and service integrations
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  technology:
+    weight_multiplier: 1.4
+  it_services:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Audit every vendor's access to your systems and data — if you don't know what they can reach, you can't manage the risk. Pull access logs from your IdP and review all service accounts and API integrations."
+remediation_technical: "Conduct a vendor access audit: query your IdP for all service accounts, federated identities, and OAuth grants associated with vendor relationships. For each, document: the vendor, the access scope, the business purpose, the date first granted, and the last confirmed review. Remove access that is no longer needed or whose purpose cannot be confirmed. Implement a quarterly vendor access review process as a standing agenda item for the access certification programme. Integrate vendor access review into your offboarding process for both vendors and internal staff who managed vendor relationships."

@@ -1,0 +1,20 @@
+id: healthcare
+display_name: Healthcare
+domain_weight_multipliers:
+  vulnerabilities: 1.2
+  compliance: 1.5
+  ai_governance: 1.0
+  security_posture: 1.2
+  privacy: 1.8
+primary_frameworks:
+  - HIPAA
+  - HITECH
+  - NIST CSF
+  - SOC 2 Type II
+lead_micelium_products:
+  - product: Sense
+    emphasis: PHI behavioural risk monitoring and anomalous-access detection
+  - product: Sypher
+    emphasis: PHI encryption at rest and in transit
+  - product: Proof
+    emphasis: HIPAA audit evidence and BAA management

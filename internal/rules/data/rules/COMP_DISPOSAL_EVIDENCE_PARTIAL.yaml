@@ -1,0 +1,39 @@
+id: COMP_DISPOSAL_EVIDENCE_PARTIAL
+domain: compliance
+severity: medium
+default_weight: 0.45
+detect:
+  questionnaire:
+    - Q-COMP-DD-014 == partially
+title: "Disposal evidence is incomplete — some records exist but coverage is not comprehensive"
+description_short: "Partial records exist for data deletion compliance, but coverage is not comprehensive across all systems and third-party processors."
+description_long: "Partial disposal evidence creates an attestation gap: the organisation can demonstrate compliant deletion for some data but cannot confirm that all in-scope data across all systems and subprocessors has been deleted. GDPR Art. 17 right-to-erasure and Art. 28 processor requirements demand that deletion be verified across the entire processing chain. HIPAA's Privacy Rule requires accounting for PHI destruction including from business associates. Partial records may satisfy an internal audit on a good day but will fail a regulatory investigation that targets a system not in scope of the partial records. The incompleteness is the risk — it means unknown data may still exist in violation of retention policy."
+frameworks:
+  - id: "GDPR Art. 17"
+    text: "Right to erasure — demonstrable deletion across the full processing chain"
+  - id: "GDPR Art. 28"
+    text: "Processor obligations — ensuring deletion by subprocessors on instruction"
+  - id: "HIPAA 164.310(d)(2)(i)"
+    text: "Disposal — implement policies and procedures for final disposition of ePHI"
+  - id: "PCI DSS Req 9.4.6"
+    text: "Hardcopy and electronic media destruction with documented evidence"
+micelium_product:
+  - product: Proof
+    role: Tracks deletion requests and generates evidence artefacts covering all systems and processors
+  - product: Ark
+    role: Enforces and documents data deletion across backup and archive systems
+  - product: Sovera
+    role: Monitors subprocessor deletion status and flags gaps in coverage
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.3
+  legal:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Expand disposal records to cover all systems and third-party processors. A partial audit trail is not sufficient — you need to be able to demonstrate complete deletion for any given data subject or data set."
+remediation_technical: "Implement a deletion tracking registry that captures: data subject or data set identifier, deletion timestamp, system or processor, deletion method, and operator record. Extend deletion verification to all third-party subprocessors via contractual deletion confirmation receipts (GDPR Art. 28 processor clause). Include backup systems in the deletion scope (coordinate with Ark or equivalent). Perform quarterly completeness audits by sampling deletion records and verifying end-to-end coverage."

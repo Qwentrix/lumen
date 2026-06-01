@@ -1,0 +1,39 @@
+id: COMP_NO_DEFICIENCY_TRACKING
+domain: compliance
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-COMP-DD-009 == no_tracking
+title: "No process exists to track compliance control deficiencies to remediation"
+description_short: "Control deficiencies and compliance gaps are not tracked — there is no process for remediation assignment, milestone management, or closure verification."
+description_long: "The absence of a deficiency tracking process means that identified compliance gaps have no structured path to remediation. Gaps discovered in assessments, audits, or monitoring are noted and then lost — there is no owner, no deadline, and no verification of closure. FedRAMP's POA&M requirement makes this structural absence immediately disqualifying for federal authorisation. SOC 2 CC4.2 requires that identified deficiencies be communicated and addressed. ISO 27001 Clause 10.1 requires correction and corrective action for nonconformities with documented evidence. A compliance programme without deficiency tracking is incapable of demonstrating improvement over time — a core requirement of every maturity-based framework. Auditors treat this as a systemic programme failure, not an isolated gap."
+frameworks:
+  - id: "FedRAMP POA&M Guidance"
+    text: "Plan of Action and Milestones — mandatory for all identified weaknesses in federal systems"
+  - id: "SOC 2 CC4.2"
+    text: "Evaluating and communicating deficiencies identified through monitoring"
+  - id: "ISO 27001 Clause 10.1"
+    text: "Nonconformity and corrective action — corrective action with evidence of effectiveness"
+  - id: "NIST SP 800-53 CA-5"
+    text: "Plan of action and milestones — systematic tracking and remediation of security weaknesses"
+micelium_product:
+  - product: Proof
+    role: Implements a deficiency tracking register with owner assignment, milestones, and closure evidence
+  - product: Sovera
+    role: Aggregates deficiencies from all frameworks into a unified remediation management dashboard
+  - product: Pulse
+    role: Automates remediation task assignment and overdue escalation workflows
+industry_overlays:
+  government:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Establish a deficiency tracking register immediately. Every identified compliance gap must have a named owner, a target remediation date, and a documented path to closure. No gap should be left unassigned."
+remediation_technical: "Implement a formal deficiency management process: (1) Deficiency register (GRC platform, Jira, or ServiceNow) capturing: control reference, framework, identified date, description, risk rating, owner, planned remediation steps, target date, and closure evidence. (2) Escalation rules for overdue items. (3) Monthly review with compliance and security leadership. (4) Closure verification requiring evidence submission before an item is marked resolved. (5) For FedRAMP: format register as a POA&M per the official FedRAMP POA&M template. Report open deficiency count and ageing to board-level where applicable."

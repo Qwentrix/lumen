@@ -1,0 +1,42 @@
+id: COMP_NO_BREACH_NOTIFICATION
+domain: compliance
+severity: critical
+default_weight: 0.90
+detect:
+  questionnaire:
+    - Q-COMP-023 == no_process
+    - Q-COMP-023 == informal_only
+title: "No documented breach notification process"
+description_short: "No formal process exists to notify regulators and affected individuals following a data breach within required timeframes."
+description_long: "Legal notification requirements are strict and unforgiving: GDPR mandates regulatory notification within 72 hours; HIPAA requires notification to HHS within 60 days of discovery; many US state laws (CCPA/CPRA, NY SHIELD, etc.) have their own timelines. An organisation that discovers a breach without a documented notification process will struggle to meet these deadlines — and the penalty for missing notification timelines is often as severe as the breach itself. An informal understanding is not sufficient for regulators who require demonstrable evidence of a documented procedure."
+frameworks:
+  - id: "GDPR Art. 33"
+    text: "Notification of personal data breach to supervisory authority within 72 hours"
+  - id: "GDPR Art. 34"
+    text: "Communication of personal data breach to data subjects"
+  - id: "HIPAA Breach Notification Rule"
+    text: "Notification to individuals, HHS, and media for breaches affecting ePHI"
+  - id: "PCI DSS Req 12.10.4"
+    text: "Incident response plan to address breaches of cardholder data"
+  - id: "CCPA / CPRA"
+    text: "California data breach notification requirements"
+micelium_product:
+  - product: Proof
+    role: Provides documented breach notification procedures and evidence log for regulators
+  - product: Pulse
+    role: Automates notification timeline tracking and escalation during a breach event
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.4
+  retail:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Document your breach notification procedure with explicit timelines mapped to each regulation you are subject to. Know which regulator to call and within how many hours before you discover a breach."
+remediation_technical: "Map your notification obligations by jurisdiction and regulation (GDPR 72h, HIPAA 60 days, state laws). Create a notification decision tree: when to notify regulators, when to notify individuals, who owns the decision. Pre-draft notification templates. Define internal escalation triggers (e.g., any suspected ePHI exposure). Store the procedure outside your production environment in case of ransomware. Assign a data protection officer or legal counsel as the notification decision owner."

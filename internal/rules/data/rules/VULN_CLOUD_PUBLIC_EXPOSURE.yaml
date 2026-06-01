@@ -1,0 +1,43 @@
+id: VULN_CLOUD_PUBLIC_EXPOSURE
+domain: vulnerabilities
+severity: high
+default_weight: 0.80
+detect:
+  questionnaire:
+    - Q-VULN-019 == no_audit
+title: "No audit of cloud storage or database public accessibility"
+description_short: "Cloud storage buckets and databases are not audited for public accessibility, leaving data exposure risks undetected."
+description_long: "Without any audit of cloud storage bucket and database access controls, publicly accessible data stores may exist without the organisation's knowledge. Misconfigured S3 buckets, Google Cloud Storage buckets, Azure Blob containers, and cloud databases exposed to the internet have caused some of the largest data breaches in recent years, exposing millions of customer records. The absence of any audit process means there is no mechanism to detect or remediate these exposures. CIS Cloud Foundations Benchmarks and NIST CSF PR.AC-3 both mandate controls to prevent unauthorized public access to data stores. PCI DSS Req 1.3 prohibits direct public access to cardholder data environments."
+frameworks:
+  - id: "NIST CSF PR.AC-3"
+    text: "Remote access is managed — prevent unauthorized public access to data stores"
+  - id: "CIS Cloud Foundations Benchmark"
+    text: "Ensure no storage bucket is publicly accessible without explicit business justification"
+  - id: "PCI DSS Req 1.3"
+    text: "Restrict direct public inbound and outbound traffic that is not required for the cardholder data environment"
+  - id: "NIST SP 800-53 AC-3"
+    text: "Access Enforcement — enforce access control policies on storage resources"
+micelium_product:
+  - product: Sense
+    role: Detects unusual data access patterns from public-facing cloud storage indicating active exploitation
+  - product: Sypher
+    role: Encrypts data at rest in cloud storage to limit the impact of publicly accessible misconfigured buckets
+  - product: Sovera
+    role: Generates compliance evidence for data exposure controls required by HIPAA, PCI DSS, and GDPR
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.4
+  retail:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  it_services:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Immediately audit all cloud storage buckets and databases for public accessibility. Any resource exposed to the internet without explicit justification should be restricted. Deploy an automated tool to alert you in real time if any resource becomes publicly accessible."
+remediation_technical: "Run an immediate audit using AWS Trusted Advisor, S3 Block Public Access, Google VPC Service Controls, or Azure Policy to identify all publicly accessible storage resources and databases. Enable Block Public Access at the account level for S3. Deploy a CSPM tool with real-time alerting on public exposure events. Ensure all databases are deployed in private subnets with no public endpoint. Review CloudTrail/CloudWatch logs for any historical public access events."

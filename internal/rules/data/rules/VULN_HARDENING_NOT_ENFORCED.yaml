@@ -1,0 +1,33 @@
+id: VULN_HARDENING_NOT_ENFORCED
+domain: vulnerabilities
+severity: medium
+default_weight: 0.45
+detect:
+  questionnaire:
+    - Q-VULN-026 == manual_periodic_audit
+title: "Configuration hardening not continuously enforced"
+description_short: "A hardening baseline exists but is only verified periodically via manual audit rather than enforced continuously."
+description_long: "A hardening baseline that is only audited periodically — rather than enforced by automated drift detection — drifts silently between audit cycles. System updates, application deployments, and operator changes routinely overwrite hardened settings. Without continuous enforcement, the gap between actual and desired configuration grows unnoticed. CIS Benchmarks and NIST SP 800-53 CM-7 expect ongoing automated compliance monitoring, not point-in-time-only verification."
+frameworks:
+  - id: "CIS Benchmarks"
+    text: "Continuous configuration compliance monitoring"
+  - id: "NIST SP 800-53 CM-7"
+    text: "Least Functionality — disable unnecessary functions and services"
+  - id: "NIST CSF PR.IP-1"
+    text: "A baseline configuration of information technology is created and maintained"
+micelium_product:
+  - product: Sense
+    role: Identifies host-level anomalies that may indicate configuration drift or weakening of controls
+industry_overlays:
+  government:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.2
+  financial:
+    weight_multiplier: 1.2
+  energy:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Move from periodic manual audits to automated drift detection that continuously validates hardening baselines and alerts when configuration deviates."
+remediation_technical: "Deploy CIS-CAT Pro or your cloud provider's Security Hub / Defender for Cloud posture checks to run continuously. Use configuration management (Ansible, Puppet, Chef) to remediate drift automatically where policy allows. Integrate results into your security dashboard with SLA for remediation of drift findings."

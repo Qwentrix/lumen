@@ -1,0 +1,35 @@
+id: COMP_TRAINING_INFORMAL
+domain: compliance
+severity: low
+default_weight: 0.30
+detect:
+  questionnaire:
+    - Q-COMP-DD-025 == informal_onboarding_only
+title: "Data handling training limited to informal onboarding coverage"
+description_short: "Employee training on data classification and handling is covered only informally during onboarding with no ongoing programme."
+description_long: "One-time informal onboarding coverage for data handling requirements is insufficient as a compliance control. Employees forget training received during onboarding, new data types and regulations emerge after onboarding, and employees who change roles receive no updated training on the handling requirements for their new responsibilities. HIPAA requires workforce training on policies and procedures for handling ePHI and mandates training as policies and procedures change. PCI DSS Req 12.6 requires a formal security awareness programme. ISO 27001 A.7.2.2 requires periodic security education and training. Most frameworks treat a programme that relies solely on informal onboarding as non-compliant with training requirements."
+frameworks:
+  - id: "HIPAA 164.308(a)(5)"
+    text: "Security awareness and training — formal programme covering ePHI handling procedures"
+  - id: "PCI DSS Req 12.6"
+    text: "Security awareness programme — formal, ongoing, and tracked for all personnel"
+  - id: "ISO 27001 A.7.2.2"
+    text: "Information security awareness, education and training — ongoing, not just initial induction"
+  - id: "GDPR Art. 32"
+    text: "Security of processing — ensuring that persons authorised to process personal data have appropriate awareness"
+micelium_product:
+  - product: Proof
+    role: Tracks employee training completion as a compliance evidence requirement with attestation records
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Implement a structured annual training programme on data classification and handling — not just a one-time onboarding mention. Track who has completed it and require attestation."
+remediation_technical: "Develop role-specific data handling training modules covering: applicable data categories (PHI, PII, cardholder data) and their handling requirements, data classification scheme and how to apply it, acceptable use of external sharing tools, incident reporting obligations, and regulatory requirements relevant to the role. Deliver via a training platform (KnowBe4, Proofpoint Security Awareness, Workday Learning) with tracked completion and electronic attestation. Set annual recertification requirements. Trigger ad hoc training when policies materially change. Retain completion records as compliance evidence."

@@ -1,0 +1,41 @@
+id: VULN_CVE_SLOW_HIGH
+domain: vulnerabilities
+severity: high
+default_weight: 0.80
+detect:
+  questionnaire:
+    - Q-VULN-DD-015 == over_quarter_or_unknown
+  scanner:
+    - vulnerabilities.high_cve_count > 0
+title: "High-severity CVEs not remediated within 90 days"
+description_short: "CVEs rated CVSS 7.0 or above typically take more than 90 days to remediate, or the timeline is unknown."
+description_long: "A remediation window exceeding 90 days for high-severity CVEs (CVSS 7.0+) means attackers have a multi-month window to exploit publicly known weaknesses. CISA KEV guidance sets 2-week SLAs for federally exploited vulnerabilities. Industry benchmarks suggest a 30-day SLA for high-severity CVEs is achievable for mature programs. Over-quarter remediation indicates systemic process breakdown: insufficient resources, lack of prioritization, or no SLA enforcement. This finding represents a more severe posture gap than VULN_SLOW_HIGH_PATCH (which covers the within-quarter nudge tier)."
+frameworks:
+  - id: "NIST SP 800-53 SI-2"
+    text: "Flaw Remediation — timely correction of information system flaws"
+  - id: "CISA BOD 22-01"
+    text: "Known Exploited Vulnerabilities — 14-day SLA for exploited CVEs"
+  - id: "CIS Control 7.7"
+    text: "Remediate detected vulnerabilities — timely based on risk rating"
+  - id: "ISO 27001 A.12.6.1"
+    text: "Management of technical vulnerabilities — timely patching"
+micelium_product:
+  - product: Sense
+    role: Detects active exploitation of high-severity CVEs that remain unpatched beyond SLA
+  - product: Pulse
+    role: Provides remediation velocity dashboards and SLA breach alerting
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  energy:
+    weight_multiplier: 1.4
+  manufacturing:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Set a firm 30-day SLA for high-severity CVEs and enforce it — more than 90 days is an extended window attackers actively exploit. Investigate and eliminate whatever is causing remediation backlogs."
+remediation_technical: "Define a formal SLA: critical CVEs within 7 days, high CVEs within 30 days. Automate SLA breach alerts from your vulnerability management platform to the responsible team and their manager. Conduct a root-cause analysis on all CVEs that breached 90 days to identify bottlenecks (change management friction, owner ambiguity, resource constraints). Implement a compensating control (e.g., WAF virtual patching) for CVEs that cannot meet the SLA."

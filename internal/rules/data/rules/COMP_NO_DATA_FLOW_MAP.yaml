@@ -1,0 +1,41 @@
+id: COMP_NO_DATA_FLOW_MAP
+domain: compliance
+severity: high
+default_weight: 0.80
+detect:
+  questionnaire:
+    - Q-COMP-017 == not_mapped
+title: "Sensitive data flows are not mapped"
+description_short: "The organisation has not mapped where sensitive data resides or how it flows across systems and third parties."
+description_long: "Without a data flow map, the organisation cannot scope its compliance obligations, identify where sensitive data is at risk, honour data subject requests that span systems, or apply appropriate controls to unmapped data stores. GDPR Art. 30 requires a complete Record of Processing Activities. HIPAA's security risk analysis (164.308(a)(1)) requires identifying all ePHI flows. PCI DSS Req 1.3 requires cardholder data flow documentation for network scoping. ISO 27001 A.8.1.1 requires an asset inventory. An unmapped data environment is a fundamental compliance programme gap — every downstream control assessment, risk analysis, and audit response depends on knowing where sensitive data is. Organisations without data flow maps are unable to make credible compliance assertions to auditors, customers, or regulators."
+frameworks:
+  - id: "GDPR Art. 30"
+    text: "Records of processing activities — mandatory documentation of all processing including data flows"
+  - id: "HIPAA 164.308(a)(1)(ii)(A)"
+    text: "Risk analysis — requires identifying all ePHI and its locations and flows"
+  - id: "PCI DSS Req 1.2"
+    text: "Network security controls — identify all cardholder data environment components and connections"
+  - id: "ISO 27001 A.8.1.1"
+    text: "Inventory of assets — information assets identified and documented"
+micelium_product:
+  - product: Sovera
+    role: Automates sensitive data flow discovery and generates a regulatory-ready data map
+  - product: Proof
+    role: Maintains the GDPR ROPA and data inventory with version history for audit
+  - product: Sense
+    role: Continuously discovers sensitive data in previously unknown locations
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.4
+  retail:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Conduct a data discovery and mapping exercise to identify where all sensitive data resides and how it flows. This is a prerequisite for nearly every other compliance activity."
+remediation_technical: "Conduct a comprehensive data mapping exercise: (1) Automated data discovery scan (Spirion, BigID, Microsoft Purview, Varonis) across all data stores. (2) Business process interviews to identify manual data flows and external transfers. (3) Cloud storage inventory review (S3 bucket inventory, Azure Blob listing). (4) Vendor subprocessor inventory from vendor contracts. Document each data type, its storage location, who has access, how it flows, and where it goes externally. Build the GDPR Art. 30 ROPA from this map. Re-run discovery quarterly to catch new data stores. Review the map annually."

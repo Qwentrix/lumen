@@ -1,0 +1,37 @@
+id: COMP_DATA_SHARE_NO_ENCRYPTION
+domain: compliance
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-COMP-DD-023 == unencrypted_with_access_controls
+title: "Sensitive data shared externally without encryption"
+description_short: "Sensitive data shared with customers, partners, or regulators is transferred without encryption, relying only on access controls."
+description_long: "Access controls alone — folder permissions, shared links with passwords — do not protect data in transit from interception or man-in-the-middle attacks, nor do they protect data once the authorised recipient's device or account is compromised. HIPAA 164.312(e)(1) requires transmission security for ePHI including encryption where reasonable. PCI DSS Req 4.2.1 requires strong cryptography for cardholder data in transit. GDPR Art. 32 requires appropriate technical measures including encryption. Relying on access controls without encryption also means the organisation cannot demonstrate it has met the 'appropriate technical measures' standard that regulators use to assess data breach negligence — a critical distinction in penalty calculations."
+frameworks:
+  - id: "HIPAA 164.312(e)(1)"
+    text: "Transmission security — guard against unauthorised access to ePHI in transit"
+  - id: "PCI DSS Req 4.2.1"
+    text: "Strong cryptography for all cardholder data transmitted over open public networks"
+  - id: "GDPR Art. 32(1)(a)"
+    text: "Security of processing — encryption as an appropriate technical measure"
+  - id: "ISO 27001 A.13.2.3"
+    text: "Electronic messaging — protection of information included in electronic messaging"
+micelium_product:
+  - product: Share
+    role: Enforces end-to-end encryption for all sensitive data shared externally with full audit trail
+  - product: Sypher
+    role: Provides client-side encryption for data before external transfer
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Encrypt all sensitive data before or during external transfer — do not rely on access controls alone. Use a managed secure file transfer or IRM platform that enforces encryption automatically."
+remediation_technical: "Require TLS 1.2+ for all data transmissions. For file sharing, use a secure managed file transfer (SFTP, FTPS, or a dedicated platform such as Kiteworks, Egnyte, or ShareFile) with encryption at rest and in transit. Apply IRM/DRM controls that travel with the file. Prohibit sending sensitive data via unencrypted email; enforce via DLP gateway policy. Log all external data transfers. Audit annually."

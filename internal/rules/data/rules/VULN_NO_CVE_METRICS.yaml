@@ -1,0 +1,37 @@
+id: VULN_NO_CVE_METRICS
+domain: vulnerabilities
+severity: medium
+default_weight: 0.40
+detect:
+  questionnaire:
+    - Q-VULN-DD-018 == not_tracked
+title: "CVE response metrics are not tracked — no MTTR or open-vulnerability counts"
+description_short: "Mean time to remediate and open vulnerability counts by severity are not tracked, making it impossible to manage or improve the vulnerability program."
+description_long: "Without tracking CVE response metrics, a vulnerability management program operates without feedback. There is no way to know whether remediation is improving or deteriorating, which teams are meeting SLAs, or whether critical vulnerabilities remain open beyond acceptable thresholds. MTTR and open-by-severity counts are the minimum viable metrics for any vulnerability program. NIST SP 800-53 CA-7 (Continuous Monitoring) requires that organisations measure the effectiveness of their security controls, which necessitates tracking remediation metrics. Audit frameworks including SOC 2, ISO 27001, and FedRAMP all expect organisations to demonstrate measured, improving vulnerability management — not just describe the process."
+frameworks:
+  - id: "NIST SP 800-53 CA-7"
+    text: "Continuous Monitoring — measure the effectiveness of security controls including vulnerability remediation rates"
+  - id: "ISO 27001 A.12.6.1"
+    text: "Management of technical vulnerabilities — monitor and measure the technical vulnerability management process"
+  - id: "CIS Control 7"
+    text: "Continuous Vulnerability Management — track remediation rates and open vulnerability metrics"
+micelium_product:
+  - product: Sovera
+    role: Provides automated vulnerability KPI dashboards with MTTR, open-by-severity, and trend analysis
+  - product: Pulse
+    role: Generates recurring CVE metrics reports for program management and leadership review
+industry_overlays:
+  financial:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.3
+  technology:
+    weight_multiplier: 1.2
+  it_services:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Start tracking two basic metrics immediately: how many open vulnerabilities you have by severity, and how long it takes to remediate them (MTTR). Without these, you have no way to know if your vulnerability program is working or getting worse."
+remediation_technical: "Configure your vulnerability management platform to export weekly metrics: open critical/high/medium/low counts, MTTR by severity tier, and remediation rate (percentage closed within SLA). Build a dashboard reviewed in standing vulnerability governance meetings. Set improvement targets for each metric. Integrate metrics export into your SIEM or GRC tool for trend tracking. Publish metrics in your quarterly security report to leadership."

@@ -8,12 +8,20 @@
 #
 # .goreleaser.yaml — Lumen scanner CLI release configuration.
 #
-# GoReleaser is used for LU-1 scaffolding only.  The macOS notarisation and
-# Windows Authenticode signing stubs below are placeholders that will be
-# completed in LU-5 once the Apple Developer ID and EV code-signing
-# certificate are fully provisioned.
+# ENT-106: macOS builds are code-signed via Developer ID Application
+# (Team T6K5H4JKXF) and notarized via xcrun notarytool (done in release.yml,
+# not here, for finer control over cert import + stapling).  Linux builds are
+# unsigned .tar.gz + checksums.  Windows remains a stub (LU-5 / EV cert).
+#
+# Required CI secrets (GitHub repo settings):
+#   APPLE_DEVELOPER_ID_APPLICATION  — base64-encoded .p12 certificate
+#   APPLE_DEVELOPER_ID_PASSWORD     — passphrase for the .p12
+#   APPLE_ID                        — Apple ID email for notarytool
+#   APP_SPECIFIC_PW                 — App-specific password for notarytool
+#   (Team ID T6K5H4JKXF is a constant — no secret needed)
 #
 # To test locally: goreleaser release --snapshot --clean
+# Note: macOS codesign steps run only in CI (require the cert from secrets).
 
 version: 2
 
@@ -22,6 +30,10 @@ project_name: lumen
 before:
   hooks:
     - go mod tidy
+    # go generate is intentionally a no-op for releases: the NVD + content
+    # blobs are COMMITTED to the repo and the generator (//go:build ignore)
+    # is never placed behind //go:generate to prevent network calls during
+    # goreleaser's build phase.  See LU4-BUILD-BLUEPRINT.md §7.1.
     - go generate ./...
 
 builds:
@@ -60,6 +72,7 @@ archives:
       - LICENSE
       - NOTICE
       - README.md
+      - SCANNER_MANIFEST.md
 
 checksum:
   name_template: "checksums.txt"
@@ -100,30 +113,45 @@ release:
   name_template: "Lumen {{ .Tag }}"
 
 # -------------------------------------------------------------------------
-# macOS: codesign + notarize + .pkg (TODO — LU-5 once Apple Developer ID
-# Application cert is loaded in CI secrets for Team T6K5H4JKXF).
+# macOS: codesign binary (ENT-106).
+#
+# The `signs:` block calls codesign on each darwin binary produced by the
+# `lumen` build.  The certificate is imported by the macOS build job in
+# release.yml (see the "Import Apple certificate" step) before goreleaser
+# runs.  Goreleaser signs, then release.yml notarizes + packages as .pkg
+# (xcrun notarytool + pkgbuild + xcrun stapler).
+#
+# Developer ID: "Developer ID Application: Qwentrix Inc (T6K5H4JKXF)"
+# Bundle ID:    com.qwentrix.lumen  (consistent with com.qwentrix.miceliumone.* family)
+# Options:      --options runtime  (hardened runtime — required for notarization)
+#               --timestamp        (secure timestamp — required for notarization)
+#               --force            (allow re-signing snapshot builds)
 # -------------------------------------------------------------------------
-# signs:
-#   - cmd: codesign
-#     args:
-#       - "--sign"
-#       - "Developer ID Application: Qwentrix Inc (T6K5H4JKXF)"
-#       - "--options"
-#       - "runtime"
-#       - "--timestamp"
-#       - "${artifact}"
-#     artifacts: binary
-#     ids:
-#       - lumen
+signs:
+  - id: macos-codesign
+    cmd: codesign
+    args:
+      - "--sign"
+      - "Developer ID Application: Qwentrix Inc (T6K5H4JKXF)"
+      - "--options"
+      - "runtime"
+      - "--timestamp"
+      - "--force"
+      - "${artifact}"
+    artifacts: binary
+    ids:
+      - lumen
+    if: '{{ eq .Os "darwin" }}'
 
 # -------------------------------------------------------------------------
-# Linux: .deb and .rpm packaging via nfpm (TODO — LU-5).
+# Linux: .deb and .rpm packaging via nfpm (deferred to LU-5).
+# Linux builds ship as unsigned .tar.gz + checksums.txt for LU-4.
 # -------------------------------------------------------------------------
 # nfpms:
 #   - id: lumen-packages
 #     package_name: lumen
 #     vendor: Qwentrix Inc
-#     homepage: https://lumen.micelium.com
+#     homepage: lumen.micelium.com
 #     maintainer: Qwentrix Engineering <eng@qwentrix.com>
 #     description: Lumen open-source local security scanner
 #     license: Apache 2.0

@@ -1,0 +1,21 @@
+id: legal
+display_name: Legal & Professional Services
+domain_weight_multipliers:
+  vulnerabilities: 1.1
+  compliance: 1.3
+  ai_governance: 1.5
+  security_posture: 1.2
+  privacy: 1.6
+primary_frameworks:
+  - GDPR
+  - ABA Model Rules (cybersecurity comment)
+  - ISO 27001
+  - EU AI Act (legal risk assessment high-risk)
+  - NIST AI RMF
+lead_micelium_products:
+  - product: Sypher
+    emphasis: Privilege-protected document encryption
+  - product: Sigil
+    emphasis: AI governance for legal research and contract AI tools
+  - product: Share
+    emphasis: Controlled document sharing with clients and counsel

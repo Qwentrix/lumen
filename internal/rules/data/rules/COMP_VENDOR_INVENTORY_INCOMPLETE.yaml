@@ -1,0 +1,37 @@
+id: COMP_VENDOR_INVENTORY_INCOMPLETE
+domain: compliance
+severity: medium
+default_weight: 0.40
+detect:
+  questionnaire:
+    - Q-COMP-DD-019 == partial_inventory
+title: "Vendor data access inventory is incomplete — some vendors not tracked"
+description_short: "A vendor inventory exists but does not comprehensively cover all third parties with access to sensitive data."
+description_long: "A partial vendor inventory creates a false sense of security — the organisation believes it knows its vendor exposure but unknown vendors remain unreviewed, uncontracted, and unmonitored. Vendors not in the inventory may be operating under expired agreements, may have had access provisioned by individual teams without central approval, or may be former vendors whose access was never revoked. Gaps in the inventory are typically discovered during breach investigations when unknown vendors are found to have had access to affected data — at which point no due diligence records exist and regulatory exposure is compounded."
+frameworks:
+  - id: "GDPR Art. 30"
+    text: "Records of processing activities — must include all processors; a partial list does not satisfy the requirement"
+  - id: "PCI DSS Req 12.8.1"
+    text: "Maintain a complete list of all service providers — partial lists leave gaps in supply chain risk management"
+  - id: "ISO 27001 A.15.1.1"
+    text: "Information security policy for supplier relationships — comprehensive supplier inventory required"
+micelium_product:
+  - product: Proof
+    role: Identifies data-sharing relationships to help complete the vendor inventory
+  - product: Share
+    role: Tracks all outbound data sharing events to surface vendors not captured in the formal inventory
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.3
+  technology:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Complete your vendor inventory — the ones not tracked are typically the riskiest because no one is managing them. Pull API connections, OAuth grants, and integration logs to find vendors that may have slipped out of the formal inventory."
+remediation_technical: "Conduct a vendor discovery exercise to fill inventory gaps: query IdP for all service accounts, OAuth grants, and federated identities; review API gateway logs for external connections; audit SaaS subscriptions via expense management or SSO; review cloud resource tagging and network flow logs for third-party connections. For each vendor discovered, determine whether they have a formal agreement and access review. Add all discovered vendors to the inventory. Implement an ongoing discovery process — require central registration of all new vendor relationships as part of procurement approval."

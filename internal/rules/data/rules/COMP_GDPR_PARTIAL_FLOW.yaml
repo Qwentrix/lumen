@@ -1,0 +1,37 @@
+id: COMP_GDPR_PARTIAL_FLOW
+domain: compliance
+severity: medium
+default_weight: 0.50
+detect:
+  questionnaire:
+    - Q-COMP-DD-005 == partial_mapping
+title: "GDPR data flow map is partial — gaps remain in EU personal data processing records"
+description_short: "EU personal data flows are partially mapped, leaving processing activities undocumented in the Record of Processing Activities."
+description_long: "A partial GDPR data flow map means the Record of Processing Activities (ROPA) is incomplete, which is itself a violation of GDPR Art. 30. Beyond the ROPA, unmapped processing activities may include unlawful processing (no legal basis), unrecognised cross-border transfers without a transfer mechanism, or data retained beyond permissible periods. In a data subject access or erasure request, the organisation cannot respond completely for data residing in unmapped systems. Supervisory authorities treat partial documentation as a reduced-severity violation compared to total absence, but still find it non-compliant and use it as evidence of inadequate organisational measures under Art. 24."
+frameworks:
+  - id: "GDPR Art. 30"
+    text: "Records of processing activities — must be complete and kept current"
+  - id: "GDPR Art. 24"
+    text: "Responsibility of the controller — implement appropriate technical and organisational measures"
+  - id: "GDPR Art. 5(2)"
+    text: "Accountability principle — controller responsible for and able to demonstrate compliance"
+micelium_product:
+  - product: Sovera
+    role: Extends data flow mapping to cover all processing activities and flags unmapped systems
+  - product: Proof
+    role: Maintains the ROPA with completeness tracking and update history
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.3
+  technology:
+    weight_multiplier: 1.3
+  legal:
+    weight_multiplier: 1.3
+  it_services:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Complete the data flow map to cover all processing activities involving EU personal data. A partial map still leaves you exposed for the unmapped systems."
+remediation_technical: "Identify the systems and processing activities missing from the current ROPA. Use automated data discovery (BigID, Microsoft Purview) to locate EU personal data in unmapped systems. Conduct targeted interviews with business units owning unmapped processes. Complete ROPA entries for all identified activities. Implement a change-management trigger so new processing activities are added to the ROPA before they go live. Review ROPA completeness quarterly."

@@ -1,0 +1,31 @@
+id: COMP_NO_MFA
+domain: compliance
+severity: critical
+default_weight: 1.0
+detect:
+  questionnaire:
+    - Q-COMP-001 == no_mfa
+title: "MFA not enforced"
+description_short: "Multi-factor authentication is not enforced for all users."
+description_long: "Without MFA, accounts are vulnerable to credential-stuffing, phishing, and password-spray attacks. MFA is the single most effective control for preventing account takeover and is mandated by virtually every major compliance framework."
+frameworks:
+  - id: "HIPAA 164.312(d)"
+    text: "Person or entity authentication"
+  - id: "PCI DSS Req 8.4"
+    text: "MFA for all non-console administrative access"
+  - id: "NIST SP 800-63B AAL2"
+    text: "Authenticator assurance level 2 requirements"
+micelium_product:
+  - product: Sypher
+    role: Encrypts data at rest to limit blast radius of compromised accounts
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Enable MFA for all user accounts, prioritising admin accounts first. Use an authenticator app or hardware token rather than SMS."
+remediation_technical: "Enforce MFA via your IdP (Okta/Entra ID/Google Workspace). Use FIDO2/WebAuthn for phishing-resistant authentication. Conditionally require step-up for privileged actions. Monitor MFA bypass attempts via SIEM alerts."

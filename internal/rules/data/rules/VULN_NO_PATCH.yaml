@@ -1,0 +1,31 @@
+id: VULN_NO_PATCH
+domain: vulnerabilities
+severity: critical
+default_weight: 1.0
+detect:
+  questionnaire:
+    - Q-VULN-001 == no_policy
+  scanner:
+    - vulnerabilities.days_since_last_update > 30
+title: "No patch management policy"
+description_short: "No formal patch management process exists."
+description_long: "Without a patch management policy, systems remain exposed to known vulnerabilities indefinitely. Attackers routinely exploit unpatched CVEs within days of public disclosure, making this one of the highest-impact gaps in an organisation's security posture."
+frameworks:
+  - id: "NIST CSF RS.MI-3"
+    text: "Newly identified vulnerabilities are mitigated or documented as accepted risks"
+  - id: "CIS Control 7"
+    text: "Continuous vulnerability management"
+micelium_product:
+  - product: Sense
+    role: Detects lateral movement exploiting unpatched hosts
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.2
+  financial:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Implement a patch management policy with defined SLAs (e.g., critical patches within 24–72 hours) and automated enforcement."
+remediation_technical: "Deploy a patch orchestration platform (e.g., WSUS, Ansible, AWS SSM Patch Manager). Define SLA tiers by CVSS score. Integrate with your vulnerability scanner (Tenable/Qualys) to auto-close patching tickets."

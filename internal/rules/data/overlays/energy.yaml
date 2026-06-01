@@ -1,0 +1,21 @@
+id: energy
+display_name: Energy & Utilities
+domain_weight_multipliers:
+  vulnerabilities: 1.4
+  compliance: 1.3
+  ai_governance: 1.2
+  security_posture: 1.6
+  privacy: 1.0
+primary_frameworks:
+  - NERC CIP
+  - NIS2 (EU critical infrastructure)
+  - IEC 62443
+  - NIST SP 800-82
+  - ISO 27001
+lead_micelium_products:
+  - product: Sense
+    emphasis: Grid and SCADA network anomaly detection
+  - product: Ark
+    emphasis: Resilient backup for control systems
+  - product: Proof
+    emphasis: NERC CIP compliance evidence

@@ -1,0 +1,40 @@
+id: VULN_SBOM_STALE
+domain: vulnerabilities
+severity: medium
+default_weight: 0.40
+detect:
+  questionnaire:
+    - Q-VULN-DD-006 == not_refreshed
+    - Q-VULN-DD-006 == ad_hoc
+title: "SBOM exists but is stale — not refreshed on a defined cadence"
+description_short: "A software bill of materials exists but is not regularly refreshed, making it an unreliable basis for vulnerability assessment."
+description_long: "An SBOM that is not refreshed becomes progressively less accurate as dependencies are updated, added, or removed during development. A stale SBOM cannot reliably answer the most important question: 'Are we exposed to this new CVE?' When a critical vulnerability is published (as happened with Log4Shell, Spring4Shell, and XZ Utils), the ability to answer that question within hours — not days — is the difference between rapid containment and extended exposure. NTIA SBOM minimum elements guidance and NIST SP 800-218 SSDF RV.1.3 require SBOMs to be kept current. An ad hoc or never-refreshed SBOM provides false assurance — the organisation believes it has supply chain visibility when it does not."
+frameworks:
+  - id: "NTIA SBOM Minimum Elements"
+    text: "SBOM must be kept current — a stale SBOM fails to fulfil its supply chain transparency purpose"
+  - id: "NIST SP 800-218 RV.1.3"
+    text: "SSDF — update software component inventories to reflect the current state of deployed software"
+  - id: "PCI DSS Req 6.3.2"
+    text: "Maintain an inventory of bespoke and custom software — inventory must be kept current"
+micelium_product:
+  - product: Sense
+    role: Provides continuous dependency vulnerability monitoring that compensates for stale SBOM periods during development cycles
+  - product: Sovera
+    role: Tracks SBOM freshness as a compliance indicator for software supply chain security evidence
+industry_overlays:
+  technology:
+    weight_multiplier: 1.4
+  it_services:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.3
+  retail:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "An SBOM that is not refreshed cannot tell you whether you are exposed to the latest critical vulnerability. Automate SBOM regeneration on every build so it always reflects the current state of your software."
+remediation_technical: "Integrate SBOM generation into your CI/CD pipeline as a build step that runs automatically on every successful build. Store the generated SBOM artefact alongside the build output. For production deployments, require the SBOM to be regenerated as part of the release process. At minimum, establish a weekly automated scheduled SBOM refresh for active projects that do not build daily. Correlate the refreshed SBOM against NVD and CISA KEV to detect new CVE exposure immediately after each refresh."

@@ -12,43 +12,109 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package compliance probes OS-level compliance controls: MFA, disk encryption,
-// firewall, patch level, and screen lock.
-// TODO (LU-4): implement per-platform checks.
+// Package compliance probes OS-level compliance controls: disk encryption,
+// firewall state, and screen lock configuration.
+//
+// MFA is intentionally NOT probed by this package. Multi-factor authentication
+// is an organisation-wide identity-provider setting that cannot be determined
+// by inspecting a single workstation. MFAEnabled is left at its zero value
+// (false) in ComplianceFindings; it is populated exclusively via the
+// questionnaire path (Q-COMP-MFA-001) and is documented as
+// "mfa_local_indeterminate" in probe metadata when the host scan runs.
+//
+// Per-platform collection is split across build-tagged files:
+//   - collect_darwin.go  (//go:build darwin)
+//   - collect_linux.go   (//go:build linux)
+//   - collect_other.go   (//go:build !darwin && !linux) — stub, returns zero values
+//
+// All collectors record their exec and file-read calls via manifest.Default
+// immediately before performing the OS call, so the runtime ledger reflects
+// what was attempted even if the call fails.
 package compliance
 
 import (
 	"context"
+
+	lstypes "github.com/Qwentrix/lumen-scoring/pkg/types"
 
 	"github.com/Qwentrix/lumen/internal/probes/common"
 )
 
 const domainID = "compliance"
 
-// Run executes the compliance probe for the current platform.
+// Run executes the compliance probe for the current platform and returns a
+// ProbeResult whose ScannerFields.Compliance is populated with real findings.
+//
+// The probe degrades gracefully on any individual collector error: a missing
+// or inaccessible tool produces a false/zero value and a metadata note, but
+// never fails the entire scan.
 func Run(ctx context.Context) (*common.ProbeResult, error) {
-	// TODO: dispatch to mfa_darwin.go / disk_encryption_*.go / firewall_*.go /
-	// patch_level_*.go / screen_lock_*.go via build tags.
+	meta := map[string]interface{}{
+		// Document the intentional non-population of MFAEnabled.
+		"mfa_local_indeterminate": "MFA is an org-wide IdP setting; it cannot be " +
+			"determined from a single-host scan. Use the questionnaire (Q-COMP-MFA-001) " +
+			"to supply this signal.",
+	}
+
+	diskEnc := collectDiskEncryption(ctx, meta)
+	firewall := collectFirewall(ctx, meta)
+	slResult := collectScreenLock(ctx, meta)
+
+	findings := &lstypes.ComplianceFindings{
+		// MFAEnabled is intentionally left false (zero value) — see package doc.
+		MFAEnabled:               false,
+		DiskEncryptionEnabled:    diskEnc,
+		FirewallEnabled:          firewall,
+		ScreenLockEnabled:        slResult.enabled,
+		ScreenLockTimeoutSeconds: slResult.timeoutSeconds,
+	}
+
 	return &common.ProbeResult{
 		DomainID: domainID,
 		Findings: []common.FindingHint{},
-		Metadata: map[string]interface{}{"status": "stub"},
+		Metadata: meta,
+		ScannerFields: common.ScannerFields{
+			Compliance: findings,
+		},
 	}, nil
 }
 
 // Manifest returns the static access declaration for the compliance probe.
+// Lists every OS API and file path this probe may access on any platform.
+// Windows entries are marked (LU-5) to distinguish them from the LU-4 scope.
 func Manifest() common.ManifestEntry {
 	return common.ManifestEntry{
 		DomainID: domainID,
 		OSAPIs: []string{
-			"profiles command, MDM payloads (macOS)",
-			"PAM module enumeration (Linux)",
-			"Get-LocalUser, MFA registry (Windows)",
-			"fdesetup status / diskutil (macOS)",
-			"lsblk / cryptsetup status (Linux)",
-			"manage-bde (Windows)",
+			// macOS — disk encryption
+			"/usr/bin/fdesetup status",
+			// macOS — firewall
+			"/usr/libexec/ApplicationFirewall/socketfilterfw --getglobalstate",
+			"/usr/bin/defaults read /Library/Preferences/com.apple.alf globalstate",
+			// macOS — screen lock
+			"/usr/bin/defaults read com.apple.screensaver askForPassword",
+			"/usr/bin/defaults read com.apple.screensaver askForPasswordDelay",
+			"/usr/bin/defaults -currentHost read com.apple.screensaver idleTime",
+			// Linux — disk encryption
+			"lsblk -o NAME,TYPE --noheadings",
+			// Linux — firewall
+			"firewall-cmd --state",
+			// Linux — screen lock
+			"gsettings get org.gnome.desktop.screensaver lock-enabled",
+			"gsettings get org.gnome.desktop.screensaver lock-delay",
+			"gsettings get org.gnome.desktop.session idle-delay",
+			// Windows (LU-5 scope only — not invoked in LU-4)
+			"Get-BitLockerVolume (Windows — LU-5)",
+			"Get-NetFirewallProfile (Windows — LU-5)",
 		},
-		FilePaths:    []string{},
-		NetworkCalls: []string{},
+		FilePaths: []string{
+			// macOS — firewall fallback plist
+			"/Library/Preferences/com.apple.alf.plist",
+			// Linux — disk encryption
+			"/etc/crypttab",
+			// Linux — firewall
+			"/etc/ufw/ufw.conf",
+		},
+		NetworkCalls: []string{}, // ZERO — this probe is fully offline
 	}
 }

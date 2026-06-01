@@ -1,0 +1,37 @@
+id: COMP_RETENTION_MANUAL_RISK
+domain: compliance
+severity: medium
+default_weight: 0.45
+detect:
+  questionnaire:
+    - Q-COMP-DD-012 == fully_manual
+title: "Data retention policy enforced entirely through manual processes"
+description_short: "The data retention policy exists but is enforced entirely through manual processes with no automated controls."
+description_long: "Manual retention enforcement introduces significant compliance risk. Manual deletion processes depend on staff remembering to execute them on schedule, correctly identifying all data stores in scope, and having access permissions to carry out deletion. In practice, manual processes are skipped, delayed, or incomplete — particularly when staff are busy or have turned over. Manual enforcement also means there are no automated logs of when deletion occurred, what was deleted, or who performed the deletion. This makes it very difficult to demonstrate compliance to regulators. For GDPR in particular, the inability to demonstrate timely deletion creates real enforcement exposure. The risk increases as data volumes grow and the organisation adds new storage systems that manual processes do not always cover."
+frameworks:
+  - id: "GDPR Art. 5(1)(e)"
+    text: "Storage limitation — must demonstrate that personal data is deleted when no longer necessary"
+  - id: "PCI DSS Req 3.2.1"
+    text: "Data retention and disposal policy — retention must be consistently enforced"
+  - id: "ISO 27001 A.8.3.2"
+    text: "Disposal of media — secure and systematic disposal of information"
+  - id: "HIPAA 164.310(d)(2)(i)"
+    text: "Disposal — implement policies and procedures to address the final disposition of ePHI"
+micelium_product:
+  - product: Ark
+    role: Automates retention schedule enforcement with programmatic lifecycle rules, eliminating manual deletion dependency
+  - product: Proof
+    role: Logs retention enforcement actions as compliance evidence to demonstrate timely deletion
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Automate your retention enforcement — rely on technical controls rather than manual processes to delete data on schedule. Manual processes break down under volume and staff turnover."
+remediation_technical: "Implement automated retention enforcement for each data store: S3 object lifecycle policies for cloud object storage, database archival and deletion jobs for relational and NoSQL databases, log rotation and expiry for SIEM and application logs, and backup expiry policies. Configure automated deletion to run on schedule without human intervention. Implement audit logging for all automated deletion events — log what was deleted, when, and by which retention policy. Test automated deletion quarterly to confirm it is operating correctly. Maintain manual processes only as a fallback for edge cases and document when they are invoked."

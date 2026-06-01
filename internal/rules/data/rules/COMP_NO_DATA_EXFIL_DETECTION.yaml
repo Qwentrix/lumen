@@ -1,0 +1,41 @@
+id: COMP_NO_DATA_EXFIL_DETECTION
+domain: compliance
+severity: high
+default_weight: 0.75
+detect:
+  questionnaire:
+    - Q-COMP-DD-024 == no_detection
+title: "No capability to detect sensitive data exfiltration"
+description_short: "The organisation has no process or tooling to detect when sensitive data is accessed abnormally, moved, or exfiltrated."
+description_long: "Without data exfiltration detection, the organisation cannot identify breaches in progress, insider theft, or data leakage through misconfigured systems. The average mean time to detect a data breach is over 200 days when no detection controls are in place — giving attackers months to exfiltrate data unnoticed. HIPAA 164.312(b) requires audit controls to examine activity in ePHI systems. PCI DSS Req 10.6 requires daily log review and Req 11.6 requires intrusion detection. SOC 2 CC7.2 requires detecting security events. The absence of exfiltration detection is also a factor in breach notification scope — without logs, the organisation may be unable to determine what was taken, potentially requiring it to report worst-case breach scope to regulators."
+frameworks:
+  - id: "HIPAA 164.312(b)"
+    text: "Audit controls — hardware and software mechanisms to record and examine ePHI activity"
+  - id: "PCI DSS Req 10.6"
+    text: "Review logs of all system components at least daily — enables detection of exfiltration"
+  - id: "SOC 2 CC7.2"
+    text: "System monitoring — detection of and response to system anomalies including data movement"
+  - id: "ISO 27001 A.12.4.1"
+    text: "Event logging — generating event logs for data access and movement"
+micelium_product:
+  - product: Sense
+    role: Provides behavioural anomaly detection identifying abnormal data access and exfiltration patterns
+  - product: Share
+    role: Monitors and restricts data sharing channels, alerting on policy violations
+  - product: Pulse
+    role: Automates detection-to-response workflows for identified exfiltration events
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  legal:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Implement monitoring that can detect when sensitive data is accessed abnormally, transferred in large volumes, or moved to destinations outside normal patterns. You need to know about a breach before your customers or regulators do."
+remediation_technical: "Deploy a layered exfiltration detection stack: (1) DLP solution (Microsoft Purview DLP, Symantec DLP, Forcepoint) with policies for sensitive data categories. (2) UEBA (User and Entity Behaviour Analytics) to baseline and alert on access anomalies (Splunk UBA, Varonis, Microsoft Sentinel UEBA). (3) SIEM correlation rules for: bulk download events, off-hours access to sensitive stores, transfers to personal cloud or USB. (4) Network DLP or CASB for egress monitoring. Set detection SLA (alert reviewed within X hours) and test annually with red team exfil scenarios."

@@ -11,36 +11,75 @@ jobs:
     name: ci/go-test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      # -----------------------------------------------------------------------
+      # Dual checkout: scanner repo into ./lumen/ and the lumen-scoring sibling
+      # into ./lumen-scoring/ so the go.mod replace directive
+      # (replace github.com/Qwentrix/lumen-scoring => ../lumen-scoring) resolves
+      # correctly.  Pattern mirrors release.yml §Checkout.
+      # -----------------------------------------------------------------------
+      - name: Checkout lumen (scanner)
+        uses: actions/checkout@v4
+        with:
+          path: lumen
+
+      - name: Checkout lumen-scoring (replace dependency)
+        uses: actions/checkout@v4
+        with:
+          repository: Qwentrix/lumen-scoring
+          path: lumen-scoring
+          # Pin to the SHA embedded in internal/rules/data/content-snapshot.meta.json.
+          # Update this ref when re-embedding content or upgrading lumen-scoring.
+          ref: main
 
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version: "1.22"
           cache: true
+          cache-dependency-path: lumen/go.sum
 
       - name: Download dependencies
+        working-directory: lumen
         run: go mod download
 
       - name: Run tests
+        working-directory: lumen
         run: go test -race -count=1 ./...
 
   lint:
     name: ci/lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      # -----------------------------------------------------------------------
+      # Dual checkout: same pattern as go-test — lumen-scoring must be present
+      # as a sibling so golangci-lint can resolve the replace directive.
+      # -----------------------------------------------------------------------
+      - name: Checkout lumen (scanner)
+        uses: actions/checkout@v4
+        with:
+          path: lumen
+
+      - name: Checkout lumen-scoring (replace dependency)
+        uses: actions/checkout@v4
+        with:
+          repository: Qwentrix/lumen-scoring
+          path: lumen-scoring
+          # Pin to the SHA embedded in internal/rules/data/content-snapshot.meta.json.
+          # Update this ref when re-embedding content or upgrading lumen-scoring.
+          ref: main
 
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version: "1.22"
           cache: true
+          cache-dependency-path: lumen/go.sum
 
       - name: Run golangci-lint
         uses: golangci/golangci-lint-action@v6
         with:
           version: latest
+          working-directory: lumen
 
   # -------------------------------------------------------------------------
   # Apache 2.0 license-header gate (AC-97-13 / LU-1 acceptance requirement).
@@ -105,11 +144,25 @@ jobs:
       - name: Build lumen binary
         run: go build -o lumen-ci ./cmd/lumen
 
-      - name: Run TestNoDefaultNetworkCalls
-        # The Go test in internal/netcheck asserts that running lumen scan
-        # produces zero outbound TCP connections.  In LU-1 this is a simple
-        # compile + run check since all probes are stubs.
+      - name: Run TestNoDefaultNetworkCalls (plain)
+        # HTTP-transport interceptor layer: any net/http call inside probes trips
+        # an atomic counter and fails the test.  In LU-1 all probes are stubs so
+        # this passes trivially; the gate prevents LU-4+ probe work from adding
+        # accidental HTTP calls.
         run: go test -v -run TestNoDefaultNetworkCalls ./internal/netcheck/...
+
+      - name: Run TestNoDefaultNetworkCalls (network-namespace isolation)
+        # Raw-syscall layer: run the same test inside a network namespace that
+        # has no interfaces (only lo).  Any raw net.Dial / net.LookupHost
+        # syscall fails with ENETUNREACH, which surfaces as a probe error caught
+        # by the test's r.err != nil check.
+        # --map-root-user maps the current UID to root inside the namespace so
+        # unshare succeeds on ubuntu-latest without requiring true root.
+        # Together with the plain run above, these two layers form the complete
+        # zero-network gate documented in SCANNER_MANIFEST.md §Zero-Network CI Gates.
+        run: >
+          sudo unshare --net --map-root-user
+          go test -v -run TestNoDefaultNetworkCalls ./internal/netcheck/...
 
   # -------------------------------------------------------------------------
   # Version stub smoke test (AC-97-10).

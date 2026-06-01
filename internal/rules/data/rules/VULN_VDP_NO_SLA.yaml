@@ -1,0 +1,39 @@
+id: VULN_VDP_NO_SLA
+domain: vulnerabilities
+severity: medium
+default_weight: 0.40
+detect:
+  questionnaire:
+    - Q-VULN-DD-010 == no_sla
+title: "No defined response-time SLA for externally reported vulnerabilities"
+description_short: "No SLA defines how quickly the organisation will acknowledge externally reported vulnerabilities."
+description_long: "The absence of a response-time SLA for the VDP means researchers have no expectation of when they will receive acknowledgement. A lack of timely response is one of the primary reasons researchers bypass coordinated disclosure and go directly to public disclosure — the researcher assumes the organisation is unresponsive or uninterested. Public disclosure of an unaddressed vulnerability before remediation is completed amplifies risk and reputational damage. CISA CVD guidance recommends acknowledging reports within 5 business days. ISO 29147 requires that organisations define and commit to response timelines. Without a defined SLA, the VDP also cannot be measured for effectiveness: there is no baseline against which to assess response performance."
+frameworks:
+  - id: "CISA Coordinated Vulnerability Disclosure"
+    text: "Organizations should acknowledge vulnerability reports within 5 business days and provide ongoing status updates"
+  - id: "ISO 29147"
+    text: "Vulnerability disclosure — define and commit to response timelines for acknowledgement and status updates"
+  - id: "NIST SP 800-53 RA-5"
+    text: "Vulnerability Monitoring and Scanning — include timely processing of externally reported vulnerabilities in the vulnerability management process"
+micelium_product:
+  - product: Sovera
+    role: Tracks VDP response metrics including acknowledgement SLA compliance as a programme governance indicator
+  - product: Pulse
+    role: Automates VDP acknowledgement workflows to ensure response SLA is met consistently
+industry_overlays:
+  financial:
+    weight_multiplier: 1.3
+  technology:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.3
+  it_services:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.2
+  manufacturing:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Define and publish a response-time SLA in your VDP policy — at minimum, how quickly you will acknowledge a report and provide a first substantive response. Without a commitment, researchers will not know whether their report was received and may escalate to public disclosure."
+remediation_technical: "Define a two-tier VDP response SLA: (1) initial acknowledgement — within 5 business days of receiving a report (automate with an auto-responder confirming receipt and assigning a tracking number); (2) substantive response — within 10-15 business days with a triage decision and initial status update. Publish both SLAs on your VDP policy page. Measure compliance monthly by tracking report receipt to acknowledgement time. Use a dedicated VDP platform or ticketing workflow to enforce SLA tracking automatically."

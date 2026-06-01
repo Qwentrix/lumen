@@ -1,0 +1,43 @@
+id: VULN_EOL_IN_PROD
+domain: vulnerabilities
+severity: high
+default_weight: 0.75
+detect:
+  questionnaire:
+    - Q-VULN-012 == some_unmitigated
+title: "End-of-life systems running in production with no mitigating controls"
+description_short: "Production systems are running on software or operating systems that no longer receive vendor security patches, with no compensating controls."
+description_long: "End-of-life software in production with no mitigating controls represents an unmanaged, indefinitely growing attack surface. Once vendor support ends, no patches are issued for newly discovered CVEs — including critical zero-day vulnerabilities. Without compensating controls such as network isolation, these systems are directly exploitable with publicly available tooling. Regulatory frameworks are unambiguous: NIST SP 800-53 SI-2 requires flaw remediation including for unsupported components; HIPAA security rule mandates risk management for all ePHI systems; PCI DSS Req 6.3.3 requires all in-scope components to be protected against known vulnerabilities. EOL systems are a recurring finding in breach investigations and regulatory enforcement actions."
+frameworks:
+  - id: "NIST SP 800-53 SI-2"
+    text: "Flaw Remediation — identify, report, and correct system flaws including unsupported software"
+  - id: "PCI DSS Req 6.3.3"
+    text: "All system components are protected from known vulnerabilities — EOL components must be remediated or removed"
+  - id: "HIPAA Security Rule 45 CFR 164.308(a)(5)"
+    text: "Protection from malicious software — includes unpatched EOL systems processing ePHI"
+  - id: "NIST CSF PR.IP-12"
+    text: "A vulnerability management plan is developed and implemented — covers EOL system risk"
+micelium_product:
+  - product: Sense
+    role: Provides enhanced behavioral monitoring around EOL systems that cannot receive agent-based security tooling
+  - product: Sypher
+    role: Enforces data encryption on network paths to and from EOL systems to limit breach impact
+  - product: Sovera
+    role: Generates compliance evidence documenting EOL risk acceptance and compensating control status
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  manufacturing:
+    weight_multiplier: 1.4
+  energy:
+    weight_multiplier: 1.5
+  education:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Unpatched end-of-life systems with no compensating controls are a direct breach risk. If immediate migration is not possible, isolate these systems from the rest of your network and implement enhanced monitoring as emergency compensating controls while you execute a migration plan."
+remediation_technical: "Immediately network-isolate all EOL production systems: place them behind restrictive firewall rules, segment them into a dedicated VLAN with minimal inbound access, and enable enhanced logging on all traffic to and from these systems. Deploy inline intrusion detection on the network segment. Create a time-bound migration plan with milestone dates and executive sign-off. Evaluate extended security update (ESU) programmes from vendors where available as a bridge. Prioritize systems with internet exposure or access to sensitive data for immediate migration."

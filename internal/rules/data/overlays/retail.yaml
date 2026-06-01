@@ -1,0 +1,21 @@
+id: retail
+display_name: Retail & E-commerce
+domain_weight_multipliers:
+  vulnerabilities: 1.2
+  compliance: 1.4
+  ai_governance: 1.1
+  security_posture: 1.1
+  privacy: 1.3
+primary_frameworks:
+  - PCI DSS
+  - GDPR
+  - CCPA
+  - ISO 27001
+  - OWASP Top 10
+lead_micelium_products:
+  - product: Sypher
+    emphasis: Cardholder data and customer PII protection
+  - product: Share
+    emphasis: Customer data sharing with marketing platforms
+  - product: Proof
+    emphasis: PCI DSS audit evidence

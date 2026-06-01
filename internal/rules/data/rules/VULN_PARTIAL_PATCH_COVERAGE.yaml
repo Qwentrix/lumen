@@ -1,0 +1,38 @@
+id: VULN_PARTIAL_PATCH_COVERAGE
+domain: vulnerabilities
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-VULN-006 == servers_only
+    - Q-VULN-006 == servers_and_workstations_only
+title: "Patch management does not cover all asset classes"
+description_short: "Patch management covers some systems but cloud workloads, containers, or other asset classes are excluded."
+description_long: "Partial patch coverage leaves entire asset classes unmanaged. Cloud workloads and containers are frequently omitted from traditional patch management programs, yet they represent an increasingly large portion of the attack surface. Attackers routinely target unpatched cloud instances and container images precisely because organisations assume their existing patch workflows cover them. CIS Control 7 requires that vulnerability management apply consistently across all asset types, including cloud-native workloads. PCI DSS scoping rules mean any unpatched system in cardholder data scope creates an immediate finding."
+frameworks:
+  - id: "CIS Control 7"
+    text: "Continuous Vulnerability Management across all asset classes"
+  - id: "NIST SP 800-53 SI-2"
+    text: "Flaw Remediation — applies to all system components"
+  - id: "PCI DSS Req 6.3"
+    text: "Security vulnerabilities are identified and managed for all in-scope components"
+micelium_product:
+  - product: Sense
+    role: Provides visibility into anomalous behaviour on cloud workloads outside the patching perimeter
+industry_overlays:
+  technology:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.3
+  it_services:
+    weight_multiplier: 1.4
+  retail:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Extend your patch management program to cover all asset classes — servers, workstations, cloud workloads, and containers. Leaving any asset class out creates blind spots an attacker can exploit."
+remediation_technical: "Inventory all asset types in scope (servers, workstations, cloud EC2/GCE/VMs, containers, network devices). Deploy cloud-native patch management for cloud workloads (AWS SSM Patch Manager, Azure Update Manager). Integrate container image rebuild and redeployment into your patch process. Validate coverage via your vulnerability scanner's asset scope report."

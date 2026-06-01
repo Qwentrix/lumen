@@ -1,0 +1,39 @@
+id: COMP_NO_DISPOSAL_EVIDENCE
+domain: compliance
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-COMP-DD-014 == no_records
+title: "No records of compliant data deletion exist"
+description_short: "The organisation maintains no records demonstrating that sensitive data was deleted in compliance with its retention schedule."
+description_long: "Without records of compliant deletion, the organisation cannot demonstrate to regulators, auditors, or affected individuals that data was deleted as required. GDPR Art. 17 right-to-erasure requires being able to confirm deletion to the data subject and demonstrate it under Art. 5(2) accountability. HIPAA requires documenting the disposition of ePHI. PCI DSS Req 9.4.6 requires records of destruction. The absence of deletion records also creates a liability gap: if data that should have been deleted is later found in a breach, the organisation cannot demonstrate it tried to delete it in accordance with policy — making it more difficult to argue limited scope and due diligence in regulatory proceedings. Deletion records are among the most frequently requested items in privacy regulatory investigations."
+frameworks:
+  - id: "GDPR Art. 17"
+    text: "Right to erasure — must be able to confirm and demonstrate deletion"
+  - id: "GDPR Art. 5(2)"
+    text: "Accountability — controller must be able to demonstrate compliance with principles"
+  - id: "HIPAA 164.310(d)(2)(i)"
+    text: "Disposal — implement policies for final disposition and document them"
+  - id: "PCI DSS Req 9.4.6"
+    text: "Hardcopy and electronic media destroyed — with documentation of destruction"
+micelium_product:
+  - product: Proof
+    role: Generates and retains cryptographically signed deletion records for all compliance-relevant deletions
+  - product: Ark
+    role: Provides documented evidence of backup and archive data deletion per retention schedules
+  - product: Sovera
+    role: Tracks GDPR erasure requests through to confirmed deletion with evidence
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Start maintaining records of every significant data deletion — including who performed it, what was deleted, when, and how. This is essential for demonstrating compliance with GDPR erasure requests and retention schedules."
+remediation_technical: "Implement a deletion evidence framework: (1) Create a deletion log template capturing: data subject or data set ID, data categories, systems deleted from (including all third-party processors), deletion method, timestamp, and responsible personnel. (2) For GDPR erasure requests: implement an erasure workflow with confirmation receipts from all processors (per GDPR Art. 28 clauses). (3) For scheduled retention deletions: generate automated deletion certificates from your data management platform. (4) For hardware: collect Certificate of Destruction from certified destruction vendors. Retain deletion records for the applicable regulatory period (HIPAA: 6 years)."

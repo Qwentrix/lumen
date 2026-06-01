@@ -1,0 +1,35 @@
+id: COMP_SERVICE_CRED_UNKNOWN
+domain: compliance
+severity: medium
+default_weight: 0.50
+detect:
+  questionnaire:
+    - Q-COMP-DD-017 == unknown
+title: "Service-to-service credential management status unknown"
+description_short: "The organisation does not know whether service-to-service integrations use unique or shared credentials."
+description_long: "If an organisation does not know how its service-to-service integrations authenticate, it cannot assess whether those credentials are appropriately managed, rotated, or segmented. Unknown credential management in service integrations is a common pathway for lateral movement once an attacker gains access to a single service — they can traverse integrations using shared or poorly managed credentials without triggering alerts. The inability to answer this question also signals that there is no centralised credential inventory or secrets management function — meaning credentials may be hardcoded in multiple locations, shared across services, or impossible to rotate rapidly during an incident."
+frameworks:
+  - id: "SOC 2 CC6.1"
+    text: "Logical and physical access controls — credentials protecting logical access must be inventoried and controlled"
+  - id: "PCI DSS Req 8.6"
+    text: "Management of interactive use of application and system accounts"
+  - id: "NIST SP 800-57"
+    text: "Key management — maintain a complete inventory of cryptographic keys and credentials"
+micelium_product:
+  - product: Sypher
+    role: Provides a centralised secrets manager that inventories and manages service credentials, eliminating the unknown state
+  - product: Sense
+    role: Detects anomalous service-to-service authentication patterns that may indicate credential misuse
+industry_overlays:
+  technology:
+    weight_multiplier: 1.4
+  it_services:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Audit all service-to-service integrations to understand what credentials are in use — if you don't know, you can't secure them. Start by listing all APIs, databases, and internal services that connect to each other."
+remediation_technical: "Conduct a service account and API key audit: identify all service-to-service integrations by reviewing API gateway logs, network traffic baselines, and code repositories. Document the authentication method for each integration (shared key, unique service account credential, certificate, managed identity). Classify each by risk tier. Migrate all service credentials to a centralised secrets manager (HashiCorp Vault, AWS Secrets Manager, Azure Key Vault). Implement unique credentials per service integration. Enable automated rotation. Add service account credential usage to your continuous monitoring scope."

@@ -1,0 +1,39 @@
+id: COMP_OPEN_AUDIT_FINDINGS
+domain: compliance
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-COMP-DD-010 == four_or_more_open
+title: "Four or more unresolved findings from last audit"
+description_short: "Four or more findings or observations from the last audit remain unresolved."
+description_long: "Unresolved audit findings represent known compliance gaps that management has accepted or failed to remediate. When four or more findings remain open, it signals that the organisation's remediation process is ineffective — gaps are identified but not closed. Carrying forward multiple unresolved findings into the next audit cycle creates compounding risk: new findings are added while old ones persist, the remediation backlog grows, and the organisation demonstrates a pattern of non-closure that is highly visible to auditors and regulators. Enterprise customers who review SOC 2 reports with management responses look specifically at whether prior observations were remediated. A high volume of open findings also suggests the organisation may not have the resources or governance discipline to maintain its compliance programme."
+frameworks:
+  - id: "SOC 2 CC4.2"
+    text: "Evaluates and communicates internal control deficiencies in a timely manner to those responsible for corrective action"
+  - id: "ISO 27001 Clause 10.1"
+    text: "Nonconformity and corrective action — organisations must take action to correct nonconformities and eliminate causes"
+  - id: "FedRAMP POA&M"
+    text: "Plan of Action and Milestones — all open findings must be tracked in the POA&M with remediation dates"
+  - id: "PCI DSS Req 12.3.4"
+    text: "Hardware and software technologies reviewed at least once every 12 months to confirm continued security"
+micelium_product:
+  - product: Proof
+    role: Tracks open audit findings to remediation with assigned owners, due dates, and evidence of closure
+  - product: Pulse
+    role: Automates remediation task assignment and escalation for overdue findings
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  technology:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Prioritise closing your open audit findings before the next audit cycle. Assign each finding to a named owner with a deadline, and track progress weekly until all findings are resolved and evidence of closure is documented."
+remediation_technical: "Create a formal POA&M (Plan of Action and Milestones) for all open findings: assign each finding to a named owner, define the root cause, document the remediation action, set a target completion date, and identify the evidence that will demonstrate closure. Review the POA&M in weekly or bi-weekly management meetings. For findings that cannot be immediately remediated, document compensating controls and an accepted residual risk. Before the next audit engagement, confirm all prior findings are closed or have documented compensating controls. Share the POA&M with your auditor in advance to demonstrate active remediation."

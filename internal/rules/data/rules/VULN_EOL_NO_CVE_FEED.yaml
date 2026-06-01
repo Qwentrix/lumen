@@ -1,0 +1,39 @@
+id: VULN_EOL_NO_CVE_FEED
+domain: vulnerabilities
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-VULN-DD-014 == no_process
+title: "No CVE notification process for end-of-life software"
+description_short: "No process exists to receive notification of newly published CVEs affecting end-of-life or legacy software that no longer has active vendor patch feeds."
+description_long: "End-of-life software continues to receive new CVE disclosures from independent researchers, national vulnerability databases, and security vendors long after vendor patch support ends. Without a process to monitor for these CVEs, an organisation running EOL software is blind to newly published critical vulnerabilities that attackers are actively targeting. This compounds the already elevated risk of EOL software: not only are patches unavailable, but the organisation also lacks awareness of new exploits. NIST CSF ID.RA-1 and NIST SP 800-53 RA-5 both require ongoing vulnerability monitoring across all production components including legacy and unsupported software."
+frameworks:
+  - id: "NIST SP 800-53 RA-5"
+    text: "Vulnerability Monitoring and Scanning — monitor for vulnerabilities in all deployed components, including EOL software"
+  - id: "NIST CSF ID.RA-1"
+    text: "Asset vulnerabilities are identified and documented — requires coverage of legacy and unsupported components"
+  - id: "CIS Control 7.6"
+    text: "Subscribe to vulnerability notification services for all deployed software including legacy versions"
+micelium_product:
+  - product: Sense
+    role: Integrates threat intelligence feeds that cover CVEs for legacy software beyond vendor support windows
+  - product: Sovera
+    role: Tracks CVE exposure for EOL components in compliance posture reporting
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  manufacturing:
+    weight_multiplier: 1.4
+  energy:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  education:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Establish a process to monitor for newly published CVEs affecting your EOL and legacy software. Vendor advisories stop at EOL — but CVE researchers and national databases continue publishing findings. You need to be subscribed to them."
+remediation_technical: "Subscribe to NIST NVD API notifications for CPE identifiers matching your EOL software. Add CISA KEV monitoring for legacy products. Consider a commercial threat intelligence feed that maintains coverage of EOL software CVE disclosures (Recorded Future, Tenable, Qualys). Integrate CVE alerts for EOL systems into your existing vulnerability triage queue with appropriate priority given the absence of available patches. Document compensating controls alongside each CVE finding for audit purposes."

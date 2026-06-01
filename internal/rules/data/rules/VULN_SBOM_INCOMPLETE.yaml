@@ -1,0 +1,41 @@
+id: VULN_SBOM_INCOMPLETE
+domain: vulnerabilities
+severity: medium
+default_weight: 0.40
+detect:
+  questionnaire:
+    - Q-VULN-DD-005 == first_party_only
+title: "SBOM covers first-party code only — third-party dependencies not inventoried"
+description_short: "The software bill of materials covers only first-party code; third-party and transitive dependencies are not tracked."
+description_long: "A first-party-only SBOM is a fundamentally incomplete security instrument. The vast majority of modern application CVEs originate in open-source and third-party dependencies, not first-party code — the Log4Shell vulnerability in Apache Log4j is a canonical example of a transitive dependency exploited across thousands of organizations whose first-party code was entirely safe. Without inventorying third-party dependencies, the SBOM cannot be used to assess exposure when new CVEs are published. Executive Order 14028 (Improving the Nation's Cybersecurity) and NIST SP 800-218 SSDF RV.1.3 require SBOMs to include third-party and open-source components. NTIA SBOM minimum elements require all components, not just first-party code."
+frameworks:
+  - id: "NTIA SBOM Minimum Elements"
+    text: "SBOM must include all software components, including third-party and open-source dependencies"
+  - id: "NIST SP 800-218 RV.1.3"
+    text: "SSDF — identify and document all software components including third-party packages in the SBOM"
+  - id: "Executive Order 14028"
+    text: "Software supply chain security — SBOMs required for software sold to federal agencies must include all dependencies"
+  - id: "PCI DSS Req 6.3.2"
+    text: "Inventory of bespoke and custom software — includes identifying third-party components used"
+micelium_product:
+  - product: Sense
+    role: Correlates SBOM dependency inventory with active CVE disclosures to surface exploitable gaps
+  - product: Sovera
+    role: Generates SBOM completeness evidence for NTIA, EO 14028, and PCI DSS compliance reporting
+industry_overlays:
+  technology:
+    weight_multiplier: 1.4
+  it_services:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.4
+  retail:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "A first-party-only SBOM misses the most dangerous vulnerabilities — the ones in your open-source dependencies. Expand SBOM coverage to include all direct and transitive third-party packages."
+remediation_technical: "Extend your SBOM generation tooling to capture direct and transitive dependencies across all package ecosystems (npm, pip, Maven, Go modules, Rust crates, etc.). Use tools such as Syft, CycloneDX, or SPDX-compatible generators that automatically resolve transitive dependency trees. Validate SBOM completeness by cross-referencing against your dependency lock files. Integrate SBOM generation into CI/CD to produce an updated SBOM on every build. Ensure the SBOM format is machine-readable (CycloneDX or SPDX JSON) for automated CVE correlation."

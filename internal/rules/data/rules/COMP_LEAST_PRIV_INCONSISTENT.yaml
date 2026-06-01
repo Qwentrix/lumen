@@ -1,0 +1,39 @@
+id: COMP_LEAST_PRIV_INCONSISTENT
+domain: compliance
+severity: medium
+default_weight: 0.50
+detect:
+  questionnaire:
+    - Q-COMP-011 == mixed
+title: "Least-privilege access control is inconsistently applied across systems"
+description_short: "Least-privilege access is applied in some systems but inconsistently across the environment, leaving over-provisioned access in parts of the estate."
+description_long: "Inconsistent least-privilege application means the organisation's access control posture is only as strong as its weakest system. Attackers and malicious insiders target the systems where least privilege is not enforced — often the legacy or less-managed parts of the environment. HIPAA 164.312(a)(1) requires limiting access to the minimum necessary. PCI DSS Req 7.1 requires limiting access to system components based on business need. ISO 27001 A.9.2.3 requires the allocation and use of privileged access rights to be restricted and controlled. Inconsistent application also complicates audit responses — the organisation cannot make a blanket assertion about its access control posture and must qualify every claim."
+frameworks:
+  - id: "HIPAA 164.312(a)(1)"
+    text: "Access control — unique user IDs and minimum necessary access"
+  - id: "PCI DSS Req 7.1"
+    text: "Limit access to system components and cardholder data to those with a business need"
+  - id: "ISO 27001 A.9.2.3"
+    text: "Management of privileged access rights — allocation restricted and controlled"
+  - id: "SOC 2 CC6.3"
+    text: "Role-based access and least privilege"
+micelium_product:
+  - product: Sense
+    role: Detects access anomalies including over-privileged accounts across inconsistently controlled systems
+  - product: Sovera
+    role: Provides a unified access governance view showing least-privilege gaps across the estate
+  - product: Proof
+    role: Tracks access control attestation and remediation progress by system
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.3
+  legal:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Identify the systems where least privilege is not enforced and bring them into alignment with your policy. Inconsistent enforcement is nearly as risky as no enforcement."
+remediation_technical: "Conduct an access rights audit across all systems. Group systems by current least-privilege maturity. For each system without RBAC: (1) Define role definitions with minimum required permissions. (2) Review current assignments and remove excess permissions. (3) Implement access provisioning via IdP group/role assignments. (4) Integrate with access review cadence. Prioritise systems containing sensitive data. Track remediation progress against a named owner and deadline for each system."

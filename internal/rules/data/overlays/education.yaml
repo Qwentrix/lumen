@@ -1,0 +1,21 @@
+id: education
+display_name: Education
+domain_weight_multipliers:
+  vulnerabilities: 1.1
+  compliance: 1.2
+  ai_governance: 1.5
+  security_posture: 1.0
+  privacy: 1.6
+primary_frameworks:
+  - FERPA
+  - COPPA
+  - NIST CSF
+  - EU AI Act (general purpose)
+  - ISO 27001
+lead_micelium_products:
+  - product: Share
+    emphasis: Student data sharing policy and consent tracking
+  - product: Sigil
+    emphasis: AI governance for EdTech and student-facing AI tools
+  - product: Proof
+    emphasis: FERPA audit trail and evidence management
