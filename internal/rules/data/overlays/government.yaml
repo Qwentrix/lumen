@@ -11,7 +11,7 @@ primary_frameworks:
   - FISMA
   - NIST SP 800-53
   - EU AI Act (high-risk public authority)
-  - ISO 27001
+  - ISO/IEC 27001:2022
 lead_micelium_products:
   - product: Proof
     emphasis: FedRAMP audit evidence and POA&M management

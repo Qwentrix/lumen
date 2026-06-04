@@ -2,15 +2,16 @@ id: manufacturing
 display_name: Manufacturing
 domain_weight_multipliers:
   vulnerabilities: 1.4
-  compliance: 1.1
+  compliance: 1.2
   ai_governance: 1.2
   security_posture: 1.5
   privacy: 1.0
 primary_frameworks:
   - IEC 62443
-  - NIST CSF
-  - ISO 27001
+  - NIST CSF 2.0
+  - ISO/IEC 27001:2022
   - CMMC (defense industrial base subset)
+  - NIS2 (EU manufacturing critical sectors)
 lead_micelium_products:
   - product: Sense
     emphasis: OT/IT boundary anomaly detection

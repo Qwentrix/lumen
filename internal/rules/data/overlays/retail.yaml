@@ -4,13 +4,13 @@ domain_weight_multipliers:
   vulnerabilities: 1.2
   compliance: 1.4
   ai_governance: 1.1
-  security_posture: 1.1
+  security_posture: 1.3
   privacy: 1.3
 primary_frameworks:
   - PCI DSS
   - GDPR
   - CCPA
-  - ISO 27001
+  - ISO/IEC 27001:2022
   - OWASP Top 10
 lead_micelium_products:
   - product: Sypher

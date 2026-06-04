@@ -9,7 +9,7 @@ domain_weight_multipliers:
 primary_frameworks:
   - GDPR
   - ABA Model Rules (cybersecurity comment)
-  - ISO 27001
+  - ISO/IEC 27001:2022
   - EU AI Act (legal risk assessment high-risk)
   - NIST AI RMF
 lead_micelium_products:

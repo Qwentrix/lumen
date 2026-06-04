@@ -1,8 +1,8 @@
 {
   "source_repo": "github.com/Qwentrix/micelium",
   "source_path": "content/lumen",
-  "source_sha": "06307f0a4c011741f52f44fd6dbdff4dde1b038e",
-  "synced_at": "2026-06-04T06:14:05Z",
+  "source_sha": "3c276dae3b710af02a42f281c87be722f8e696b0",
+  "synced_at": "2026-06-04T11:06:00Z",
   "rule_count": 307,
   "overlay_count": 10,
   "note": "All domain rules (VULN/COMP/AIGOV/SECPOS/PRIV) + 10 overlays. Re-sync with 'make sync-content' before tagging a release.",
