@@ -1,0 +1,30 @@
+id: AIGOV_SHADOW_AI_LOW
+domain: ai_governance
+severity: medium
+default_weight: 0.45
+detect:
+  questionnaire:
+    - Q-AIGOV-003 == some_known
+  scanner:
+    - ai_governance.shadow_ai_apps_count > 0
+    - ai_governance.browser_extensions_ai_count > 1
+title: "Known shadow AI usage not addressed"
+description_short: "Some unapproved AI tool usage is known but has not been addressed."
+description_long: "Known policy violations that are not addressed signal to the workforce that governance is unenforced, accelerating further shadow AI adoption. Each unaddressed instance represents an uncontrolled data processing activity."
+frameworks:
+  - id: "GDPR Art. 5(1)(f)"
+    text: "Integrity and confidentiality principle"
+  - id: "NIST AI RMF GOVERN-6.1"
+    text: "Policies and procedures are in place for AI incident escalation"
+micelium_product:
+  - product: Sigil
+    role: Shadow AI monitoring and enforcement workflow
+industry_overlays:
+  legal:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Address known shadow AI usage through a combination of employee communication, technical controls, and policy enforcement."
+remediation_technical: "Enumerate known shadow AI tools and evaluate each for risk tier. Either approve with controls or block. Communicate outcome to affected staff. Deploy monitoring to detect recurrence."

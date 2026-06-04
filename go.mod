@@ -5,6 +5,7 @@ go 1.22
 require (
 	github.com/Qwentrix/lumen-scoring v0.0.0-00010101000000-000000000000
 	github.com/spf13/cobra v1.8.1
+	golang.org/x/sys v0.27.0
 )
 
 require (

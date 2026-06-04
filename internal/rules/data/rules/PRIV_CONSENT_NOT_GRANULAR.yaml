@@ -1,0 +1,40 @@
+id: PRIV_CONSENT_NOT_GRANULAR
+domain: privacy
+severity: medium
+default_weight: 0.55
+detect:
+  questionnaire:
+    - Q-PRIV-013 == all_or_nothing
+    - Q-PRIV-DD-012 == mixed
+title: "Consent withdrawal is all-or-nothing — per-purpose granularity is absent"
+description_short: "Users can only withdraw all consent at once rather than per purpose or processing category, making it impossible to maintain a lawful basis for legitimate processing activities when users object to a specific use."
+description_long: "GDPR Art. 7 and Recital 32 require that consent be specific and granular — bundled or omnibus consent that does not differentiate by purpose is not valid GDPR consent. Presenting consent as all-or-nothing means users who object to one use case (e.g., marketing profiling) cannot selectively withdraw that consent while maintaining consent to necessary processing. This effectively coerces users into accepting all purposes or accepting none, which regulators consider a violation of the specificity requirement. DPAs in France, Germany, and the Netherlands have issued fines specifically for bundled consent designs. CCPA similarly requires allowing consumers to opt out of sale without conditioning other services on that choice."
+frameworks:
+  - id: "GDPR Art. 7"
+    text: "Conditions for consent — must be specific, informed, and freely given per purpose"
+  - id: "GDPR Recital 32"
+    text: "Consent should cover all processing activities carried out for the same purpose — separate purposes require separate consents"
+  - id: "GDPR Art. 6(1)(a)"
+    text: "Lawfulness — consent as a lawful basis requires granularity matching the processing purpose"
+  - id: "CCPA §1798.120"
+    text: "Right to opt out of sale — must be separable from other service conditions"
+  - id: "ISO 27018 §5.3"
+    text: "Use of personal data limited to consented purposes"
+micelium_product:
+  - product: Sypher
+    role: Enables per-purpose consent tagging on data objects so DRM enforcement matches the granularity of consent given
+  - product: Proof
+    role: Audits and evidences per-purpose consent records for regulatory review
+industry_overlays:
+  technology:
+    weight_multiplier: 1.4
+  retail:
+    weight_multiplier: 1.3
+  financial:
+    weight_multiplier: 1.2
+  healthcare:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Redesign your consent UI so users can accept or withdraw consent separately for each processing purpose — marketing, analytics, profiling, data sharing, and so on. All-or-nothing consent is not valid under GDPR for distinct processing activities."
+remediation_technical: "1. Decompose processing purposes and map them to separate consent toggles in the UI. 2. Update the consent data model to store per-purpose flags with timestamps and notice versions. 3. Gate each downstream processing system on the relevant per-purpose consent flag. 4. Implement a preference center accessible to users at any time (not just at registration). 5. Ensure marketing and analytics systems receive per-purpose consent signals and halt processing for purposes where consent is absent. 6. Audit existing consent records and re-consent users where bundled consent was previously collected."

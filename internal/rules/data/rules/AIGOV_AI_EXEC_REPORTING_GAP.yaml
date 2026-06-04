@@ -1,0 +1,42 @@
+id: AIGOV_AI_EXEC_REPORTING_GAP
+domain: ai_governance
+severity: medium
+default_weight: 0.45
+detect:
+  questionnaire:
+    - Q-AIGOV-036 == not_reported
+    - Q-AIGOV-036 == ad_hoc_when_flagged
+    - Q-AIGOV-DD-037 == not_in_risk_register
+    - Q-AIGOV-DD-043 == not_included
+title: "AI risk not reported to executive leadership — board and C-suite lack visibility"
+description_short: "AI risk is not formally reported to executive leadership or the board on a regular cadence, leaving strategic AI risk decisions without appropriate oversight."
+description_long: "AI risk has moved from a technical footnote to a board-level concern: EU AI Act violations carry penalties up to €35 million or 7% of global turnover; AI-related data breaches are the fastest-growing category of regulatory inquiry; and public AI incidents generate reputational damage at speed. Executive and board oversight of AI risk requires a regular reporting cadence — not ad-hoc escalation when something goes wrong. Ad-hoc reporting means that structural risk accumulation (shadow AI growth, unreviewed vendor terms, expanding agent autonomy) is invisible to leadership until an incident occurs. NIST AI RMF GOVERN-1.2 requires clear accountability structures with executive visibility. ISO 42001 requires management review of the AI management system at planned intervals. Without executive reporting, resources are not allocated, risk appetite is not set, and strategic AI decisions default to tactical engineering choices."
+frameworks:
+  - id: "NIST AI RMF GOVERN-1.2"
+    text: "Accountability structures for AI risk management include executive-level visibility and reporting"
+  - id: "ISO 42001 9.3"
+    text: "Management review — executive leadership shall review the AI management system and its performance at planned intervals"
+  - id: "EU AI Act Art. 9"
+    text: "Risk management system — requires organisational accountability structures that executive oversight enables"
+  - id: "NIST AI RMF GOVERN-2.1"
+    text: "Policies and processes engage the perspective of relevant individuals and communities — executive engagement is required for resource allocation"
+micelium_product:
+  - product: Sigil
+    role: Generates executive AI risk dashboards and quarterly reporting packages with trend data on shadow AI, vendor risks, agent incidents, and compliance posture
+  - product: Sovera
+    role: Produces AI governance compliance status reports formatted for board and audit committee review, with regulatory deadline tracking
+industry_overlays:
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.3
+  technology:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Put AI risk on the agenda for your executive team or board at least every quarter. Cover shadow AI trends, any incidents, vendor risk status, and regulatory deadline progress. Leadership needs to see this regularly — not only when there is a crisis."
+remediation_technical: "Establish a quarterly AI risk reporting cadence to executive leadership and/or the board covering: (1) shadow AI metrics — growth in unapproved tool usage, policy violations; (2) incident summary — AI incidents in period, remediation status; (3) vendor risk status — vendor review completions, outstanding DPAs; (4) regulatory deadline tracker — EU AI Act, sector-specific AI regulations, upcoming enforcement milestones; (5) resource utilisation — AI governance programme budget vs plan. Add AI risk as a named category in the enterprise risk register with defined risk owners, tolerances, and review cadence. Document each executive report as evidence of NIST AI RMF GOVERN-1.2 and ISO 42001 management review requirements."

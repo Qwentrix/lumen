@@ -1,0 +1,45 @@
+id: AIGOV_AUP_GENAI_GAP
+domain: ai_governance
+severity: medium
+default_weight: 0.50
+detect:
+  questionnaire:
+    - Q-AIGOV-009 == general_only
+    - Q-AIGOV-009 == genai_only
+    - Q-AIGOV-042 == not_addressed
+  scanner:
+    - ai_governance.shadow_ai_apps_count > 0
+    - ai_governance.browser_extensions_ai_count > 1
+    - ai_governance.mcp_servers_running > 0
+title: "AI acceptable use policy does not address generative AI or autonomous agents"
+description_short: "The organisation's AI policy exists but omits explicit coverage of generative AI tools or autonomous AI agents."
+description_long: "A general AI policy written before the widespread adoption of generative AI tools (LLMs, image generators, code assistants) and autonomous agents does not address the specific risks these technologies introduce: hallucination and reliance on incorrect outputs, prompt injection, unintended data submission in conversational interfaces, and the dramatically expanded action surface of autonomous agents. Employees encountering these tools without specific guidance default to personal judgment, which varies widely. EU AI Act Art. 4 requires deployers to ensure adequate AI literacy — which includes understanding the specific risks of general-purpose AI systems. OWASP LLM Top 10 LLM01 (Prompt Injection) and LLM06 (Sensitive Information Disclosure) represent risks that only materialise through the use of generative interfaces not covered by pre-LLM policies."
+frameworks:
+  - id: "EU AI Act Art. 4"
+    text: "AI literacy — deployers must ensure employees have sufficient knowledge of GenAI and agent capabilities and risks"
+  - id: "NIST AI RMF GOVERN-5.1"
+    text: "Organisational teams are committed to governance policies that address the specific risks of AI technologies in use"
+  - id: "OWASP LLM Top 10 LLM01"
+    text: "Prompt Injection — specific to generative AI interfaces; requires explicit policy coverage"
+  - id: "OWASP LLM Top 10 LLM06"
+    text: "Sensitive Information Disclosure — data submitted in generative AI prompts requires explicit policy controls"
+micelium_product:
+  - product: Sigil
+    role: Enforces agent-specific use boundaries defined in the updated AUP, with technical controls that reflect generative AI and agent risk categories
+  - product: Sense
+    role: Detects behavioural patterns consistent with unsafe generative AI use, including bulk data submission to LLM endpoints
+industry_overlays:
+  technology:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.3
+  legal:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Update your AI acceptable use policy to explicitly cover generative AI tools (ChatGPT, Copilot, Gemini, Claude, etc.) and autonomous agents — including what data must never be submitted and what to do if an AI output seems wrong."
+remediation_technical: "Revise the AI AUP to include a dedicated section on generative AI covering: approved tools list, prohibited data classifications in prompts, hallucination response procedure (report and do not act without verification), and a separate section on autonomous agents covering permitted action scopes and escalation requirements. Align to NIST AI RMF GOVERN-5.1 and EU AI Act Art. 4 AI literacy obligations."

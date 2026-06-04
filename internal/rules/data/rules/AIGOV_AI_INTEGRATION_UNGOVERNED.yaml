@@ -1,0 +1,47 @@
+id: AIGOV_AI_INTEGRATION_UNGOVERNED
+domain: ai_governance
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-AIGOV-023 == not_addressed
+    - Q-AIGOV-023 == covered_by_general_policy
+    - Q-AIGOV-DD-021 == full_access_granted
+    - Q-AIGOV-DD-021 == access_scoped_informally
+  scanner:
+    - ai_governance.llm_egress_processes_count > 0
+    - ai_governance.browser_extensions_ai_count > 0
+title: "Integrated AI tools (Copilot, Gemini Workspace, etc.) lack dedicated governance"
+description_short: "AI tools with direct integrations to email, cloud storage, or CRM are governed only under the general AI policy without dedicated access scoping or data minimisation review."
+description_long: "AI tools that integrate directly with cloud storage, email, CRM, or productivity platforms operate with fundamentally different risk profiles from standalone AI tools. A user pasting data into a standalone AI tool makes a discrete decision each time; an integrated AI tool may access weeks of emails, entire SharePoint sites, or full CRM histories autonomously. Applying the same general AI policy to both conflates distinct risk levels. EU AI Act Art. 26 requires deployers to implement appropriate measures proportionate to the risk — integrated AI tools that access broad data scopes require data-minimisation reviews, scoped permissions, and dedicated audit oversight. GDPR Art. 25 (data protection by design) requires limiting data access to what is necessary for the stated purpose. NIST AI RMF MAP-5.1 requires identifying all AI-related risks including those from integrated systems."
+frameworks:
+  - id: "EU AI Act Art. 26"
+    text: "Deployers shall implement appropriate technical and organisational measures — integrated AI with broad data access requires dedicated controls"
+  - id: "GDPR Art. 25"
+    text: "Data protection by design — integrated AI must be configured to access only the minimum necessary data"
+  - id: "NIST AI RMF MAP-5.1"
+    text: "AI system risks — integrated AI tools create unique risk pathways that must be explicitly mapped"
+  - id: "OWASP LLM Top 10 LLM08"
+    text: "Excessive Agency — integrated AI systems with broad data access and action scope amplify the consequences of model errors"
+micelium_product:
+  - product: Sigil
+    role: Governs integrated AI tool authorisation scopes and enforces data minimisation at the integration boundary, ensuring AI agents receive only the data necessary for their defined purpose
+  - product: Sypher
+    role: Applies DRM classification controls to data stores accessed by integrated AI, limiting what integrated tools can read or export
+  - product: Sense
+    role: Monitors integrated AI data access patterns and alerts on anomalous scope expansion or bulk data reads consistent with over-permission
+industry_overlays:
+  technology:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.3
+  legal:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Treat AI tools that connect to your email, files, or CRM separately from standalone AI tools. Review what data access they have, reduce it to the minimum needed, and audit their activity on a regular schedule."
+remediation_technical: "For each integrated AI tool (Copilot for M365, Gemini Workspace, Salesforce Einstein, etc.): (1) document all data sources the integration accesses; (2) conduct a data minimisation review to scope permissions to the minimum required for the stated purpose; (3) set up dedicated audit log collection for integration-generated data access events; (4) define a review cadence (quarterly) for continued access justification. Add integrated AI governance as a separate section in the AI risk register. Align to GDPR Art. 25 data protection by design and NIST AI RMF MAP-5.1."

@@ -1,0 +1,44 @@
+id: PRIV_LEGAL_HOLD_UNMANAGED
+domain: privacy
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-PRIV-DD-021 == no_legal_hold_integration
+    - Q-PRIV-DD-024 == not_tracked
+title: "Legal holds are not integrated with data deletion processes — inadvertent deletion risk"
+description_short: "Data subject deletion requests and automated retention-expiry jobs run without checking for active legal holds, creating risk of inadvertent deletion of data subject to litigation preservation or regulatory investigation obligations."
+description_long: "Legal hold obligations (litigation hold, regulatory investigation preservation) and privacy deletion obligations (DSAR erasure, retention expiry) directly conflict unless explicitly managed. Without integration, an automated retention job may delete data that is subject to a litigation hold, constituting spoliation of evidence — a serious legal risk potentially resulting in adverse inference instructions, sanctions, or contempt findings. Conversely, legal hold data may block a DSAR erasure response, which must be communicated to the data subject with a documented reason and timeline. GDPR Art. 17(3)(e) explicitly carves out legal hold exceptions from the right to erasure, but only where the hold is documented and the restriction is proportionate."
+frameworks:
+  - id: "GDPR Art. 17(3)(e)"
+    text: "Right to erasure exception — deletion may be restricted for legal claims establishment, exercise, or defence"
+  - id: "GDPR Art. 18"
+    text: "Right to restriction of processing — legal hold is a lawful basis for restricting rather than deleting"
+  - id: "HIPAA 45 CFR §164.530(j)"
+    text: "Retention of documentation — required records cannot be deleted during applicable retention period"
+  - id: "CCPA §1798.105(d)"
+    text: "Deletion exceptions include legal obligations — must be documented and communicated"
+  - id: "ISO 27018 §5.1"
+    text: "Data lifecycle management including hold and deletion conflict resolution"
+micelium_product:
+  - product: Ark
+    role: Manages legal hold flags that exempt records from automated deletion jobs until holds are lifted
+  - product: Proof
+    role: Documents legal hold decisions, scope, and rationale as evidence artefacts for litigation and regulatory review
+  - product: Sypher
+    role: Enforces access restrictions on legal-hold data so it is preserved but access-controlled during investigation
+industry_overlays:
+  legal:
+    weight_multiplier: 1.8
+  financial:
+    weight_multiplier: 1.5
+  healthcare:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  technology:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Ensure your deletion processes — both automated retention jobs and DSAR erasure workflows — check for active legal holds before deleting any data. When a deletion request conflicts with a legal hold, inform the data subject of the reason and the expected timeline."
+remediation_technical: "1. Implement a legal hold flag at the record or data-subject level in all systems where deletion automation runs. 2. Configure automated deletion jobs to skip records with active legal holds. 3. Build a legal hold register: hold subject, data scope, hold-start date, issuing authority, expected end date, and responsible owner. 4. Create a conflict-resolution process for DSAR deletion requests where a hold applies: legal review, data subject notification with Art. 17(3) reason, and hold expiry tracking. 5. Extend legal hold requirements to third-party processors via DPA clauses — if a processor holds data subject to litigation, they must honor the hold. 6. Conduct quarterly legal hold audits to ensure expired holds are lifted and data is released for deletion."

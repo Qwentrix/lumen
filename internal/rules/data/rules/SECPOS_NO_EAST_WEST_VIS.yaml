@@ -1,0 +1,43 @@
+id: SECPOS_NO_EAST_WEST_VIS
+domain: security_posture
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-SECPOS-019 == no_east_west_visibility
+    - Q-SECPOS-DD-014 == no_cloud_flow_visibility
+    - Q-SECPOS-DD-015 == no_dns_security
+title: "No east-west (lateral) traffic visibility"
+description_short: "Internal and lateral network traffic is not monitored or inspected — lateral movement is undetectable."
+description_long: "Most security monitoring focuses on north-south traffic at the perimeter. Attackers who gain initial access to any internal system are effectively invisible if east-west traffic is not monitored. Lateral movement — the phase where attackers move from the initial foothold to high-value targets — happens entirely within the internal network. Without east-west visibility from an NDR, SIEM with flow log ingestion, or internal IDS, the mean time to detect remains high (IBM CODB 2024 reports the global average at 204 days). CISA Zero Trust guidance requires east-west traffic monitoring as part of the network pillar."
+frameworks:
+  - id: "NIST CSF DE.CM-01"
+    text: "Networks and network services are monitored to find potentially adverse events"
+  - id: "CIS Control 13.2"
+    text: "Deploy a host-based intrusion detection solution on sensitive assets"
+  - id: "ISO 27001:2022 A.8.16"
+    text: "Monitoring activities — detection of anomalous behaviour"
+  - id: "SOC 2 CC7.2"
+    text: "The entity monitors system components for anomalies"
+  - id: "FedRAMP SI-4(4)"
+    text: "Inbound and outbound communications traffic monitoring"
+  - id: "CISA Zero Trust Pillar: Networks"
+    text: "All network traffic monitored and inspected, including internal east-west flows"
+micelium_product:
+  - product: Sense
+    role: Network and entity behaviour analytics providing east-west traffic anomaly detection
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  energy:
+    weight_multiplier: 1.5
+  manufacturing:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Deploy network detection and response (NDR) or configure your SIEM to ingest internal traffic flow logs. Enable DNS query logging and alert on connections to known-malicious domains. This lets you see attackers moving laterally before they reach critical systems."
+remediation_technical: "Deploy a network detection and response (NDR) solution (Vectra AI, Darktrace, ExtraHop, Corelight) or configure flow log collection (NetFlow, VPC Flow Logs, NSG Flow Logs) ingested into your SIEM with east-west traffic rules. Enable DNS security filtering (Cisco Umbrella, Infoblox, or Windows DNS debug logging) and ingest into SIEM. Create lateral movement detection rules: unusual SMB lateral connections, kerberoasting indicators, RDP from unexpected sources. Prioritise internal monitoring for cloud environments where east-west traffic traverses VPC security groups."

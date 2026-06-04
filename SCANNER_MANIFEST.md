@@ -1,6 +1,6 @@
 # Lumen Scanner Access Manifest
 
-**Version:** v0.1.x (LU-4)
+**Version:** v0.1.x (LU-5)
 **License:** Apache 2.0
 **Source:** github.com/Qwentrix/lumen
 
@@ -25,7 +25,9 @@ The declarations here are the single source of truth that drives:
 
 **Network exceptions (require explicit user action):**
 - `lumen scan --hybrid` — uploads a signed findings summary to `lumen-api`. Requires prior consent. Shows a preview before any upload.
-- `lumen update` — fetches a signed rule + NVD bundle update from `lumen.micelium.com`. Requires prior consent. (LU-5 feature — not available in v0.1.x.)
+- `lumen update` — fetches a signed rule + NVD bundle update (content delta) from `lumen.micelium.com`. Requires prior consent. Available from LU-5 / v0.1.x.
+
+**Proxy transparency:** both `lumen scan --hybrid` and `lumen update` use the Go default HTTP transport, which honours the standard `HTTPS_PROXY` / `HTTP_PROXY` / `NO_PROXY` environment variables if set. The scanner itself never reads or sets these variables; they are resolved by the OS/runtime at HTTP client creation time. In fully air-gapped environments where proxy env vars are absent, no proxy is used.
 
 ---
 
@@ -47,11 +49,18 @@ The declarations here are the single source of truth that drives:
 
 **Zero network.** The NVD index is embedded in the binary (`internal/nvd/data/cve-index.json.gz`). No network calls are made during matching.
 
+**CVE count methodology:** CVE counts (critical/high) reflect **version-bounded matches** — CVEs with all-empty version bounds are suppressed when a bounded sibling for the same product also exists in the index. This prevents a known NVD artifact (~46% of raw records have at least one unbounded CPE entry) from over-counting matches once the index is regenerated via `make gen-nvd`. The committed index uses UPPERCASE severity strings (`"CRITICAL"`/`"HIGH"` from the NVD API); the probe normalises to lowercase at read time so no regen is needed for the severity fix.
+
 ### macOS (`//go:build darwin`)
 
 | OS API / Command | Arguments | Purpose | Manifest recorded |
 |---|---|---|---|
-| `/usr/sbin/system_profiler` | `SPApplicationsDataType -json` | Enumerate installed applications | Yes (`exec_calls`) |
+| `/usr/sbin/system_profiler` | `SPApplicationsDataType -json` | Enumerate installed .app bundles | Yes (`exec_calls`) |
+| `/usr/bin/sw_vers` | `-productVersion` | Retrieve macOS version → `apple:macos` CPE for OS-level CVEs | Yes (`exec_calls`) |
+| `/usr/sbin/pkgutil` | `--pkgs` | List installed package receipts (CLI tools, SDKs, frameworks) | Yes (`exec_calls`) |
+| `/usr/sbin/pkgutil` | `--pkg-info <receipt-id>` | Get version of a matched security-relevant receipt | Yes (`exec_calls`) |
+| `/opt/homebrew/bin/brew` | `list --versions` | Enumerate Homebrew packages (Apple Silicon — best-effort, tolerate absence) | Yes (`exec_calls`) |
+| `/usr/local/bin/brew` | `list --versions` | Enumerate Homebrew packages (Intel — best-effort, tolerate absence) | Yes (`exec_calls`) |
 | `/usr/bin/defaults read` | `/Library/Preferences/com.apple.SoftwareUpdate LastSuccessfulDate` | Days since last OS/software update | Yes (`exec_calls`) |
 | `/usr/bin/defaults read` | `/Library/Preferences/com.apple.SoftwareUpdate LastFullSuccessfulDate` | Days since last full update | Yes (`exec_calls`) |
 
@@ -59,7 +68,7 @@ The declarations here are the single source of truth that drives:
 |---|---|---|
 | `/Library/Preferences/com.apple.SoftwareUpdate.plist` | Software update timestamp (read via `defaults`, indirect) | Yes (`file_reads`) |
 
-**Data collected:** installed application names + version strings (no file content, no user data), days since last OS update, count of CVE matches (critical/high).
+**Data collected:** installed application names + version strings (no file content, no user data), OS version, CLI tool versions (curl/git/openssl/python/node), days since last OS update, count of CVE matches (critical/high).
 
 ### Linux (`//go:build linux`)
 
@@ -77,6 +86,19 @@ The declarations here are the single source of truth that drives:
 **Fallback:** if neither `dpkg-query` nor `rpm` is present, the probe returns an empty inventory with a metadata note (`inventory_unavailable`). The scan continues.
 
 **Data collected:** package names + version strings, days since last package update, CVE match counts.
+
+### Windows (`//go:build windows`)
+
+| OS API / Command | Arguments | Purpose | Manifest recorded |
+|---|---|---|---|
+| `powershell.exe Get-HotFix` | `-NoProfile -NonInteractive -Command (Get-HotFix \| Sort-Object InstalledOn -Descending \| Select-Object -First 1).InstalledOn` | Patch recency fallback when WUA registry key is absent | Yes (`exec_calls`) |
+
+| File Path | Purpose | Manifest recorded |
+|---|---|---|
+| `HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall (Windows registry — DisplayName scan)` | Enumerate installed programs (64-bit view) for CVE matching | Yes (`file_reads`) |
+| `HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall (Windows registry — 32-bit view)` | Enumerate 32-bit installed programs for CVE matching | Yes (`file_reads`) |
+| `HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall (Windows registry — DisplayName scan)` | Enumerate user-scope installed programs for CVE matching | Yes (`file_reads`) |
+| `HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\Results\Install (Windows registry — LastSuccessTime)` | Days since last Windows Update (patch recency) | Yes (`file_reads`) |
 
 ### NVD Index (embedded)
 
@@ -133,47 +155,149 @@ The declarations here are the single source of truth that drives:
 
 **Fallback:** if a tool is absent (e.g. `gsettings` on a non-GNOME system), the field returns `false`/`0` with a metadata note. The scan continues.
 
-### Windows (LU-5 — NOT invoked in v0.1.x)
+### Windows (`//go:build windows`)
 
-The following will be added in LU-5:
-
-- `Get-BitLockerVolume` — BitLocker encryption state
-- `Get-NetFirewallProfile` — Windows Defender Firewall state
-
----
-
-## Domain: `ai_governance` (LU-5 stub)
-
-v0.1.x: this probe runs but returns zero-valued `AIGovernanceFindings`. Real probe logic ships in LU-5.
-
-**Planned access (LU-5):**
-- `ps` / `lsof` — detect running LLM/AI assistant processes
-- `~/.config/` / application support directories — detect AI app installations
-
-**Network:** ZERO (same constraint applies in LU-5).
+| File Path | Purpose | Manifest recorded |
+|---|---|---|
+| `HKLM\SYSTEM\CurrentControlSet\Control\BitLocker\Volume (Windows registry — BitLocker ProtectionStatus)` | BitLocker volume encryption state (ProtectionStatus DWORD per volume GUID) | Yes (`file_reads`) |
+| `HKLM\SOFTWARE\Policies\Microsoft\FVE (Windows registry — BitLocker FVE policy fallback)` | BitLocker Group Policy key (fallback when BitLocker\Volume key is absent) | Yes (`file_reads`) |
+| `HKLM\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy (Windows registry — firewall profiles)` | Windows Defender Firewall EnableFirewall DWORD for Domain/Standard/Public profiles | Yes (`file_reads`) |
+| `HKCU\Control Panel\Desktop (Windows registry — screen lock)` | ScreenSaveActive, ScreenSaverIsSecure, ScreenSaveTimeOut values | Yes (`file_reads`) |
 
 ---
 
-## Domain: `security_posture` (LU-5 stub)
+## Domain: `ai_governance`
 
-v0.1.x: this probe runs but returns zero-valued `SecurityPostureFindings`. Real probe logic ships in LU-5.
+**Purpose:** Detect shadow AI tooling — installed LLM desktop apps, browser AI extensions, running MCP server processes, and passive LLM egress socket detection.
 
-**Planned access (LU-5):**
-- `~/.ssh/` — enumerate SSH private key files (no content read, only metadata)
-- `lsof -i` / `ss -tlnp` — enumerate listening ports
+**Zero network.** All checks use the local process list, socket table, and file system only.
 
-**Network:** ZERO.
+### macOS (`//go:build darwin`)
+
+| OS API / Command | Arguments | Purpose | Manifest recorded |
+|---|---|---|---|
+| `/bin/ps` | `-axo comm` | Enumerate running process names | Yes (`exec_calls`) |
+| `/bin/ps` | `-axo args` | Enumerate running process command lines | Yes (`exec_calls`) |
+| `/usr/sbin/lsof` | `-nP -iTCP -sTCP:ESTABLISHED` | Detect established TCP connections to LLM API endpoints (passive — no dial) | Yes (`exec_calls`) |
+
+| File Path | Purpose | Manifest recorded |
+|---|---|---|
+| `/Applications/ (directory listing only)` | Detect installed AI app bundles | Yes (`file_reads`) |
+| `~/Library/Application Support/Google/Chrome/Default/Extensions/ (macOS)` | Chrome AI extensions | Yes (`file_reads`) |
+| `~/Library/Application Support/Microsoft Edge/Default/Extensions/ (macOS)` | Edge AI extensions | Yes (`file_reads`) |
+| `~/Library/Application Support/BraveSoftware/Brave-Browser/Default/Extensions/ (macOS)` | Brave AI extensions | Yes (`file_reads`) |
+| `~/Library/Application Support/Firefox/Profiles/*/extensions.json (macOS)` | Firefox AI extensions | Yes (`file_reads`) |
+
+### Linux (`//go:build linux`)
+
+| OS API / Command | Arguments | Purpose | Manifest recorded |
+|---|---|---|---|
+| `ss` | `-tnp state established` | Detect established connections to LLM APIs (passive — no dial) | Yes (`exec_calls`) |
+| `netstat` | `-tnp (fallback if ss absent)` | Fallback socket enumeration | Yes (`exec_calls`) |
+
+| File Path | Purpose | Manifest recorded |
+|---|---|---|
+| `/proc/[0-9]*/comm` | Process name enumeration (file read, no exec) | Yes (`file_reads`) |
+| `/proc/[0-9]*/cmdline` | Process command line enumeration | Yes (`file_reads`) |
+| `~/.config/google-chrome/Default/Extensions/ (Linux)` | Chrome AI extensions (Linux) | Yes (`file_reads`) |
+| `~/.config/chromium/Default/Extensions/ (Linux)` | Chromium AI extensions | Yes (`file_reads`) |
+| `~/.config/microsoft-edge/Default/Extensions/ (Linux)` | Edge AI extensions (Linux) | Yes (`file_reads`) |
+| `~/.config/BraveSoftware/Brave-Browser/Default/Extensions/ (Linux)` | Brave AI extensions (Linux) | Yes (`file_reads`) |
+| `~/.mozilla/firefox/*/extensions.json (Linux)` | Firefox AI extensions (Linux) | Yes (`file_reads`) |
+| `~/.local/bin/ (Linux — local app installs)` | Detect locally installed AI CLI tools | Yes (`file_reads`) |
+
+### Windows (`//go:build windows`)
+
+| OS API / Command | Arguments | Purpose | Manifest recorded |
+|---|---|---|---|
+| `CreateToolhelp32Snapshot TH32CS_SNAPPROCESS (Windows kernel32.dll)` | — | Enumerate running processes for shadow AI app and MCP server detection | Yes (`exec_calls`) |
+| `Process32First / Process32Next (Windows kernel32.dll — exe name enumeration)` | — | Walk process snapshot entries to extract exe names | Yes (`exec_calls`) |
+| `iphlpapi.dll GetExtendedTcpTable (Windows — TCP_TABLE_OWNER_PID_ALL, passive ZERO-network)` | — | Read kernel TCP connection table (ESTABLISHED state) for LLM egress detection; no DNS, no dial | Yes (`file_reads`) |
+
+| File Path | Purpose | Manifest recorded |
+|---|---|---|
+| `HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall (Windows registry — DisplayName scan)` | Detect installed AI desktop apps by display name (shadow AI detection) | Yes (`file_reads`) |
+| `HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall (Windows registry — DisplayName scan)` | Detect user-scope installed AI apps | Yes (`file_reads`) |
+| `%LOCALAPPDATA%\Google\Chrome\User Data\Default\Extensions\ (Windows — Chrome AI extensions)` | Chrome AI extensions (directory walk + manifest.json name read) | Yes (`file_reads`) |
+| `%LOCALAPPDATA%\Microsoft\Edge\User Data\Default\Extensions\ (Windows — Edge AI extensions)` | Edge AI extensions (directory walk + manifest.json name read) | Yes (`file_reads`) |
+| `%LOCALAPPDATA%\BraveSoftware\Brave-Browser\User Data\Default\Extensions\ (Windows — Brave AI extensions)` | Brave AI extensions (directory walk + manifest.json name read) | Yes (`file_reads`) |
+| `%APPDATA%\Mozilla\Firefox\Profiles\*\extensions.json (Windows — Firefox AI extensions)` | Firefox AI extensions (JSON parse) | Yes (`file_reads`) |
+
+**Note — LLM egress on Windows:** `GetExtendedTcpTable` returns raw IPv4 addresses; no reverse-DNS lookup is performed (prohibited by the ZERO-network invariant). IP-range matching against LLM API CIDRs is a future enhancement; the current implementation returns 0 conservatively.
+
+**Data collected:** count of shadow AI apps, browser AI extensions, LLM egress processes, and running MCP servers. No process arguments, file contents, or user data are recorded.
 
 ---
 
-## Domain: `privacy` (LU-5 stub)
+## Domain: `security_posture`
 
-v0.1.x: this probe runs but returns zero-valued `PrivacyFindings`. Real probe logic ships in LU-5.
+**Purpose:** Probe overall security hygiene: SSH key strength, password manager presence, and open listening ports.
 
-**Planned access (LU-5):**
-- `~/Documents/` — regex scan for PII patterns (no content retained)
+**Zero network.** All checks use the local filesystem and process/socket tables only.
 
-**Network:** ZERO.
+### macOS (`//go:build darwin`)
+
+| OS API / Command | Arguments | Purpose | Manifest recorded |
+|---|---|---|---|
+| `/usr/bin/ssh-keygen` | `-l -f <key>` | Determine SSH key type and bit-length (no key content read) | Yes (`exec_calls`) |
+| `/bin/ps` | `-axo comm` | Detect running password manager agent processes | Yes (`exec_calls`) |
+| `/usr/sbin/lsof` | `-nP -iTCP -iUDP -sTCP:LISTEN` | Enumerate non-loopback listening TCP/UDP ports | Yes (`exec_calls`) |
+
+| File Path | Purpose | Manifest recorded |
+|---|---|---|
+| `~/.ssh/ (directory listing + first-64-bytes header sniff per file; no private key content read)` | Enumerate SSH private key files by header type | Yes (`file_reads`) |
+
+### Linux (`//go:build linux`)
+
+| OS API / Command | Arguments | Purpose | Manifest recorded |
+|---|---|---|---|
+| `/usr/bin/ssh-keygen` | `-l -f <key>` | Determine SSH key type and bit-length | Yes (`exec_calls`) |
+| `ss` | `-tlnpu (preferred) / netstat -tlnpu (fallback)` | Enumerate non-loopback listening ports | Yes (`exec_calls`) |
+
+| File Path | Purpose | Manifest recorded |
+|---|---|---|
+| `~/.ssh/ (directory listing + first-64-bytes header sniff per file; no private key content read)` | Enumerate SSH private key files | Yes (`file_reads`) |
+| `/proc/[0-9]*/comm` | Detect running password manager processes (file read, no exec) | Yes (`file_reads`) |
+
+### Windows (`//go:build windows`)
+
+| OS API / Command | Arguments | Purpose | Manifest recorded |
+|---|---|---|---|
+| `C:\Windows\System32\OpenSSH\ssh-keygen.exe -l -f <key> (Windows built-in OpenSSH)` | `-l -f <key>` | Determine SSH key type and bit-length (no key content read); falls back to Git-bundled ssh-keygen or PATH | Yes (`exec_calls`) |
+| `CreateToolhelp32Snapshot TH32CS_SNAPPROCESS (Windows kernel32.dll — password manager process detection)` | — | Enumerate running processes to detect password manager executables | Yes (`exec_calls`) |
+| `Process32First / Process32Next (Windows kernel32.dll — exe name enumeration)` | — | Walk process snapshot entries to extract exe names | Yes (`exec_calls`) |
+| `iphlpapi.dll GetExtendedTcpTable (Windows — TCP_TABLE_OWNER_PID_ALL, listening ports)` | — | Read kernel TCP table; listening-state rows counted (loopback excluded) | Yes (`file_reads`) |
+| `iphlpapi.dll GetExtendedUdpTable (Windows — UDP_TABLE_OWNER_PID, listening ports)` | — | Read kernel UDP table; all non-loopback sockets counted | Yes (`file_reads`) |
+
+| File Path | Purpose | Manifest recorded |
+|---|---|---|
+| `%USERPROFILE%\.ssh\ (Windows — directory listing + header sniff; no private key content read)` | Enumerate SSH private key files by PEM header; no key content is read or stored | Yes (`file_reads`) |
+| `HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall (Windows registry — password manager DisplayName scan)` | Detect installed password managers by display name | Yes (`file_reads`) |
+| `HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall (Windows registry — password manager DisplayName scan)` | Detect user-scope installed password managers | Yes (`file_reads`) |
+
+**Data collected:** SSH key count, weak key count (RSA < 2048 bits, any DSA), password manager detected (boolean), listening port count. No key content, file content, or private data is collected.
+
+---
+
+## Domain: `privacy`
+
+**Purpose:** Opt-in DLP scanner — detect PII patterns (SSN, credit card) in `~/Documents`. **Disabled by default.** Requires `--include-privacy` flag and prior consent for the privacy domain.
+
+**Zero network.** The scanner never transmits file contents.
+
+**Safety guarantees:**
+- Only invoked when `--include-privacy` is set and privacy domain is consented to.
+- No filename, file path, matched string, or file content is ever recorded — only scalar counters.
+- Symlinks are never followed.
+- Files larger than 5 MiB are skipped.
+- Total files capped at 5,000 per scan.
+- Scan bounded to `~/Documents` only.
+
+| File Path | Purpose | Manifest recorded |
+|---|---|---|
+| `~/Documents/ (streaming read, ≤5000 files, ≤5 MiB/file; no symlinks followed; matched content never stored or transmitted)` | PII pattern scan (SSN, Luhn-validated credit cards) | Yes (`file_reads`) |
+
+**Data collected:** `pii_match_count` (integer), `files_scanned_count` (integer). No matched strings, no file paths, no content.
 
 ---
 
@@ -185,7 +309,7 @@ v0.1.x: this probe runs but returns zero-valued `PrivacyFindings`. Real probe lo
 | **Key fingerprint** | `hex(sha256(publicKey))[:16]` — surfaced in `consent.json` and `--hybrid` upload headers. Not the private key. |
 | **What is signed** | The canonical JSON of the `findings` field in a `--hybrid` upload payload. The signature proves the upload came from the consented install. |
 | **Re-consent trigger** | The SHA-256 hash of each domain's `Manifest()` (OSAPIs + FilePaths, JSON-canonical) is stored in `consent.json`. If a future scanner version adds a new probe access path, that domain's hash changes and re-consent is required for that domain. |
-| **Revocation** | Run `lumen consent --reset` to delete `~/.lumen/consent.json` and re-run the walkthrough. The install key is NOT rotated by reset (existing signed uploads remain verifiable). |
+| **Revocation** | Run `lumen consent --reset` to delete `~/.lumen/consent.json`, rotate the install key (a new `~/.lumen/install.key` is generated), and re-run the walkthrough. Existing `--hybrid` uploads signed with the old key remain verifiable on the server side (old keys are retained server-side); new uploads use the rotated key. |
 
 ---
 

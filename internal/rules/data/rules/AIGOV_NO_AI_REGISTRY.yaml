@@ -1,0 +1,48 @@
+id: AIGOV_NO_AI_REGISTRY
+domain: ai_governance
+severity: high
+default_weight: 0.80
+detect:
+  questionnaire:
+    - Q-AIGOV-002 == informal
+    - Q-AIGOV-005 == no_tracking
+    - Q-AIGOV-006 == no_process
+    - Q-AIGOV-015 == no_tracking
+    - Q-AIGOV-DD-006 == not_integrated
+    - Q-AIGOV-DD-006 == no_registry
+  scanner:
+    - ai_governance.shadow_ai_apps_count > 0
+    - ai_governance.llm_egress_processes_count > 0
+    - ai_governance.mcp_servers_running > 0
+title: "No formal AI model registry or approved-tools list"
+description_short: "AI tools and models in production are not formally inventoried or tracked in an approved registry."
+description_long: "Without a formal AI model registry or maintained approved-tools list, the organisation has no authoritative source of which AI systems are in production, which versions are active, or which employees are authorised to use which tools. This creates compounding governance gaps: shadow AI proliferates because there is no clear approved list to reference; incident response is hampered because responders cannot identify which AI systems are in scope; and version drift goes undetected because there is no baseline to compare against. NIST AI RMF GOVERN-1.1 and MAP-1.1 both require that organisations identify and catalogue AI systems as a foundation for all subsequent risk management activities. ISO 42001 Annex A A.6.2 requires an inventory of AI systems as part of the AI management system scope."
+frameworks:
+  - id: "NIST AI RMF GOVERN-1.1"
+    text: "Organisational policies and practices are in place to foster a critical AI risk culture — a registry anchors accountability"
+  - id: "NIST AI RMF MAP-1.1"
+    text: "Context is established for framing AI risks — requires knowing which AI systems exist"
+  - id: "ISO 42001 A.6.2"
+    text: "AI system inventory — organisations shall maintain an inventory of AI systems"
+  - id: "EU AI Act Art. 9"
+    text: "Risk management system for high-risk AI — requires identification of all in-scope systems"
+micelium_product:
+  - product: Sigil
+    role: Provides the authoritative AI system registry with lifecycle tracking, version control, and access governance for all AI agents and models
+  - product: Sovera
+    role: Ties registry entries to compliance obligations, surfacing which AI systems require regulatory documentation
+industry_overlays:
+  technology:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.4
+  it_services:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Create and maintain an approved-tools list of all AI tools employees may use, and a model registry for all AI systems running in production. Review both at least quarterly."
+remediation_technical: "Establish a model registry (a structured store — a database table or configuration-as-code file) capturing for each AI system: name, version, owner, deployment date, data classifications processed, vendor, and approval status. Gate production deployments on registry entry creation. Implement an approved-tools list published to all employees with a review cadence. Integrate registry decommission events with access revocation workflows. Align to NIST AI RMF MAP-1.1 context-establishment practices."

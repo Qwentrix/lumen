@@ -1,0 +1,48 @@
+id: SECPOS_NO_ZTA
+domain: security_posture
+severity: high
+default_weight: 0.60
+detect:
+  questionnaire:
+    - Q-SECPOS-011 == no_conditional_access
+    - Q-SECPOS-DD-003 == no_zta
+    - Q-SECPOS-DD-003 == identity_only
+    - Q-SECPOS-DD-007 == flat_cloud_network
+title: "Zero Trust controls absent — no conditional access or network microsegmentation"
+description_short: "No Zero Trust controls are in place: no conditional access and no network microsegmentation."
+description_long: "Zero Trust Architecture (ZTA) moves security from perimeter-based to identity-and-data-centric. Without conditional access, any device in any location can authenticate freely. Without network microsegmentation, a compromised host can reach all other systems. NIST SP 800-207 defines the ZTA pillars; the US Federal Zero Trust Strategy (OMB M-22-09) mandates federal agencies achieve ZTA maturity. Commercial organisations without ZTA have demonstrably higher mean time to contain breaches. This finding covers the absence of identity-based conditional access (device posture, location, risk score) as a foundational ZTA gap."
+frameworks:
+  - id: "NIST SP 800-207"
+    text: "Zero Trust Architecture — all access decisions consider identity, device, and context"
+  - id: "NIST CSF PR.AA-05"
+    text: "Access permissions are managed and enforced"
+  - id: "CIS Control 12.8"
+    text: "Implement network access control and VPN with multi-factor authentication"
+  - id: "ISO 27001:2022 A.8.20"
+    text: "Network security — access control and segmentation"
+  - id: "FedRAMP AC-17(2)"
+    text: "Remote access with protection of confidentiality and integrity"
+  - id: "CISA Zero Trust Pillar: Identity"
+    text: "Conditional access evaluating device health and contextual risk"
+micelium_product:
+  - product: Sypher
+    role: Data-centric access controls as an additional Zero Trust layer independent of network position
+  - product: Sense
+    role: Continuous behavioural verification feeding into conditional access decisions
+  - product: Sovera
+    role: Policy engine defining and enforcing access rules aligned to ZTA principles
+industry_overlays:
+  government:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.3
+  technology:
+    weight_multiplier: 1.3
+  energy:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Start your Zero Trust journey with conditional access: require devices to be managed and compliant before allowing login, and block access from high-risk locations. Then add network segmentation to prevent lateral movement."
+remediation_technical: "Phase 1 — Identity ZTA: configure Conditional Access policies in your IdP to evaluate device compliance (MDM-joined, EDR healthy), user risk score, and geolocation. Block legacy authentication. Phase 2 — Device ZTA: integrate MDM compliance as an access gate. Phase 3 — Network ZTA: deploy ZTNA (Cloudflare Access, Zscaler ZPA, Microsoft Entra Private Access) to replace VPN with application-scoped access. Implement workload microsegmentation using security groups with default-deny rules."

@@ -102,10 +102,19 @@ func Run(reset bool, acceptAll bool) error {
 	}
 
 	// Keygen happens here — consent is the trust gate.
+	// H-3: When --reset is passed the user expects a fresh install identity key
+	// (the --reset help text says "regenerates install key"). Call
+	// RegenerateInstallKey() on reset so the old key is actually discarded and
+	// a new one is generated, rather than silently reloading the existing key.
 	fmt.Println("\nlumen consent: generating install identity key…")
-	_, _, err := keys.EnsureInstallKey()
-	if err != nil {
-		return fmt.Errorf("consent: keygen: %w", err)
+	if reset {
+		if _, _, keyErr := keys.RegenerateInstallKey(); keyErr != nil {
+			return fmt.Errorf("consent: keygen: %w", keyErr)
+		}
+	} else {
+		if _, _, keyErr := keys.EnsureInstallKey(); keyErr != nil {
+			return fmt.Errorf("consent: keygen: %w", keyErr)
+		}
 	}
 	fingerprint, err := keys.InstallKeyFingerprint()
 	if err != nil {

@@ -1,0 +1,41 @@
+id: SECPOS_TRAINING_NOT_ROLE_SPECIFIC
+domain: security_posture
+severity: medium
+default_weight: 0.40
+detect:
+  questionnaire:
+    - Q-SECPOS-038 == not_required
+    - Q-SECPOS-DD-030 == one_size_fits_all
+    - Q-SECPOS-DD-031 == no_differentiated_response
+title: "Security training not role-specific — one-size-fits-all curriculum"
+description_short: "Security awareness training uses a generic curriculum not tailored to role-specific threats."
+description_long: "Generic security awareness training has significantly lower effectiveness than role-specific programmes. Finance teams face BEC and wire-transfer fraud; developers face supply-chain and code injection attacks; executives face spear-phishing and vishing. A one-size-fits-all curriculum leaves each group under-prepared for their highest-likelihood threats. NIST SP 800-50 and FedRAMP AT-2 both require role-based training content. Repeat phishing failures by the same individuals indicate that the current training approach is not working for those users and requires a differentiated intervention strategy."
+frameworks:
+  - id: "NIST SP 800-50"
+    text: "Building an information technology security awareness and training programme — role-based content"
+  - id: "CIS Control 14.1"
+    text: "Establish and maintain a security awareness programme with role-tailored content"
+  - id: "ISO 27001:2022 A.6.3"
+    text: "Information security awareness, education, and training — tailored to role"
+  - id: "SOC 2 CC2.2"
+    text: "The entity communicates internally with role-specific security expectations"
+  - id: "FedRAMP AT-3"
+    text: "Role-based training — additional training for privileged and high-risk roles"
+  - id: "CISA Zero Trust Pillar: Identity"
+    text: "Human risk reduction including role-appropriate security training"
+micelium_product:
+  - product: Sense
+    role: Behavioural analytics identifies high-risk user cohorts to inform targeted training prioritisation
+  - product: Pulse
+    role: Workflow automation for targeted training assignment based on risk signals
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.3
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Customise security training by role: finance staff should learn about wire-fraud and BEC, developers about secure coding, executives about spear-phishing, and IT staff about privileged-access responsibilities. Repeat phishing failures should trigger automatic enrolment in additional training."
+remediation_technical: "Segment training programme by role cohort: privileged users (PAM, phishing-resistant MFA), developers (OWASP Top 10, secrets management, supply chain), finance (BEC, invoice fraud, wire-transfer verification), executives (spear-phishing, vishing, deep-fake awareness), all staff (baseline phishing, password hygiene, incident reporting). Use your training platform's cohort and tag features to assign role-specific modules automatically. Configure automated repeat-offender escalation: a user who fails 3 phishing simulations in a rolling 12 months is automatically enrolled in intensive training and flagged for manager follow-up. Review role mappings annually."

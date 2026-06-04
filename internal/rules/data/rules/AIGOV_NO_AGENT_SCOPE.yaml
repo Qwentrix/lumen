@@ -1,0 +1,47 @@
+id: AIGOV_NO_AGENT_SCOPE
+domain: ai_governance
+severity: critical
+default_weight: 0.95
+detect:
+  questionnaire:
+    - Q-AIGOV-024 == yes_ungoverned
+    - Q-AIGOV-025 == no_scope_defined
+    - Q-AIGOV-025 == documented_not_enforced
+    - Q-AIGOV-041 == yes_ungoverned
+    - Q-AIGOV-044 == no_validation
+    - Q-AIGOV-DD-023 == case_by_case
+    - Q-AIGOV-DD-024 == no_detection
+  scanner:
+    - ai_governance.mcp_servers_running > 0
+title: "AI agents operate without defined or enforced action scope"
+description_short: "Autonomous AI agents in use have no documented action allowlist or technical enforcement preventing out-of-scope actions."
+description_long: "An AI agent without a technically enforced action scope is an unconstrained actor operating in your environment. Unlike a human employee who exercises judgment, an AI agent will execute whatever its model determines is appropriate given its instructions — which may include actions the deployer never intended, amplified by the speed and scale of automation. OWASP LLM Top 10 LLM08 (Excessive Agency) identifies undefined agent scope as the primary risk factor for autonomous AI. EU AI Act Art. 14 requires deployers of high-risk AI to ensure effective human oversight mechanisms — which presupposes defined boundaries. NIST AI RMF MANAGE-1.3 requires that risk controls include constraints on AI system autonomy. An agent that can write files, execute code, call external APIs, or send messages without a defined allowlist creates a single misconfiguration or prompt injection event away from a serious incident."
+frameworks:
+  - id: "EU AI Act Art. 14"
+    text: "Human oversight measures — high-risk AI systems must have means for humans to intervene; undefined scope prevents this"
+  - id: "NIST AI RMF MANAGE-1.3"
+    text: "Risk controls include constraints on AI system autonomy and action scope"
+  - id: "OWASP LLM Top 10 LLM08"
+    text: "Excessive Agency — agent systems should be granted minimum necessary permissions and have clearly defined action boundaries"
+  - id: "ISO 42001 A.6.2.3"
+    text: "AI system constraints — organisations shall define the intended purpose and operational constraints of AI systems"
+micelium_product:
+  - product: Sigil
+    role: Provides the policy engine for AI agent action scope definition — allowlists, denylist enforcement, and real-time blocking of out-of-scope agent actions
+  - product: Sense
+    role: Monitors agent action patterns and triggers alerts when behaviour deviates from defined baseline scope
+industry_overlays:
+  technology:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  it_services:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "For every AI agent in your environment, write down exactly what it is allowed to do — and technically enforce that list so the agent cannot take actions outside it. An agent with no boundaries is a liability."
+remediation_technical: "For each autonomous AI agent: (1) define an explicit action allowlist covering file system paths, external API endpoints, communication channels, and data stores the agent is permitted to access; (2) enforce the allowlist at runtime — the agent framework or orchestration layer should block all actions not in the allowlist; (3) document the allowlist as configuration-as-code in version control; (4) implement runtime scope monitoring that alerts and optionally blocks when the agent attempts an action outside the allowlist. Treat agent scope as a security boundary equivalent to network firewall rules. Align to OWASP LLM Top 10 LLM08 minimum-privilege principle and NIST AI RMF MANAGE-1.3."

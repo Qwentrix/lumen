@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:build !darwin && !linux
+//go:build !darwin && !linux && !windows
 
-// Package compliance stubs for non-darwin/linux platforms (e.g. Windows).
-// Windows compliance probes are implemented in LU-5.
+// Package compliance stubs for non-darwin/linux/windows platforms.
+// Windows compliance probes are implemented in collect_windows.go (ENT-108).
 package compliance
 
 import "context"

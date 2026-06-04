@@ -1,0 +1,43 @@
+id: SECPOS_BACKUP_NOT_TESTED
+domain: security_posture
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-SECPOS-029 == backup_runs_not_tested
+    - Q-SECPOS-030 == offsite_mutable
+    - Q-SECPOS-DD-024 == over_two_years_or_never
+    - Q-SECPOS-DD-026 == generic_dr_plan_only
+    - Q-SECPOS-DD-044 == no_post_incident_review
+title: "Backups exist but restores are not tested"
+description_short: "Backup jobs run but successful restoration has never been verified — recovery capability is unproven."
+description_long: "A backup that has never been tested is not a backup — it is a hope. Backup corruption, misconfigured encryption keys, failed jobs, and media degradation are common causes of restore failure discovered only at the worst possible moment during a real incident. Studies consistently show that 20–30% of restore attempts from untested backups fail. Regulatory frameworks and cyber insurance policies require documented restore testing. During a ransomware incident, the absence of a tested restore path forces a ransom payment decision that a verified backup would have made unnecessary."
+frameworks:
+  - id: "NIST SP 800-34 Rev 1"
+    text: "Contingency planning — recovery testing and exercises"
+  - id: "CIS Control 11.2"
+    text: "Perform automated backups and test recovery"
+  - id: "ISO 27001:2022 A.8.13"
+    text: "Information backup — testing of backup copies"
+  - id: "SOC 2 A1.3"
+    text: "Recovery procedures are tested on a periodic basis"
+  - id: "FedRAMP CP-9(1)"
+    text: "System backup testing — test restore capability"
+  - id: "CISA Zero Trust Pillar: Data"
+    text: "Verified data recovery capability as resilience requirement"
+micelium_product:
+  - product: Proof
+    role: Restore test evidence documentation and compliance reporting for audit trail
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  energy:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Schedule quarterly restore tests — actually restore data to a test environment and verify it is complete and usable. Document the results. Any backup you have not tested should be treated as untrusted."
+remediation_technical: "Define a restore-test schedule: quarterly for all Tier 1 systems, annually for Tier 2. Restore to an isolated test environment (never overwrite production with a test restore). Verify restored data completeness and application functionality. Document test results including system, backup date, restore duration, data completeness percentage, and tester. Integrate restore test results into your DR plan. Automate restore testing where possible using orchestration platforms (Veeam DataLabs, Zerto, or custom scripts) to increase frequency without operational burden."

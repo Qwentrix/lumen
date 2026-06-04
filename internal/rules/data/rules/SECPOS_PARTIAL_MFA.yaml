@@ -1,0 +1,40 @@
+id: SECPOS_PARTIAL_MFA
+domain: security_posture
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-SECPOS-005 == partial_some_roles
+    - Q-SECPOS-007 == sso_partial
+title: "MFA enforced for some roles or systems only"
+description_short: "MFA is enforced inconsistently — some accounts or applications remain unprotected."
+description_long: "Partial MFA coverage creates an uneven security boundary that attackers reliably exploit. If any application, role, or access pathway lacks MFA, threat actors actively target those gaps. Shadow IT, SaaS applications on-boarded without IdP integration, and legacy systems are common sources of partial coverage. SOC 2 auditors and PCI DSS assessors flag partial MFA as a control deficiency requiring compensating controls or a documented remediation timeline."
+frameworks:
+  - id: "NIST CSF PR.AA-02"
+    text: "Identities are proofed and bound to credentials based on the context of interactions"
+  - id: "CIS Control 6.3"
+    text: "Require MFA for all externally-exposed applications"
+  - id: "ISO 27001:2022 A.8.5"
+    text: "Secure authentication"
+  - id: "SOC 2 CC6.1"
+    text: "Logical access security controls"
+  - id: "FedRAMP IA-2(2)"
+    text: "Multi-factor authentication for non-privileged accounts"
+  - id: "CISA Zero Trust Pillar: Identity"
+    text: "Consistent strong authentication across all access pathways"
+micelium_product:
+  - product: Sypher
+    role: Data-level access controls compensate for authentication gaps on unprotected systems
+  - product: Sense
+    role: Detects access anomalies originating from accounts without MFA coverage
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Extend MFA to every application that accesses corporate data. Audit which applications are not covered by your SSO/IdP and bring them into scope within 90 days."
+remediation_technical: "Inventory all applications via IdP integration reports. Enforce MFA as a Conditional Access requirement at the IdP level rather than per-application. Migrate remaining non-SSO applications to SAML or OIDC so authentication is centralised. Treat any application rejecting SSO as a risk exception requiring documented compensating controls and a migration deadline."

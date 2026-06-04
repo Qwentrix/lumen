@@ -1,0 +1,39 @@
+id: AIGOV_DATA_LEAKAGE_AI
+domain: ai_governance
+severity: critical
+default_weight: 0.95
+detect:
+  questionnaire:
+    - Q-AIGOV-004 == no_controls
+  scanner:
+    - ai_governance.shadow_ai_apps_count > 0
+    - ai_governance.browser_extensions_ai_count > 0
+    - ai_governance.llm_egress_processes_count > 0
+title: "Sensitive data submitted to external AI services without controls"
+description_short: "Confidential or regulated data is sent to external AI services without technical controls."
+description_long: "Submitting PII, PHI, financial data, or trade secrets to external AI services without controls means that data is processed under the AI provider's terms of service, not your DPA. Training data retention by providers is a common contractual trap. This is a direct breach of GDPR Article 28, HIPAA Business Associate requirements, and may constitute a data breach notification event."
+frameworks:
+  - id: "GDPR Art. 28"
+    text: "Processing by a processor must be governed by a contract"
+  - id: "HIPAA 164.308(b)"
+    text: "Business associate contracts and other arrangements"
+  - id: "EU AI Act Art. 26(1)"
+    text: "Deployers shall use AI systems in accordance with instructions of use and implement appropriate technical and organisational measures to ensure data governance and prevent unauthorised processing"
+micelium_product:
+  - product: Sigil
+    role: Data classification enforcement at the AI prompt layer
+  - product: Share
+    role: Data governance controls for AI prompt content
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.8
+  legal:
+    weight_multiplier: 1.7
+  financial:
+    weight_multiplier: 1.6
+  government:
+    weight_multiplier: 1.6
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Stop submitting sensitive data to AI services immediately. Require all AI tool usage to go through approved enterprise instances with DPAs in place."
+remediation_technical: "Classify data types flowing to AI endpoints using DLP scanning. Block regulated data categories at the proxy layer. Procure enterprise AI subscriptions that include DPAs (Azure OpenAI, Anthropic Enterprise, Google Workspace AI). Audit past submissions for breach notification obligation."

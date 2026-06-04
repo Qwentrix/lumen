@@ -1,0 +1,42 @@
+id: AIGOV_NO_OVERRIDE_PROCESS
+domain: ai_governance
+severity: high
+default_weight: 0.75
+detect:
+  questionnaire:
+    - Q-AIGOV-033 == no_override
+    - Q-AIGOV-046 == no_review_required
+    - Q-AIGOV-DD-033 == disclosed_no_explanation
+    - Q-AIGOV-DD-034 == no_override_process
+  scanner:
+    - ai_governance.mcp_servers_running > 0
+title: "No documented process for humans to override AI recommendations in regulated workflows"
+description_short: "AI-assisted decisions in regulated workflows lack a defined, documented override process — humans cannot reliably intervene and their interventions are not recorded."
+description_long: "EU AI Act Art. 14 is unambiguous: high-risk AI systems must have human oversight measures including the ability for designated persons to decide not to use the AI recommendation and to override it. This requirement exists because AI models make errors — including systematic errors on particular subpopulations — and human expertise is the designed corrective mechanism. Without a documented override process, several failure modes occur: decision-makers may not know they are authorised to override; overrides may happen informally and not be recorded, removing them from the audit trail and eliminating accountability; regulatory auditors see only AI recommendations implemented, with no evidence of human judgment applied; and individuals who contest AI decisions cannot receive information about whether any human review occurred. GDPR Art. 22(3) also explicitly requires the ability of the data subject to obtain human intervention and to express their point of view."
+frameworks:
+  - id: "EU AI Act Art. 14"
+    text: "Human oversight — high-risk AI systems must have measures for designated persons to intervene, override, and halt the system"
+  - id: "GDPR Art. 22(3)"
+    text: "Automated decision-making — controller must implement measures to safeguard data subject rights including human intervention and ability to express views"
+  - id: "NIST AI RMF MANAGE-2.2"
+    text: "Human oversight mechanisms are designed and implemented proportionate to the risk level of AI-assisted decisions"
+  - id: "ISO 42001 A.6.2.4"
+    text: "Human oversight — organisations shall define and implement processes for human review and override of AI system outputs"
+micelium_product:
+  - product: Sigil
+    role: Implements configurable override workflows in AI-assisted decision systems — named decision authority, override recording with reason, and audit trail integration
+  - product: Proof
+    role: Provides override audit evidence for regulatory submissions and data-subject rights responses
+industry_overlays:
+  financial:
+    weight_multiplier: 1.5
+  healthcare:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.5
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Define a clear process for staff to override AI recommendations, make sure they know they are authorised to do so, and record every override with the reason. This is a legal requirement for regulated AI decisions."
+remediation_technical: "For each regulated AI-assisted decision workflow: (1) define a named override authority — the role and person authorised to reject or modify the AI recommendation; (2) implement an override action in the workflow UI — a distinct 'Override' button or decision path that requires entry of a reason; (3) record every override decision with: reviewer identity, original AI recommendation, override outcome, override reason, and timestamp; (4) include override actions in the decision audit log; (5) train all decision-makers on override procedures and their obligation to exercise independent judgment; (6) communicate the override and contestation path to affected individuals in disclosure notices. Align to EU AI Act Art. 14 and GDPR Art. 22(3)."

@@ -1,0 +1,42 @@
+id: PRIV_NO_DSAR_LOG
+domain: privacy
+severity: medium
+default_weight: 0.55
+detect:
+  questionnaire:
+    - Q-PRIV-021 == no_log
+    - Q-PRIV-021 == partial_log
+title: "No complete DSAR log — data subject request records are absent or incomplete"
+description_short: "The organization does not maintain a complete log of all data subject requests, including the action taken and the outcome, making it impossible to demonstrate GDPR Art. 12 compliance in a regulatory audit."
+description_long: "GDPR Art. 12(5) requires organizations to handle data subject requests and demonstrate that they have done so properly — implicit in this accountability obligation is maintaining records of requests received and actions taken. Without a complete DSAR log, the organization cannot: demonstrate timely response rates, show that all requests were actioned, identify patterns indicating systemic issues, or defend against a complaint that a request was ignored. Where requests are only partially logged, gaps in the record create exposure — a data subject can assert their request was ignored, and the organization cannot disprove it. GDPR Art. 5(2) accountability requires the controller to demonstrate compliance; absence of logs prevents this."
+frameworks:
+  - id: "GDPR Art. 12"
+    text: "Modalities for exercising rights — responses must be timely and accountable; records support demonstrating compliance"
+  - id: "GDPR Art. 5(2)"
+    text: "Accountability — controller must be able to demonstrate compliance with DSAR obligations"
+  - id: "CCPA §1798.100"
+    text: "Right to know and delete — operational records of fulfilment support compliance demonstration"
+  - id: "HIPAA 45 CFR §164.524"
+    text: "Access to PHI — documentation of requests and responses must be maintained"
+  - id: "ISO 27018 §9"
+    text: "Data subject requests should be logged and tracked to completion"
+micelium_product:
+  - product: Proof
+    role: Provides a complete, searchable DSAR log capturing intake date, request type, deadline, actions taken, response date, and outcome for every request
+  - product: Pulse
+    role: Automates DSAR intake logging so no request entering any channel is missed
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.3
+  legal:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Log every data subject request from the moment it arrives, including what you did with it and when. If you cannot show a regulator a complete record of every DSAR you have received, you cannot demonstrate you handled them all correctly."
+remediation_technical: "1. Implement a centralized DSAR log that captures: request receipt date/time, channel (email, web form, in person), request type (access, deletion, portability, correction, objection), data subject identity, response date, response outcome, and whether the deadline was met. 2. Configure all DSAR intake channels (contact forms, email addresses, in-person processes) to route to the central log automatically. 3. Retain DSAR records for a minimum of 3 years (GDPR limitation period for regulatory action). 4. Generate a monthly DSAR metrics report: volume, response rate within deadline, outstanding requests. 5. Conduct quarterly audit sampling: verify logged requests were actioned correctly."

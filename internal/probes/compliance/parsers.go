@@ -190,3 +190,21 @@ func parseGSettingsUint32(s string) int {
 	}
 	return n
 }
+
+// ─── Windows pure parsers (no build tag — testable on any host) ──────────────
+
+// parseScreenLockWindows parses Windows screensaver registry values into a
+// screenLockResult. Exposed as a pure function for cross-platform unit testing.
+//
+// Parameters match HKCU\Control Panel\Desktop registry values:
+//   - activeOut: ScreenSaveActive   REG_SZ "1" = screensaver enabled
+//   - secureOut: ScreenSaverIsSecure REG_SZ "1" = password required on resume
+//   - timeoutOut: ScreenSaveTimeOut  REG_SZ seconds until screensaver activates
+func parseScreenLockWindows(activeOut, secureOut, timeoutOut []byte) screenLockResult {
+	active := strings.TrimSpace(string(activeOut))
+	secure := strings.TrimSpace(string(secureOut))
+	timeoutSec := parseIntDefault(strings.TrimSpace(string(timeoutOut)), 0)
+
+	enabled := active == "1" && secure == "1"
+	return screenLockResult{enabled: enabled, timeoutSeconds: timeoutSec}
+}

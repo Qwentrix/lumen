@@ -1,0 +1,50 @@
+id: PRIV_NO_RETENTION_POLICY
+domain: privacy
+severity: high
+default_weight: 0.75
+detect:
+  questionnaire:
+    - Q-PRIV-024 == no
+    - Q-PRIV-024 == yes_partial
+    - Q-PRIV-027 == no_review
+    - Q-PRIV-DD-023 == no_retention_policy
+title: "No data retention policy or schedules — personal data kept indefinitely without defined deletion timelines"
+description_short: "The organization has no formal data retention policy with defined schedules specifying how long personal data is retained, meaning personal data may be kept indefinitely beyond its lawful purpose."
+description_long: "GDPR Art. 5(1)(e) requires personal data to be 'kept in a form which permits identification of data subjects for no longer than is necessary for the purposes for which the personal data are processed' — the storage limitation principle. Without a retention policy with defined schedules per data type, personal data is effectively kept forever. This means every data subject whose data was collected months or years ago and whose purpose has expired has grounds for a GDPR erasure complaint. CCPA §1798.100(e) prohibits retaining personal information beyond what is reasonably necessary. HIPAA 45 CFR §164.530(j) requires covered entities to retain specified records for 6 years from creation or last effective date — but also not to retain indefinitely beyond that. Absence of retention schedules is a finding in virtually every GDPR audit and is routinely cited by supervisory authorities."
+frameworks:
+  - id: "GDPR Art. 5(1)(e)"
+    text: "Storage limitation — personal data kept no longer than necessary for the processing purpose"
+  - id: "GDPR Art. 30(1)(f)"
+    text: "ROPA must include envisaged time limits for erasure of personal data"
+  - id: "CCPA §1798.100(e)"
+    text: "Personal information not to be retained beyond what is reasonably necessary"
+  - id: "HIPAA 45 CFR §164.530(j)"
+    text: "Retention of documentation — minimum and maximum retention periods apply to different record types"
+  - id: "ISO 27001 A.8.3"
+    text: "Media disposal — data lifecycle management including defined retention and deletion schedules"
+  - id: "NIST Privacy Framework CT.DM-1"
+    text: "Data processing is managed consistent with the organization's privacy principles — retention schedules are a core element"
+micelium_product:
+  - product: Ark
+    role: Enforces retention schedules by automating deletion or anonymization of data at retention expiry, across all backup and primary storage
+  - product: Sypher
+    role: Time-limits DRM access rights so data becomes inaccessible at retention expiry even if not physically deleted
+  - product: Sovera
+    role: Manages jurisdiction-differentiated retention schedules and documents schedule reviews for ROPA compliance
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.7
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.5
+  retail:
+    weight_multiplier: 1.3
+  technology:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Decide how long you need each type of personal data and write it down. Once the retention period expires, delete the data. Keeping personal data forever 'just in case' is both a legal risk and a breach-impact multiplier."
+remediation_technical: "1. Conduct a data type inventory and for each type, determine: the lawful retention period (regulatory minimum, contractual requirement, or business necessity with documented justification). 2. Document retention schedules in a retention policy covering all data categories: customer PII, employee data, financial records, health data, logs and analytics. 3. Differentiate schedules by jurisdiction where required (EU GDPR storage limitation vs. US regulatory retention minimums may conflict — document the longer legally required period with the basis). 4. Include retention schedules in the Art. 30 ROPA per Art. 30(1)(f). 5. Implement automated deletion or anonymization jobs triggered at retention expiry. 6. Review retention schedules annually and whenever processing purposes change."

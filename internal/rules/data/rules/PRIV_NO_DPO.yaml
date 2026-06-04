@@ -1,0 +1,47 @@
+id: PRIV_NO_DPO
+domain: privacy
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-PRIV-048 == no_privacy_role
+    - Q-PRIV-051 == never
+    - Q-PRIV-053 == no
+title: "No Data Protection Officer or designated privacy accountability role"
+description_short: "The organization has no DPO, privacy lead, or equivalent designated role accountable for privacy compliance — and privacy risk is not reported to executive leadership."
+description_long: "GDPR Art. 37 mandates DPO appointment for: public authorities, organizations carrying out large-scale systematic monitoring, and organizations processing special-category data at scale. Even where mandatory DPO appointment does not strictly apply, the absence of any designated privacy accountability role means no one owns the privacy programme, no one tracks regulatory developments, no one coordinates DSAR responses, and no one manages breach notification. This results in a privacy function that is effectively inactive. Where privacy risk is never reported to executive leadership (Q-PRIV-051 == never), the board cannot make informed decisions about privacy investment, and senior management cannot demonstrate the 'tone from the top' that regulators look for. Annual privacy training absent (Q-PRIV-053 == no) compounds this — employees cannot comply with obligations they are unaware of."
+frameworks:
+  - id: "GDPR Art. 37"
+    text: "DPO appointment mandatory for public authorities, large-scale monitoring, and special-category processing at scale"
+  - id: "GDPR Art. 38–39"
+    text: "DPO tasks and position — involvement in all matters relating to personal data processing"
+  - id: "GDPR Art. 5(2)"
+    text: "Accountability — demonstrating compliance requires a responsible function with defined ownership"
+  - id: "HIPAA 45 CFR §164.530(a)"
+    text: "Privacy official — covered entities must designate a privacy official responsible for the privacy programme"
+  - id: "CCPA §1798.130"
+    text: "Designated methods for submitting consumer requests — requires operational privacy function"
+  - id: "NIST Privacy Framework GV.AT-1"
+    text: "Privacy roles and responsibilities are assigned and supported by organizational leadership"
+micelium_product:
+  - product: Proof
+    role: Provides the privacy programme infrastructure (DSAR management, breach log, DPIA tracking, ROPA) that a DPO or privacy lead needs to be effective
+  - product: Sovera
+    role: Provides compliance tracking dashboards that enable the privacy lead to report privacy risk to executive leadership
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  education:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Designate someone — internally or externally — as the person responsible for privacy compliance. Give them the authority to review new processing activities, respond to DSARs, manage breaches, and report to leadership. Without this role, nothing else in your privacy programme will work consistently."
+remediation_technical: "1. Assess whether a mandatory GDPR DPO appointment is required for your organization based on Art. 37 criteria. 2. Regardless of mandatory requirement, designate an internal privacy lead or appoint an external DPO-as-a-service. 3. Define the privacy lead's responsibilities: ROPA maintenance, DSAR coordination, breach notification, DPIA oversight, regulatory monitoring, training programme ownership. 4. Establish a privacy risk reporting cadence: at minimum quarterly reports to executive leadership covering DSAR volumes, breach incidents, audit findings, and regulatory developments. 5. Implement annual privacy awareness training for all staff handling personal data. 6. Create an internal privacy policy and require annual employee acknowledgement."

@@ -1,0 +1,43 @@
+id: AIGOV_MODEL_DRIFT_UNMONITORED
+domain: ai_governance
+severity: medium
+default_weight: 0.50
+detect:
+  questionnaire:
+    - Q-AIGOV-015 == tracked_no_change_control
+    - Q-AIGOV-016 == not_monitored
+    - Q-AIGOV-016 == informal_monitoring
+    - Q-AIGOV-DD-007 == no_process
+    - Q-AIGOV-DD-040 == general_anomaly_monitoring
+title: "AI model drift not monitored — output quality and behaviour changes go undetected"
+description_short: "AI model outputs are not systematically monitored for drift, degradation, or behavioural change over time."
+description_long: "AI models — particularly those accessed via APIs from third-party providers — are not static. Providers silently update base models, change fine-tuning, or modify safety filters, causing output distributions to shift. Without monitoring, business processes that depend on consistent model behaviour may begin producing different outputs — including less accurate, biased, or policy-non-compliant results — without any alert. This is particularly dangerous in regulated workflows where model outputs influence decisions. Model drift also creates a debugging challenge: unexplained changes in downstream metrics are difficult to attribute to model updates when no version change was logged. NIST AI RMF MEASURE-2.5 requires continuous monitoring of AI system performance. EU AI Act Art. 72 (for providers) and Art. 26 (for deployers) require monitoring to ensure AI systems continue to perform as intended. ISO 42001 A.9.3 requires operational monitoring of AI system performance."
+frameworks:
+  - id: "NIST AI RMF MEASURE-2.5"
+    text: "AI system behaviour is monitored for performance drift and degradation in production"
+  - id: "EU AI Act Art. 26(6)"
+    text: "Deployers of high-risk AI shall monitor the performance of the AI system in light of its intended purpose"
+  - id: "ISO 42001 A.9.3"
+    text: "Operational monitoring — AI system performance shall be continuously monitored against defined objectives"
+  - id: "NIST AI RMF MANAGE-2.4"
+    text: "Risk controls include monitoring for drift in AI system outputs relative to intended behaviour"
+micelium_product:
+  - product: Sigil
+    role: Tracks AI model versions used in each deployment and provides baseline comparison tooling to detect output distribution shifts after provider updates
+  - product: Sense
+    role: Monitors AI system outputs as behavioural signals, detecting drift patterns that fall outside established performance baselines
+industry_overlays:
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.3
+  legal:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Set up monitoring to track whether your AI models are producing consistent outputs over time. When outputs change significantly, you should receive an alert — not discover the problem through a downstream complaint."
+remediation_technical: "Implement a model performance monitoring pipeline: (1) define evaluation datasets with expected output characteristics or reference outputs; (2) run scheduled evaluations (daily or per release) and record output metrics (accuracy, classification distribution, response-length distribution, refusal rates); (3) set alert thresholds for statistically significant deviations; (4) log model version identifiers in all inference calls so that provider-side version changes are attributable in logs; (5) define a model-change review process triggered when drift is detected — assess whether the change is acceptable or requires downstream workflow review. Align to NIST AI RMF MEASURE-2.5 and EU AI Act Art. 26(6)."

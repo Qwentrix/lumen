@@ -194,6 +194,18 @@ func buildNVDURL(severity, pubStart, pubEnd string, startIndex int) string {
 	return nvdAPIBase + "?" + q.Encode()
 }
 
+// nvdClient is a package-level HTTP client configured to NOT follow redirects.
+// L-3: using http.DefaultClient (which follows redirects) would forward the
+// apiKey header to a redirect target, leaking the bearer key. By returning
+// http.ErrUseLastResponse we stop at the first redirect response and let the
+// caller handle it; in practice NVD never redirects, so this has no functional
+// impact.
+var nvdClient = &http.Client{
+	CheckRedirect: func(_ *http.Request, _ []*http.Request) error {
+		return http.ErrUseLastResponse
+	},
+}
+
 // nvdGet performs a GET against the NVD API with the API key header, retrying
 // transient failures (rate limits, 5xx, empty bodies) with quadratic backoff.
 // The public NVD service frequently throttles by returning an empty body or a
@@ -213,7 +225,9 @@ func nvdGet(url, apiKey string) ([]byte, error) {
 		// NVD's edge rejects some requests with no User-Agent.
 		req.Header.Set("User-Agent", "lumen-nvd-gen/1.0 (+https://github.com/Qwentrix/lumen)")
 
-		resp, err := http.DefaultClient.Do(req)
+		// L-3: use nvdClient (redirect-stopped) instead of http.DefaultClient so
+		// the apiKey header is not forwarded to a redirect target.
+		resp, err := nvdClient.Do(req)
 		if err != nil {
 			lastErr = fmt.Errorf("fetch: %w", err)
 		} else {
@@ -258,11 +272,52 @@ func sleepForRate(apiKey string) {
 	}
 }
 
+// isUnbounded returns true when a CPERange has all version bounds empty,
+// meaning it would match any version of the product.
+func isUnbounded(r CPERange) bool {
+	return r.VersionStartIncluding == "" && r.VersionEndExcluding == "" && r.VersionEndIncluding == ""
+}
+
+// dropRedundantUnbounded implements M-5: for each (vendor, product) pair, if
+// there is at least one bounded CPE entry, remove all-empty-bounds entries for
+// that same pair. This prevents a single unbounded CPE artifact (NVD quirk)
+// from matching every installed version and over-counting CVE hits.
+//
+// A genuinely all-versions CVE (one where NO bounded entry exists for a product)
+// is kept so that the scanner can still flag truly universal vulnerabilities.
+func dropRedundantUnbounded(ranges []CPERange) []CPERange {
+	// Collect the set of (vendor, product) pairs that have at least one bounded entry.
+	hasBounded := map[[2]string]bool{}
+	for _, r := range ranges {
+		if !isUnbounded(r) {
+			hasBounded[[2]string{r.Vendor, r.Product}] = true
+		}
+	}
+	if len(hasBounded) == 0 {
+		// No bounded entries at all — keep everything.
+		return ranges
+	}
+	out := ranges[:0]
+	for _, r := range ranges {
+		// Drop unbounded entries only when a bounded sibling exists for the same product.
+		if isUnbounded(r) && hasBounded[[2]string{r.Vendor, r.Product}] {
+			continue
+		}
+		out = append(out, r)
+	}
+	return out
+}
+
 // toRecords converts raw NVD vulnerability entries into curated CVERecords. It
 // drops entries that have no CVSS v3.1 score (or score < minScore), and keeps
 // only CPE matches that are (a) flagged vulnerable and (b) for a product in the
 // scanner's curated allowlist (CuratedProducts). A CVE with no surviving CPE
 // range after filtering is dropped entirely.
+//
+// M-5: for each CVE, all-empty-bounds CPE entries are dropped when a bounded
+// entry for the same (vendor, product) also exists. This prevents ~46% of index
+// records whose unbounded CPE artifact would match every installed version from
+// inflating CVE counts once C-1's severity fix makes counts non-zero.
 func toRecords(vulns []nvdVulnerability, minScore float64) []CVERecord {
 	curated := lumennvd.CuratedProducts()
 	records := make([]CVERecord, 0, len(vulns))
@@ -277,7 +332,9 @@ func toRecords(vulns []nvdVulnerability, minScore float64) []CVERecord {
 		if score < minScore {
 			continue
 		}
-		severity := cve.Metrics.CVSSMetricV31[0].CVSSData.BaseSeverity
+		// C-1: store severity lowercase so future regens produce a consistent
+		// index that matches without needing strings.ToLower at read time.
+		severity := strings.ToLower(cve.Metrics.CVSSMetricV31[0].CVSSData.BaseSeverity)
 
 		var cpeRanges []CPERange
 		for _, cfg := range cve.Configurations {
@@ -309,6 +366,10 @@ func toRecords(vulns []nvdVulnerability, minScore float64) []CVERecord {
 				}
 			}
 		}
+
+		// M-5: remove all-empty-bounds CPE entries when a bounded sibling
+		// exists for the same (vendor, product) pair.
+		cpeRanges = dropRedundantUnbounded(cpeRanges)
 
 		if len(cpeRanges) == 0 {
 			continue

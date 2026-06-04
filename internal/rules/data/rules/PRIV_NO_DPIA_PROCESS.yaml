@@ -1,0 +1,50 @@
+id: PRIV_NO_DPIA_PROCESS
+domain: privacy
+severity: high
+default_weight: 0.75
+detect:
+  questionnaire:
+    - Q-PRIV-040 == no_screening
+    - Q-PRIV-040 == ad_hoc
+    - Q-PRIV-055 == no
+    - Q-PRIV-055 == ad_hoc
+title: "No DPIA screening process — high-risk processing activities not systematically assessed before launch"
+description_short: "The organization lacks a systematic process for screening new processing activities against GDPR Art. 35 DPIA criteria before they commence, and AI tools processing personal data are not subject to privacy risk assessment."
+description_long: "GDPR Art. 35 makes the DPIA mandatory — not optional — before commencing processing that is likely to result in high risk. The obligation to assess begins before processing starts, not after. Without a systematic screening process, high-risk processing activities regularly commence without a DPIA, creating retroactive compliance gaps that cannot be fully remediated without halting the processing. Where AI tools processing personal data are assessed only ad hoc or not at all (Q-PRIV-055), a rapidly growing category of high-risk processing — large-scale profiling, automated decision-making, behavioural analytics — goes unassessed. The EU AI Act introduces additional mandatory conformity assessment requirements for AI systems that overlap with DPIA obligations, making systematic screening increasingly critical."
+frameworks:
+  - id: "GDPR Art. 35"
+    text: "DPIA required before commencing high-risk processing — a screening process is needed to identify which processing activities qualify"
+  - id: "GDPR Art. 35(3)"
+    text: "DPIA mandatory for: systematic profiling, processing special-category data at scale, systematic monitoring"
+  - id: "GDPR Art. 25"
+    text: "Privacy by design — risk assessment should be embedded in the processing design phase"
+  - id: "HIPAA 45 CFR §164.308(a)(1)"
+    text: "Risk analysis required — systematic assessment before implementing PHI processing"
+  - id: "ISO 27018 §5.2"
+    text: "Risk assessment for personal data processing should be conducted before implementation"
+  - id: "NIST Privacy Framework ID.RA-P"
+    text: "Privacy risk assessment conducted before implementing new processing activities"
+micelium_product:
+  - product: Proof
+    role: Provides DPIA screening checklists, DPIA templates, and document management to operationalize the DPIA gate as a reusable workflow
+  - product: Sovera
+    role: Documents the organizational and technical measures arising from DPIAs as compliance evidence
+  - product: Sense
+    role: Provides behavioral analytics data relevant to the risk assessment component of DPIAs for monitoring and profiling activities
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  education:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Create a DPIA screening checklist that must be completed for every new processing activity, feature, or AI tool before it launches. If it meets one or more of the Art. 35 high-risk criteria, a full DPIA is required before processing begins."
+remediation_technical: "1. Develop a DPIA screening questionnaire based on GDPR Art. 35(3) mandatory criteria plus the WP248/EDPB supplementary criteria (new technology, vulnerable groups, large-scale, denial of service). 2. Implement the screening questionnaire as a mandatory gate in the product/feature approval workflow — no launch without completed screening. 3. If screening flags high-risk criteria, require a full Art. 35(7) DPIA before launch: description, necessity assessment, risk evaluation, mitigation measures, DPO review. 4. For AI tools specifically: apply the screening to any AI system that processes personal data for profiling, scoring, prediction, or behavioral analysis — include EU AI Act conformity considerations. 5. Maintain a DPIA register documenting all screenings and full DPIAs conducted."

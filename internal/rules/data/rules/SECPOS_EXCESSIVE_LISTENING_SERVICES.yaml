@@ -1,0 +1,41 @@
+id: SECPOS_EXCESSIVE_LISTENING_SERVICES
+domain: security_posture
+severity: medium
+default_weight: 0.45
+detect:
+  scanner:
+    - security_posture.listening_ports_count > 50
+title: "Host exposes an unusually high number of listening services"
+description_short: "The scanned host is listening on more than 50 ports, indicating unnecessary services are likely running and increasing the attack surface."
+description_long: "A host with more than 50 listening services almost certainly has services running that are not required for its function. Every listening port is a potential attack surface: unpatched daemons, misconfigured services, and legacy protocols all present exploit opportunities. CIS Control 4.8 requires disabling all unnecessary services, protocols, and open ports. NIST CSF PR.PS-01 requires configuration management that enforces minimal service exposure. While a developer workstation with Docker and Kubernetes may legitimately reach 20–30 ports, exceeding 50 on any single host — including development machines — indicates the principle of least functionality is not being applied. The threshold of 50 is chosen to avoid false positives on typical development environments while flagging genuinely excessive exposure."
+frameworks:
+  - id: "CIS Control 4.8"
+    text: "Uninstall or disable unnecessary services on enterprise and end-user assets"
+  - id: "NIST CSF PR.PS-01"
+    text: "Configuration management practices are established and maintained — minimal service exposure is a configuration baseline element"
+  - id: "ISO 27001:2022 A.8.9"
+    text: "Configuration management — disable services not required for system function"
+  - id: "FedRAMP CM-7"
+    text: "Least functionality — configure systems to provide only essential capabilities"
+  - id: "NIST SP 800-123"
+    text: "Guide to general server security — disable all services, applications, and network protocols not required"
+micelium_product:
+  - product: Sense
+    role: Monitors runtime service activity to identify which listening services are active versus idle, surfacing candidates for removal
+  - product: Sovera
+    role: Policy-as-code configuration governance enforces approved service lists and flags deviations from the minimal-service baseline
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  energy:
+    weight_multiplier: 1.4
+  manufacturing:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Audit the services running on this host and disable any that are not required for its intended function. Each unnecessary service is attack surface you can eliminate at zero operational cost."
+remediation_technical: "1. Run 'ss -tlnup' (Linux) or 'netstat -an' (macOS/Windows) to enumerate all listening processes. 2. For each listening port, identify the owning process and determine whether it is required for the system's documented function. 3. Disable or uninstall services that are not required: use systemctl disable (Linux), launchctl unload (macOS), or sc config start=disabled (Windows). 4. For containerised hosts, review exposed ports in Docker/Kubernetes service definitions and remove unnecessary port mappings. 5. Document the approved service list as part of the hardening baseline for this system class. 6. Add a scheduled scan to verify the approved service list has not grown after software updates or configuration changes."

@@ -1,0 +1,40 @@
+id: SECPOS_NO_PHISHING_SIM
+domain: security_posture
+severity: medium
+default_weight: 0.45
+detect:
+  questionnaire:
+    - Q-SECPOS-035 == no_phishing_simulations
+    - Q-SECPOS-035 == ad_hoc
+    - Q-SECPOS-DD-029 == not_measured
+    - Q-SECPOS-DD-029 == stable_high_or_worsening
+title: "No phishing simulations — employee susceptibility unmeasured"
+description_short: "No phishing simulation programme exists — employee susceptibility to phishing is unknown and unimproved."
+description_long: "Without phishing simulations, an organisation has no empirical measure of employee susceptibility. A training programme without simulations cannot demonstrate improvement or identify high-risk individuals. The 2024 Verizon DBIR shows phishing as the leading initial access vector for ransomware. Phishing simulation programmes consistently reduce click rates from 30–40% to under 5% within 12 months when combined with targeted training. Without measurement, security awareness investment cannot be justified or optimised. SOC 2 and ISO 27001 auditors increasingly expect evidence of phishing simulation programmes as part of security awareness programme effectiveness."
+frameworks:
+  - id: "NIST CSF PR.AT-02"
+    text: "Individuals in specialised roles are provided awareness and training"
+  - id: "CIS Control 14.9"
+    text: "Conduct role-specific security awareness and skills training including phishing simulation"
+  - id: "ISO 27001:2022 A.6.3"
+    text: "Information security awareness, education, and training — effectiveness testing"
+  - id: "SOC 2 CC2.2"
+    text: "Entity communicates security expectations with measurable outcomes"
+  - id: "FedRAMP AT-2(2)"
+    text: "Insider threat awareness — phishing and social engineering simulation"
+  - id: "CISA Zero Trust Pillar: Identity"
+    text: "Human-factor risk reduction includes measured phishing resistance"
+micelium_product:
+  - product: Sense
+    role: Detects post-phishing compromise behaviour — credential use from unusual locations or devices
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.3
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Run phishing simulations quarterly to measure how many employees click on simulated phishing emails. Use the results to identify individuals who need additional training. Track your click rate over time to demonstrate improvement."
+remediation_technical: "Configure your security awareness training platform to run automated phishing simulations: minimum quarterly cadence, using a rotating library of templates covering credential-harvesting, BEC impersonation, and malware-lure scenarios. Track click rate, credential entry rate, and report rate per simulation run. Define improvement targets: reduce click rate by 50% within 12 months, achieve >10% report rate within 6 months. Automatically enrol clickers in a just-in-time training module immediately after clicking. Report phishing metrics to CISO monthly and to executive leadership quarterly. Feed simulation findings back into training content updates."

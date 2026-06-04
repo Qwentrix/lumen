@@ -1,0 +1,48 @@
+id: SECPOS_NO_HARDENING_BASELINE
+domain: security_posture
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-SECPOS-039 == no_hardening
+    - Q-SECPOS-039 == vendor_defaults_only
+    - Q-SECPOS-DD-034 == no_benchmark
+    - Q-SECPOS-DD-037 == no_container_scanning
+title: "No documented hardening baseline or configuration drift detection process"
+description_short: "No approved hardening baseline standard has been documented, and no continuous process exists to detect when system configurations drift from the intended secure state."
+description_long: "A hardening baseline is a governance and process finding: the organisation has not selected, documented, or formally adopted a hardening standard (CIS Benchmarks, DISA STIGs, or equivalent), and has no continuous process to detect and remediate configuration drift. This is distinct from systems that have been hardened but are drifting — it reflects the absence of the hardening programme itself. Without a documented baseline, there is no authoritative definition of what a correctly configured system looks like, which means audit findings have no remediation target, developers have no secure-by-default reference, and the organisation cannot demonstrate to auditors that hardening is a managed process rather than ad hoc effort. Configuration drift detection is equally critical: even organisations that harden at build time find configurations drift over time through manual changes, software updates, and misconfigured automation. Without continuous drift detection, the hardened state is not maintained."
+frameworks:
+  - id: "NIST CSF PR.PS-01"
+    text: "Configuration management practices are established and maintained"
+  - id: "CIS Control 4.1"
+    text: "Establish and maintain a secure configuration process for enterprise assets"
+  - id: "CIS Benchmark"
+    text: "CIS Benchmarks for OS, cloud, container, and application hardening"
+  - id: "ISO 27001:2022 A.8.9"
+    text: "Configuration management — security hardening of systems"
+  - id: "SOC 2 CC6.1"
+    text: "Logical and physical access security controls include hardened configurations"
+  - id: "FedRAMP CM-6"
+    text: "Configuration settings — implementation of security configuration checklists"
+  - id: "CISA Zero Trust Pillar: Devices"
+    text: "Device security enforced through hardened configuration baselines"
+micelium_product:
+  - product: Sense
+    role: Monitors runtime behaviour that deviates from expected baselines on hardened systems
+  - product: Sovera
+    role: Policy-as-code configuration governance and compliance posture tracking
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  energy:
+    weight_multiplier: 1.4
+  manufacturing:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Select a hardening standard, document it as an approved policy, and then set up automated monitoring to alert you when systems deviate from it. The standard itself is less important than having one formally adopted and consistently applied — CIS Benchmarks Level 1 is a reasonable starting point for most environments."
+remediation_technical: "1. Formally adopt a documented hardening standard: select CIS Benchmarks (Level 1 minimum, Level 2 for sensitive workloads) or DISA STIGs for government environments. Record the selection as an approved policy document referencing specific benchmark versions. 2. Create golden images/AMIs with benchmarks applied using configuration management (Ansible, Chef, Puppet) so every provisioned system starts in a known-good state. 3. Establish continuous drift detection: deploy AWS Config Rules, Azure Policy, or a CSPM tool to alert when running configurations deviate from the approved baseline. Define remediation SLAs per finding severity. 4. Integrate baseline compliance scoring into your engineering metrics: track benchmark compliance score per system class and report trends to the security team. 5. Establish a change-management process for approved exceptions, documented with rationale and compensating controls, so the programme accounts for legitimate deviations without treating them as uncontrolled drift."

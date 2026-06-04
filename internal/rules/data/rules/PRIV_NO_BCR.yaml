@@ -1,0 +1,43 @@
+id: PRIV_NO_BCR
+domain: privacy
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-PRIV-DD-029 == no_mechanism
+title: "No transfer mechanism for intra-group cross-border personal data transfers"
+description_short: "The organization transfers personal data between group entities across borders without Binding Corporate Rules, Standard Contractual Clauses, or another approved GDPR transfer mechanism."
+description_long: "Multi-national corporate groups that transfer personal data between entities across borders require a lawful transfer mechanism for each transfer under GDPR Chapter V (Art. 44–49), even for intra-group flows. Without BCRs approved under Art. 47 or alternative SCCs for intra-group transfers, each transfer lacks a lawful basis under GDPR. BCRs provide the most operationally efficient mechanism for groups with multiple EEA-to-third-country entity transfers, as they cover all intra-group flows under a single approved framework. Using SCCs for intra-group transfers is legally valid but operationally cumbersome at scale. No mechanism at all means every intra-group transfer is potentially unlawful — a significant compliance risk for any multi-national group."
+frameworks:
+  - id: "GDPR Art. 47"
+    text: "Binding Corporate Rules — provides lawful basis for intra-group transfers across jurisdictions"
+  - id: "GDPR Art. 44–46"
+    text: "Cross-border transfer mechanisms — one required for every transfer outside the EEA"
+  - id: "GDPR Art. 46(2)(c)"
+    text: "Standard Contractual Clauses as alternative to BCRs for intra-group transfers"
+  - id: "ISO 27018 §5.4"
+    text: "Intra-group cross-border transfers of personal data require documented transfer safeguards"
+  - id: "NIST Privacy Framework GV.PO-2"
+    text: "Privacy obligations for cross-border data flows are identified and managed"
+micelium_product:
+  - product: Sovera
+    role: Provides geo-fenced key custody and data residency controls that technically enforce BCR/SCC geographic constraints across group entities
+  - product: Proof
+    role: Documents BCR-required transparency and audit obligations, maintaining evidence of intra-group transfer compliance
+industry_overlays:
+  financial:
+    weight_multiplier: 1.5
+  healthcare:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  it_services:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "If your organization transfers personal data between group companies in different countries, you need a legal transfer mechanism for each of those flows. BCRs are the most efficient solution for groups with many intra-group cross-border flows; SCCs are an alternative for simpler group structures."
+remediation_technical: "1. Map all intra-group data flows that cross borders from EEA to non-adequate countries. 2. Assess whether BCR or SCC is more appropriate based on the number of entities, complexity of flows, and appetite for BCR application process (typically 12–24 months). 3. If BCRs: engage lead supervisory authority, draft BCR documentation per Art. 47(2) requirements, obtain approval. 4. If SCCs: execute GDPR 2021 SCCs (Commission Decision EU 2021/914) for each intra-group transfer, including the mandatory Transfer Impact Assessment. 5. Implement technical controls to enforce the transfer basis: geo-fenced key custody, data residency constraints, and access logging by entity. 6. Register intra-group transfer mechanisms in the Art. 30 ROPA."

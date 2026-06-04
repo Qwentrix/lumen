@@ -1,0 +1,49 @@
+id: AIGOV_THIRD_PARTY_AI_UNGOVERNED
+domain: ai_governance
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-AIGOV-006 == security_only
+    - Q-AIGOV-007 == yes_ungoverned
+    - Q-AIGOV-007 == unknown
+    - Q-AIGOV-DD-010 == employees_only
+    - Q-AIGOV-DD-044 == not_assessed
+    - Q-AIGOV-DD-044 == direct_tools_only
+  scanner:
+    - ai_governance.shadow_ai_apps_count > 0
+    - ai_governance.llm_egress_processes_count > 0
+title: "Third-party AI tool use not governed — contractors or vendor AI uncontrolled"
+description_short: "Contractors, vendors, or third parties using AI on your systems or data are not subject to AI governance controls."
+description_long: "AI governance gaps in third-party relationships create the same data-leakage and compliance exposure as ungoverned internal use, but with less visibility. When contractors or vendors use unapproved AI tools against your data, your organisation remains the data controller under GDPR and the responsible party under most AI regulations — even if the third party caused the exposure. EU AI Act Art. 25 imposes obligations on deployers even when the AI system originates from a third-party provider. NIST AI RMF GOVERN-6.1 and GOVERN-6.2 require supply-chain AI risks to be treated within the same governance framework as first-party risks. A gap here commonly arises when an AI AUP covers employees but contracts with vendors are not updated to incorporate AI-use restrictions."
+frameworks:
+  - id: "EU AI Act Art. 25"
+    text: "Obligations of deployers — responsibility applies regardless of whether the AI system is built in-house or procured"
+  - id: "NIST AI RMF GOVERN-6.1"
+    text: "AI supply-chain and third-party risks are included in the organisation's AI risk governance"
+  - id: "NIST AI RMF GOVERN-6.2"
+    text: "Policies and procedures are in place for AI supply-chain risk management"
+  - id: "ISO 42001 A.6.1.3"
+    text: "AI supply chain — AI risks from suppliers and partners are assessed and managed"
+micelium_product:
+  - product: Sigil
+    role: Extends AI governance scope to third-party agents and vendor-operated AI systems with policy enforcement at the access boundary
+  - product: Sovera
+    role: Tracks third-party AI vendor obligations and contract compliance against AI governance framework requirements
+  - product: Sypher
+    role: Enforces data-handling controls at the point of third-party access, limiting exposure even when vendor AI use is undiscovered
+industry_overlays:
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.3
+  technology:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Update contracts with contractors and vendors to require compliance with your AI acceptable use policy. Include a clause prohibiting the use of unapproved AI tools on your systems or with your data."
+remediation_technical: "Amend vendor and contractor agreements to include an AI-use addendum defining: prohibited AI tools, approved tool categories, notification requirements when new AI tools are adopted, and liability for policy violations. Add AI-tool-use questions to vendor security questionnaires. Extend your shadow-AI monitoring to include contractor-operated systems with access to your data. Align to NIST AI RMF GOVERN-6.1/6.2 supply-chain controls."

@@ -1,0 +1,29 @@
+id: SECPOS_NO_NETWORK_MONITORING
+domain: security_posture
+severity: high
+default_weight: 0.75
+detect:
+  questionnaire:
+    - Q-SECPOS-002 == no_monitoring
+title: "No network traffic monitoring"
+description_short: "No monitoring is in place to detect anomalous or malicious network activity."
+description_long: "Without network monitoring, attacker dwell time increases dramatically. The IBM CODB 2024 average dwell time before detection is 194 days without monitoring. SIEM/NDR solutions reduce mean time to detect (MTTD) to under 10 days, directly reducing breach cost."
+frameworks:
+  - id: "NIST CSF DE.CM-1"
+    text: "Networks and network services are monitored to detect potential cybersecurity events"
+  - id: "CIS Control 13"
+    text: "Network monitoring and defence"
+micelium_product:
+  - product: Sense
+    role: Behavioural network anomaly detection and lateral movement alerts
+industry_overlays:
+  energy:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Deploy network monitoring that detects unusual traffic patterns, lateral movement, and data exfiltration attempts."
+remediation_technical: "Deploy a SIEM (Splunk, Microsoft Sentinel, Elastic) with network flow ingestion. Add NDR (Darktrace, ExtraHop, Zeek) for deeper analysis. Define detection rules for common TTPs from MITRE ATT&CK. Set up alerting and on-call rotation."

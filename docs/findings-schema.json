@@ -1,6 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://lumen.micelium.com/schemas/findings-schema.json",
+  "$comment": "WARNING: The $id above is a logical identifier only — it MUST NOT be referenced by URL inside template.html or any self-contained report HTML. The self-contained report gate forbids http(s):// references in the generated file; embedding this URL would break that invariant. This schema is consumed only as a local file reference by lumen-api and qwen-web tooling.",
   "title": "Lumen Scanner Output Schema",
   "description": "JSON Schema for the Lumen scanner output formats.\n\nCovers two shapes:\n  1. The `ReportPayload` produced by `lumen scan` / `lumen report` (the full scored report).\n  2. The hybrid upload payload sent by `lumen scan --hybrid` to lumen-api.\n\nDownstream tooling (lumen-api, qwen-web) should use this schema to consume scanner output.",
   "oneOf": [
@@ -406,76 +407,39 @@
     "HybridUploadPayload": {
       "type": "object",
       "title": "HybridUploadPayload",
-      "description": "The structured findings JSON sent by `lumen scan --hybrid` to lumen-api /api/v1/lumen/scanner/ingest. No file content, no PII, no hostnames.",
-      "required": ["scanner_version", "findings", "signature"],
+      "description": "The structured findings JSON sent by `lumen scan --hybrid` to POST /api/v1/lumen/scanner/ingest.\n\nPrivacy guarantee: contains ONLY integer counts and booleans. No file content,\nno PII values, no file paths, no hostnames, no usernames.\n\nTrust model: the ed25519 signature proves payload integrity (tamper-evidence + dedup),\nNOT identity. The server accepts any schema-conforming, validly-signed payload\nfrom any install. No install-key registration server-side in v1.",
+      "required": ["scanner_version", "industry", "company_size", "scanner_findings", "public_key", "signature"],
       "properties": {
         "scanner_version": {
           "type": "string",
-          "description": "Semver of the lumen binary, e.g. 'v0.1.0'."
+          "description": "Semver of the lumen binary, e.g. 'v1.0.0'."
         },
-        "content_bundle_sha": {
+        "industry": {
           "type": "string",
-          "description": "SHA-256 of the rule+NVD bundle used during the scan."
+          "description": "Industry vertical for overlay selection, e.g. 'healthcare'. May be empty string."
         },
-        "scanned_at": {
+        "company_size": {
           "type": "string",
-          "format": "date-time"
-        },
-        "findings": {
-          "type": "object",
-          "description": "Per-domain structured probe outputs.",
-          "properties": {
-            "vulnerabilities": { "$ref": "#/$defs/DomainHybridFindings" },
-            "compliance":      { "$ref": "#/$defs/DomainHybridFindings" },
-            "ai_governance":   { "$ref": "#/$defs/DomainHybridFindings" },
-            "security_posture":{ "$ref": "#/$defs/DomainHybridFindings" },
-            "privacy":         { "$ref": "#/$defs/DomainHybridFindings" }
-          },
-          "additionalProperties": false
+          "enum": ["individual", "smb", "mid", "enterprise"],
+          "description": "Company-size bucket."
         },
         "scanner_findings": {
           "$ref": "#/$defs/ScannerFindings",
-          "description": "Typed structured probe outputs for lumen-scoring engine consumption."
+          "description": "Structured probe outputs from the local scanner — integer counts and booleans only."
+        },
+        "embedded_snapshot_sha": {
+          "type": "string",
+          "description": "The source_sha from the scanner's embedded content-snapshot.meta.json (M-7 divergence detection). A git commit hash identifying the content bundle compiled into the scanner binary. Empty string for older scanner builds that predate this field. The server compares this against its live bundle SHA; if they differ, the response includes score_divergence_warning: true. Not sensitive — this is a public git SHA."
+        },
+        "public_key": {
+          "type": "string",
+          "description": "Hex-encoded ed25519 public key from ~/.lumen/install.pub. Used to verify the signature.",
+          "pattern": "^[0-9a-f]{64}$"
         },
         "signature": {
           "type": "string",
-          "description": "ed25519 signature (hex) over canonical JSON of the 'findings' field."
-        },
-        "install_key_fingerprint": {
-          "type": "string",
-          "description": "Hex fingerprint of the public key used to sign. Not the private key."
-        }
-      }
-    },
-
-    "DomainHybridFindings": {
-      "type": "object",
-      "description": "Domain findings in hybrid upload format.",
-      "required": ["hints"],
-      "properties": {
-        "hints": {
-          "type": "array",
-          "items": { "$ref": "#/$defs/FindingHint" }
-        },
-        "metadata": {
-          "type": "object",
-          "description": "Optional non-PII probe metadata (e.g. package counts, OS version)."
-        }
-      }
-    },
-
-    "FindingHint": {
-      "type": "object",
-      "title": "FindingHint",
-      "description": "A lightweight hint used in the hybrid upload path. Maps to a rule ID.",
-      "required": ["rule_id"],
-      "properties": {
-        "rule_id": {
-          "type": "string",
-          "description": "YAML rule identifier this hint maps to, e.g. 'NO_MFA_ORG_WIDE'."
-        },
-        "value": {
-          "description": "Optional numeric or string value supporting the hint."
+          "description": "Hex-encoded ed25519 signature over the canonical JSON of the payload body with the 'signature' field set to '' (excluded from the signed message).",
+          "pattern": "^[0-9a-f]{128}$"
         }
       }
     }

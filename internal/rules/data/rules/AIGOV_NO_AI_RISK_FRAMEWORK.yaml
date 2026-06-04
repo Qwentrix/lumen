@@ -1,0 +1,40 @@
+id: AIGOV_NO_AI_RISK_FRAMEWORK
+domain: ai_governance
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-AIGOV-DD-039 == no_assessment
+    - Q-AIGOV-DD-039 == informal_risk_assessment
+  scanner:
+    - ai_governance.shadow_ai_apps_count > 0
+    - ai_governance.mcp_servers_running > 0
+    - ai_governance.llm_egress_processes_count > 0
+title: "No structured AI risk assessment framework — NIST AI RMF or equivalent absent"
+description_short: "The organization has not conducted a formal AI risk assessment aligned to a recognized framework such as NIST AI RMF, leaving AI risks unmapped, unmeasured, and unmanaged."
+description_long: "A structured AI risk framework is the foundation for all other AI governance controls. Without a formalized mapping and measurement layer — NIST AI RMF MAP and MEASURE functions, or an equivalent structured methodology — organizations cannot reliably identify which AI systems carry material risk, cannot set proportionate controls, and cannot demonstrate due diligence to regulators. An informal risk assessment is insufficient: it typically lacks coverage criteria, reproducible methodology, and documented evidence suitable for audit. The EU AI Act Art. 9 requires that operators of high-risk AI systems establish, implement, document, and maintain a risk management system. NIST AI RMF MAP requires the AI system and its context to be categorized, and all affected parties identified, before risks can be measured. Absence of this foundational layer means that controls for bias, data leakage, agent scope, and vendor risk exist, if at all, as isolated point measures rather than a coherent, prioritized risk posture."
+frameworks:
+  - id: "EU AI Act Art. 9"
+    text: "Risk management system — operators of high-risk AI must establish, document, and maintain a risk management system covering the full lifecycle"
+  - id: "NIST AI RMF MAP"
+    text: "MAP function — AI system context is established, AI risks are identified and categorized in a structured way"
+  - id: "NIST AI RMF MEASURE"
+    text: "MEASURE function — AI risks are analyzed, assessed, and tracked using quantitative or qualitative methods"
+micelium_product:
+  - product: Sigil
+    role: Provides the AI governance framework layer — risk categorization, assessment workflows, and structured evidence collection aligned to NIST AI RMF and EU AI Act Art. 9
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Adopt a recognized AI risk framework — NIST AI RMF is a practical starting point. Map your AI systems, identify who they affect, and assess the risks in each deployment context before adding controls."
+remediation_technical: "Implement NIST AI RMF GOVERN-1.1 through GOVERN-6.2 by establishing an AI risk register with entries per AI system covering: system purpose, affected populations, data inputs, output use, failure modes, and residual risk rating. Run MAP workshops for each high-risk system using the AI RMF Playbook. Document MEASURE outcomes — bias metrics, reliability tests, security assessments — in version-controlled artifacts. Schedule MANAGE reviews on a cadence proportional to system impact. For EU AI Act Art. 9 compliance, ensure the risk management system is updated whenever the AI system is materially changed."

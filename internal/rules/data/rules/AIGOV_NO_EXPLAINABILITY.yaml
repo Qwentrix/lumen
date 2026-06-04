@@ -1,0 +1,43 @@
+id: AIGOV_NO_EXPLAINABILITY
+domain: ai_governance
+severity: high
+default_weight: 0.75
+detect:
+  questionnaire:
+    - Q-AIGOV-034 == outputs_only
+    - Q-AIGOV-043 == yes_not_disclosed
+    - Q-AIGOV-DD-032 == no_explainability
+    - Q-AIGOV-DD-032 == post_hoc_analysis
+    - Q-AIGOV-DD-033 == not_disclosed
+title: "No explainability capability for AI-assisted decisions — affected persons cannot understand or contest outcomes"
+description_short: "AI model outputs used in regulated decisions lack explainability tooling, and AI involvement in customer-facing decisions is not disclosed."
+description_long: "Explainability is required at two levels. First, technical explainability for decision-makers — being able to see why an AI model produced a particular recommendation, whether through feature importance scores, SHAP values, LIME, or rule extraction. Without this, decision-makers cannot evaluate whether the AI's reasoning is appropriate for the specific case, reducing oversight to a rubber-stamp of the model's output. Second, transparency to affected individuals — informing people when AI was involved in a decision that affects them, and providing a plain-language explanation of the key factors and a path to contest. GDPR Art. 22 establishes the right to explanation for automated decisions. EU AI Act Art. 13 requires meaningful transparency for high-risk AI. Disclosing AI involvement without an explanation path provides formal compliance but fails the substance of these rights."
+frameworks:
+  - id: "GDPR Art. 22"
+    text: "Automated decision-making — data subjects have the right to obtain human review, express their point of view, and contest decisions"
+  - id: "EU AI Act Art. 13"
+    text: "Transparency — high-risk AI systems shall be designed to enable deployers to interpret and explain outputs to affected persons"
+  - id: "NIST AI RMF MEASURE-2.9"
+    text: "Explainability and interpretability approaches are applied to support human oversight of AI system outputs"
+  - id: "OWASP LLM Top 10 LLM09"
+    text: "Misinformation — lack of explainability prevents detection of hallucinated or biased outputs in regulated decisions"
+micelium_product:
+  - product: Sigil
+    role: Integrates explainability tooling into AI-assisted decision workflows, providing decision-makers with model reasoning summaries and capturing explanations in the audit trail
+  - product: Sovera
+    role: Generates GDPR Art. 22 and EU AI Act Art. 13 compliant disclosure templates for customer-facing AI decisions, with contestation path documentation
+industry_overlays:
+  financial:
+    weight_multiplier: 1.5
+  healthcare:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.5
+  education:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "For AI systems that make decisions affecting people, implement two things: (1) tools that help your staff understand why the AI made a particular recommendation; and (2) a clear disclosure to affected people that AI was used in the decision and how they can challenge it."
+remediation_technical: "Implement explainability at two levels: (1) Internal — integrate an explainability framework (SHAP, LIME, or vendor-native explanation API) into the decision workflow; present key contributing features alongside model outputs to decision-makers; log explanation artifacts alongside decisions in the audit trail; (2) External — develop GDPR Art. 22 compliant disclosure notices stating AI involvement, key factors in the decision, and the process to request human review or contest the outcome; deliver these notices at the point of decision and on request. For customer-facing AI decisions, add AI-disclosure language to relevant user interfaces and communications. Align to EU AI Act Art. 13 transparency requirements and NIST AI RMF MEASURE-2.9."

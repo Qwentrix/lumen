@@ -1,0 +1,44 @@
+id: SECPOS_EDR_SIG_ONLY
+domain: security_posture
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-SECPOS-012 == av_only
+    - Q-SECPOS-DD-008 == sig_only
+title: "Antivirus/signature-only endpoint protection — no behavioural EDR"
+description_short: "Endpoint protection relies on signatures only, without behavioural detection capabilities."
+description_long: "Signature-based antivirus is ineffective against modern threats. Fileless malware, living-off-the-land binaries (LOLBins), and polymorphic ransomware variants are designed specifically to evade signature detection. Behavioural EDR detects adversary TTPs — actions rather than file hashes — making it effective against novel and zero-day attacks. The gap between signature-only detection and modern threat actors' evasion capabilities has widened dramatically since 2020. Organisations relying solely on AV are effectively undefended against the techniques used in the majority of ransomware and APT campaigns today."
+frameworks:
+  - id: "NIST CSF DE.CM-01"
+    text: "Networks and system components are monitored to find potentially adverse events"
+  - id: "CIS Control 10.1"
+    text: "Deploy and maintain anti-malware software on all assets"
+  - id: "CIS Control 13.7"
+    text: "Deploy host-based intrusion detection and response"
+  - id: "ISO 27001:2022 A.8.7"
+    text: "Protection against malware"
+  - id: "SOC 2 CC7.2"
+    text: "The entity monitors system components for anomalies"
+  - id: "FedRAMP SI-3(2)"
+    text: "Automatic malicious code detection and updates"
+  - id: "CISA Zero Trust Pillar: Devices"
+    text: "Behavioural endpoint analytics as part of device trust evaluation"
+micelium_product:
+  - product: Sense
+    role: Correlates endpoint telemetry with network behaviour to detect evasive threats that bypass signatures
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  energy:
+    weight_multiplier: 1.4
+  manufacturing:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Upgrade from antivirus to a modern EDR solution that uses behavioural detection to catch attacks that don't match known signatures. Ensure your EDR covers all operating systems in use, including servers."
+remediation_technical: "Replace legacy AV with an EDR platform providing behavioural detection based on MITRE ATT&CK TTPs. Verify the platform includes: process-tree analysis, memory scanning, network traffic correlation, and automated containment. Run parallel evaluation against red-team TTPs (LOLBin abuse, process injection, credential dumping) before migrating. Integrate with SIEM for unified alert management and threat-hunting workflows."

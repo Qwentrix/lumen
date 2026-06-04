@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:build !darwin && !linux
+//go:build !darwin && !linux && !windows
 
-// Package vulnerabilities stubs for non-darwin/linux platforms (e.g. Windows).
-// Windows vulnerability probes are implemented in LU-5.
+// Package vulnerabilities stubs for non-darwin/linux/windows platforms.
+// Windows vulnerability probes are implemented in collect_windows.go (ENT-108).
 package vulnerabilities
 
 import (
@@ -29,7 +29,14 @@ func collectInventory(_ context.Context, meta map[string]interface{}) []nvd.Inst
 	return nil
 }
 
+// DaysSinceUpdateUnknown is the fail-secure sentinel value returned when the
+// last-update date cannot be determined. Matches the darwin/linux/windows constant.
+// Intentionally 365 so VULN_NO_PATCH fires rather than being suppressed.
+const DaysSinceUpdateUnknown = 365
+
 func collectDaysSinceLastUpdate(_ context.Context, meta map[string]interface{}) int {
 	meta["days_since_update_unavailable"] = "platform not supported in LU-4; Windows probes are LU-5"
-	return 0
+	// M-1 fail-secure: return 365 (DaysSinceUpdateUnknown) rather than 0,
+	// so VULN_NO_PATCH fires instead of being silently suppressed.
+	return DaysSinceUpdateUnknown
 }

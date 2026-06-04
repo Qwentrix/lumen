@@ -1,0 +1,45 @@
+id: AIGOV_AI_INCIDENT_HISTORY
+domain: ai_governance
+severity: medium
+default_weight: 0.55
+detect:
+  questionnaire:
+    - Q-AIGOV-035 == yes_not_remediated
+    - Q-AIGOV-035 == yes_remediated
+    - Q-AIGOV-DD-042 == no_taxonomy
+    - Q-AIGOV-DD-045 == no_lessons_learned_process
+    - Q-AIGOV-DD-045 == informal_lessons
+title: "Prior AI incidents not remediated or lessons not structured — repeat risk elevated"
+description_short: "The organisation has experienced AI-related incidents without structured remediation, or lacks an AI incident taxonomy and lessons-learned process to prevent recurrence."
+description_long: "AI incidents that are not formally remediated — with documented root cause, process changes, and control improvements — create a predictable recurrence pattern. Regulators treat prior unremediated incidents as evidence of systemic governance failure rather than isolated events, and they ask about incident history in supervision processes. Equally, the absence of an AI-specific incident taxonomy means that AI events (data leakage through AI tools, model misbehaviour, agent scope violations) are classified under general security incident categories where AI-specific root causes and remediation patterns are obscured. This limits the organisation's ability to learn from incidents and improves likelihood of repetition. NIST AI RMF MANAGE-4.2 requires continuous improvement informed by incident analysis. EU AI Act Art. 73 requires providers to report serious incidents — deployers need a taxonomy to identify what qualifies."
+frameworks:
+  - id: "NIST AI RMF MANAGE-4.2"
+    text: "Organisational risk management processes are updated based on lessons learned from AI incidents"
+  - id: "EU AI Act Art. 73"
+    text: "Reporting of serious incidents — requires a taxonomy to identify when AI incidents meet the reporting threshold"
+  - id: "ISO 42001 10.2"
+    text: "Continual improvement — organisations shall use AI incidents as inputs to management system improvement"
+  - id: "NIST AI RMF GOVERN-1.4"
+    text: "Continuous improvement in AI risk management — incident-driven learning is a primary mechanism"
+micelium_product:
+  - product: Sigil
+    role: Provides an AI incident taxonomy and structured post-incident review workflow — root cause categorisation, control gap identification, and remediation tracking
+  - product: Sense
+    role: Detects incident patterns that suggest unremediated control gaps, correlating current events with historical AI incident signatures
+  - product: Proof
+    role: Packages incident records and remediation evidence for regulatory reporting under EU AI Act Art. 73
+industry_overlays:
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.3
+  technology:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Review any past AI incidents that were not fully addressed and complete the remediation. Then set up a formal process for how AI incidents are classified, investigated, and learned from going forward."
+remediation_technical: "Immediate: conduct a retrospective review of all prior AI-related incidents and complete any outstanding remediation items, documenting what was done and by whom. Ongoing: (1) define an AI incident taxonomy covering: data leakage via AI, model misbehaviour (hallucination, bias), agent scope violation, AI account compromise, vendor AI failure; (2) integrate AI incident categories into the existing IR process; (3) establish a post-incident review process for all AI incidents with: root cause analysis, control gap identification, remediation action plan with owner and due date, and lessons-learned summary; (4) schedule quarterly review of open remediation items. Align to NIST AI RMF MANAGE-4.2 and EU AI Act Art. 73."

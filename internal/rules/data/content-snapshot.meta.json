@@ -1,10 +1,10 @@
 {
   "source_repo": "github.com/Qwentrix/micelium",
   "source_path": "content/lumen",
-  "source_sha": "70f699ed8489c820971c2b748136d2ef69f3d78b",
-  "synced_at": "2026-05-31T07:06:24Z",
-  "rule_count": 170,
+  "source_sha": "06307f0a4c011741f52f44fd6dbdff4dde1b038e",
+  "synced_at": "2026-06-04T06:14:05Z",
+  "rule_count": 307,
   "overlay_count": 10,
-  "note": "VULN_* and COMP_* rules + all 10 industry overlays. Re-sync with 'make sync-content' before tagging a release.",
-  "detect_scanner_status": "ACTIVE — VULN_*/COMP_* rules carry detect.scanner conditions for host-observable fields (critical/high CVE counts, days_since_last_update, disk_encryption_enabled, firewall_enabled, screen_lock_enabled). See LU4-BUILD-BLUEPRINT.md §9."
+  "note": "All domain rules (VULN/COMP/AIGOV/SECPOS/PRIV) + 10 overlays. Re-sync with 'make sync-content' before tagging a release.",
+  "detect_scanner_status": "ACTIVE (all 5 domains) — vulns: CVE counts/patch age; compliance: disk/firewall/screen-lock; ai_governance: shadow-AI/egress/MCP; security_posture: SSH keys/ports/password-mgr; privacy: PII counts. See LU5-BUILD-BLUEPRINT.md."
 }

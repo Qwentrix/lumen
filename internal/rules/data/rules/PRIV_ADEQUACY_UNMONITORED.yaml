@@ -1,0 +1,42 @@
+id: PRIV_ADEQUACY_UNMONITORED
+domain: privacy
+severity: medium
+default_weight: 0.45
+detect:
+  questionnaire:
+    - Q-PRIV-DD-028 == no_monitoring
+    - Q-PRIV-DD-028 == reactive_only
+title: "Adequacy-decision status changes are not monitored"
+description_short: "The organization does not actively monitor GDPR adequacy decisions and would only discover a revocation after an external trigger, leaving cross-border transfers without a lawful basis."
+description_long: "The European Commission's adequacy decisions that authorize personal data transfers to third countries are not permanent — they can be revoked or suspended (as seen with Privacy Shield in 2020), modified, or lapse. Organizations relying on adequacy decisions without monitoring face the risk that transfers continue unlawfully after revocation, potentially for months. GDPR Chapter V (Art. 44–49) requires a valid transfer mechanism for every cross-border transfer; relyng on a revoked adequacy decision carries the same liability as having no mechanism at all. ISO 27018 and NIST Privacy Framework GV.PO-2 both require ongoing monitoring of the external legal environment affecting privacy controls."
+frameworks:
+  - id: "GDPR Art. 44–45"
+    text: "Transfers based on adequacy decisions — organizations must verify the decision remains valid"
+  - id: "GDPR Art. 46"
+    text: "Fallback transfer mechanisms required when adequacy is revoked"
+  - id: "ISO 27018 §5.4"
+    text: "Monitoring of cross-border transfer legal environment for cloud personal data"
+  - id: "NIST Privacy Framework GV.PO-2"
+    text: "Privacy policies, processes, and procedures are maintained and reviewed"
+micelium_product:
+  - product: Sovera
+    role: Provides geo-fenced key custody that can be adjusted when adequacy decisions change, ensuring transfers do not continue unlawfully
+  - product: Proof
+    role: Tracks transfer mechanisms in use per jurisdiction and flags when an adequacy basis requires review
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  legal:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.3
+  it_services:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Subscribe to European Commission adequacy-decision updates and designate someone responsible for reviewing cross-border transfer mechanisms when legal status changes. Do not assume your transfer basis is valid indefinitely."
+remediation_technical: "1. Subscribe to the European Commission's adequacy-decision register and DPA/ICO alert services. 2. Maintain a transfer mechanism register that lists each cross-border transfer, the mechanism relied upon (adequacy, SCC, BCR, DPF), and the review date. 3. Implement a quarterly review gate that verifies adequacy status for all relied-upon countries. 4. Prepare fallback SCCs for all adequacy-reliant transfers so they can be activated within 48 hours if adequacy is revoked. 5. Assign a named owner (DPO or legal counsel) for adequacy monitoring."

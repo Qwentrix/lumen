@@ -50,6 +50,7 @@ builds:
       - amd64
       - arm64
     ignore:
+      # Windows arm64: omitted from matrix pending arm64 Windows CI runner availability.
       - goos: windows
         goarch: arm64
     ldflags:
@@ -59,6 +60,31 @@ builds:
       - -X main.BuiltAt={{.Date}}
     flags:
       - -trimpath
+    # -----------------------------------------------------------------------
+    # ENT-108 (LU-5): Windows build — UNSIGNED (OQ-3 BLOCKED)
+    #
+    # Windows binaries are produced by the build matrix above (amd64 only).
+    # They are NOT signed with an Authenticode EV certificate because:
+    #
+    #   OQ-3 (EV code-signing cert procurement) is UNRESOLVED.
+    #
+    # An unsigned binary will trigger SmartScreen on clean Windows 11 VMs.
+    # The Win11 SmartScreen acceptance test (ENT-108 acceptance criterion)
+    # is therefore DEFERRED/BLOCKED until OQ-3 is resolved.
+    #
+    # When OQ-3 completes:
+    #  1. Provision EV cert (DigiCert / Sectigo recommended).
+    #  2. Add a `signs:` block (or release.yml step) that runs:
+    #       signtool sign /fd sha256
+    #                    /tr http://timestamp.digicert.com /td sha256
+    #                    /f certificate.pfx /p %WINDOWS_SIGN_PASS%
+    #                    lumen.exe
+    #  3. Update release.yml Windows build step to import the .pfx and run signtool.
+    #  4. Re-run SmartScreen acceptance test on a clean Win11 VM.
+    #  5. Remove this blocked comment.
+    #
+    # See docs/WINDOWS_SIGNING.md for the full EV-sign checklist.
+    # -----------------------------------------------------------------------
 
 archives:
   - id: lumen-archives
@@ -126,6 +152,11 @@ release:
 # Options:      --options runtime  (hardened runtime — required for notarization)
 #               --timestamp        (secure timestamp — required for notarization)
 #               --force            (allow re-signing snapshot builds)
+#
+# DUAL SIGNING PATHWAYS — READ BEFORE MODIFYING:
+# Used ONLY for local `goreleaser release --snapshot`. CI/tagged-release signing
+# + notarization is done in release.yml (codesign + xcrun notarytool + stapling)
+# — the two pathways are independent; do not assume goreleaser signs CI releases.
 # -------------------------------------------------------------------------
 signs:
   - id: macos-codesign

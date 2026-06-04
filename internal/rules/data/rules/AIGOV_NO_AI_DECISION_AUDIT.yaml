@@ -1,0 +1,43 @@
+id: AIGOV_NO_AI_DECISION_AUDIT
+domain: ai_governance
+severity: high
+default_weight: 0.80
+detect:
+  questionnaire:
+    - Q-AIGOV-032 == yes_minimal_oversight
+    - Q-AIGOV-033 == yes_possible_not_logged
+    - Q-AIGOV-034 == no_audit_log
+    - Q-AIGOV-DD-034 == possible_not_recorded
+    - Q-AIGOV-DD-035 == no_logs_or_no_retention
+title: "No audit trail for AI-assisted decisions in regulated workflows"
+description_short: "Inputs, outputs, and decision context for AI-assisted decisions in regulated workflows are not captured in a searchable audit log."
+description_long: "AI-assisted decisions in regulated contexts — hiring, credit, medical triage, legal outcomes — require a complete audit trail because the decision may be challenged by an affected person, investigated by a regulator, or used as evidence in litigation. Without an audit log of what the AI system received as input, what it recommended, what the human decision was, and whether any override was applied, the organisation cannot reconstruct the basis for decisions. This creates direct exposure under GDPR Art. 22 (automated decision-making — affected persons have rights that require the organisation to explain the decision), EU AI Act Art. 12 (logging requirements for high-risk AI), and sector regulations in financial services and healthcare. The problem compounds over time: logging gaps from six months ago cannot be retroactively filled. The longer audit logging is absent, the larger the period of unrecoverable exposure."
+frameworks:
+  - id: "EU AI Act Art. 12"
+    text: "Logging capabilities — high-risk AI systems shall have automatic logging of events relevant to oversight and post-hoc review"
+  - id: "GDPR Art. 22"
+    text: "Automated individual decision-making — data subjects have the right to explanation; audit logs are required to provide it"
+  - id: "NIST AI RMF MEASURE-2.7"
+    text: "AI system behaviour and decisions are monitored and documented for accountability and oversight"
+  - id: "EU AI Act Art. 13"
+    text: "Transparency and provision of information — affected persons must be able to understand AI-assisted decisions affecting them"
+micelium_product:
+  - product: Sigil
+    role: Provides structured decision audit logging for AI-assisted workflows — capturing input context, model output, human decision, and override actions with tamper-evident storage
+  - product: Proof
+    role: Exports decision audit logs in regulatory-submission formats, with defined retention periods and searchable indices for data-subject access requests and investigations
+  - product: Sovera
+    role: Maps AI decision audit requirements to applicable regulatory obligations and monitors audit log completeness
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.5
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "For any AI system that helps make decisions about people — loan approvals, hiring, medical recommendations, legal outcomes — log every decision with the AI's recommendation, what decision was actually made, and whether a human changed the AI's recommendation."
+remediation_technical: "Implement decision audit logging for every regulated AI-assisted workflow capturing: (1) input data submitted to the AI system (or a pseudonymised/hashed representation if personal data is involved); (2) AI system output/recommendation with confidence scores or risk scores; (3) human decision outcome; (4) override indicator — did the human change the AI's recommendation? If yes, with reason; (5) reviewer identity; (6) timestamp (UTC). Store in an append-only log with defined retention (minimum 3 years, or as required by applicable regulation). Implement searchable access for data-subject access requests and regulatory queries. Define a data-retention policy compliant with applicable regulations. Align to EU AI Act Art. 12 and GDPR Art. 22."

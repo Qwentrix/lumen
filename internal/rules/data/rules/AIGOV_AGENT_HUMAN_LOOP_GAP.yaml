@@ -1,0 +1,47 @@
+id: AIGOV_AGENT_HUMAN_LOOP_GAP
+domain: ai_governance
+severity: high
+default_weight: 0.80
+detect:
+  questionnaire:
+    - Q-AIGOV-026 == no_human_gate
+    - Q-AIGOV-026 == optional_review
+    - Q-AIGOV-044 == end_result_validated
+    - Q-AIGOV-046 == review_recommended
+    - Q-AIGOV-DD-023 == no_thresholds
+    - Q-AIGOV-DD-024 == logged_reviewed_later
+    - Q-AIGOV-DD-041 == manual_monitoring
+  scanner:
+    - ai_governance.mcp_servers_running > 0
+title: "No mandatory human-in-the-loop gate for high-impact AI agent actions"
+description_short: "AI agents proceed autonomously for high-impact actions — no mandatory human approval step before consequences become irreversible."
+description_long: "The absence of a human-in-the-loop gate for high-impact AI agent actions means that errors, hallucinations, prompt injections, or misconfigured agent instructions can propagate to production consequences before any human can review them. An AI agent that sends external communications, modifies production data, or executes financial transactions without mandatory human approval converts model errors into business incidents at machine speed. EU AI Act Art. 14 is explicit: high-risk AI systems must have technical measures ensuring humans can intervene and override. NIST AI RMF MANAGE-2.2 requires human oversight proportionate to the risk level of AI-assisted decisions. The risk is compounded in chained agent workflows where each stage amplifies earlier errors — validation only at the final output misses cascading failures through the pipeline."
+frameworks:
+  - id: "EU AI Act Art. 14"
+    text: "Human oversight — high-risk AI must have effective oversight mechanisms including ability to pause, correct, and override"
+  - id: "NIST AI RMF MANAGE-2.2"
+    text: "Risk controls include human oversight mechanisms commensurate with AI system impact potential"
+  - id: "OWASP LLM Top 10 LLM08"
+    text: "Excessive Agency — human-in-the-loop gates are a primary recommended control for high-impact agent actions"
+  - id: "ISO 42001 A.6.2.4"
+    text: "Human oversight — organisations shall define where human oversight is required in AI system workflows"
+micelium_product:
+  - product: Sigil
+    role: Implements configurable human-in-the-loop checkpoints in agent workflows — high-impact actions require explicit approval before execution, with timeout and escalation policies
+  - product: Sense
+    role: Classifies agent action risk levels in real time, surfacing human-review requirements based on action type and context
+industry_overlays:
+  financial:
+    weight_multiplier: 1.5
+  healthcare:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Require a human to approve any AI agent action that could have significant consequences — sending emails outside your organisation, modifying customer records, executing payments, or running code in production. A yes/no prompt from a real person is often all that is needed."
+remediation_technical: "Define a risk-tiered action classification for your AI agent workflows: (1) low-risk actions (read-only, internal) — autonomous execution acceptable; (2) medium-risk (write to production, send to internal recipients) — asynchronous human review within SLA; (3) high-risk (external communications, financial transactions, production data deletion) — synchronous human approval required before execution. Implement the gate in the agent orchestration layer with a timeout policy (if no approval received in N minutes, abort). Log all approval and rejection decisions with reviewer identity and timestamp. Align to EU AI Act Art. 14 oversight requirements."

@@ -1,0 +1,33 @@
+id: AIGOV_NO_BIAS_ASSESSMENT
+domain: ai_governance
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-AIGOV-DD-001 == no
+title: "No bias and fairness assessment for decision-making AI"
+description_short: "AI models used in business decisions are not assessed for bias or fairness."
+description_long: "AI models used in hiring, credit scoring, insurance, healthcare triage, or law enforcement are classified as high-risk under the EU AI Act. Deployers must conduct conformity assessments including bias evaluation before deployment and periodically thereafter."
+frameworks:
+  - id: "EU AI Act Art. 9"
+    text: "Risk management system for high-risk AI"
+  - id: "NIST AI RMF MEASURE-2.5"
+    text: "AI system to be deployed is demonstrated to be valid and reliable"
+  - id: "EEOC AI guidelines"
+    text: "Adverse impact analysis for AI in employment decisions"
+micelium_product:
+  - product: Sigil
+    role: Bias assessment workflow and audit trail management
+industry_overlays:
+  financial:
+    weight_multiplier: 1.5
+  healthcare:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Before deploying any AI model that affects people, conduct a bias and fairness assessment across protected demographic groups."
+remediation_technical: "Use IBM AI Fairness 360, Google's What-If Tool, or Microsoft Fairlearn for bias metrics. Document assessment results. Build pre-deployment gates in your MLOps pipeline. Schedule periodic re-assessment as data distributions shift."

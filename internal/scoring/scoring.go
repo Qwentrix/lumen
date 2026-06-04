@@ -23,13 +23,11 @@
 //	      → evaluateRules → evalScannerCondition   [lumen-scoring]
 //	  → *types.ReportPayload
 //
-// Scanner-active domains (v0.1.x): vulnerabilities and compliance.
-// The embedded rules snapshot contains active detect.scanner conditions for
-// both of these domains, so probe findings directly affect the score and grade.
-//
-// Questionnaire-only in v0.1.x (no scanner conditions yet): ai_governance,
-// security_posture, and privacy. These domains contribute to the score only
-// when questionnaire answers are provided (--hybrid mode, LU-5).
+// Scanner-active domains: vulnerabilities and compliance have had detect.scanner
+// conditions since LU-4. ai_governance, security_posture, and privacy are now
+// wired (LU-5) — their probe fields flow into ScannerFindings and will trigger
+// scoring rules as soon as AIGOV_*/SECPOS_*/PRIV_* rules carry detect.scanner
+// conditions in the embedded snapshot.
 package scoring
 
 import (
@@ -54,7 +52,21 @@ import (
 // Scanner-active domains (vulnerabilities + compliance) produce findings that
 // directly affect the score. ai_governance, security_posture, and privacy are
 // questionnaire-only in v0.1.x and require --hybrid answers to score below A.
+//
+// Callers that need the ScannerFindings struct for other purposes (e.g. the
+// hybrid upload path) should use BuildScannerFindings once and pass the result
+// to ScoreScanWithFindings to avoid building the struct twice.
 func ScoreScan(results map[string]*common.ProbeResult, industry, companySize string) (*lstypes.ReportPayload, error) {
+	sf := BuildScannerFindings(results)
+	return ScoreScanWithFindings(sf, industry, companySize)
+}
+
+// ScoreScanWithFindings scores a pre-built *lstypes.ScannerFindings struct.
+// It is the preferred entry-point when the caller has already built the
+// ScannerFindings (e.g. for the hybrid upload path), so the same struct is
+// used for both local scoring and the upload payload — guaranteeing
+// score-parity between local report and server assessment.
+func ScoreScanWithFindings(sf *lstypes.ScannerFindings, industry, companySize string) (*lstypes.ReportPayload, error) {
 	// Load embedded rules and overlays.
 	ruleStore, overlayStore, cleanup, err := lumenrules.LoadEmbedded()
 	if err != nil {
@@ -67,9 +79,6 @@ func ScoreScan(results map[string]*common.ProbeResult, industry, companySize str
 	if err != nil {
 		return nil, fmt.Errorf("scoring: create engine: %w", err)
 	}
-
-	// Build scanner findings from probe results.
-	sf := buildScannerFindings(results)
 
 	// Generate a local UUID (no network).
 	assessmentID := localUUID()
@@ -89,11 +98,22 @@ func ScoreScan(results map[string]*common.ProbeResult, industry, companySize str
 	return payload, nil
 }
 
+// BuildScannerFindings is the exported form of buildScannerFindings.
+// It maps each probe domain's ScannerFields into the typed types.ScannerFindings
+// struct consumed by the lumen-scoring engine.
+//
+// This is exported for use by the hybrid upload path in cmd/lumen/scan.go so that
+// the exact same ScannerFindings passed to Score() can also be sent to lumen-api,
+// guaranteeing server-side score == local score (score-parity invariant).
+func BuildScannerFindings(results map[string]*common.ProbeResult) *lstypes.ScannerFindings {
+	return buildScannerFindings(results)
+}
+
 // buildScannerFindings maps each probe domain's ScannerFields into the typed
 // types.ScannerFindings struct consumed by the lumen-scoring engine.
 //
-// For LU-4, only Vulnerabilities and Compliance are populated from real probes.
-// AIGovernance, SecurityPosture, and Privacy remain zero-valued (LU-5 fills them).
+// All five domains are now populated: vulnerabilities and compliance (since LU-4);
+// ai_governance, security_posture, and privacy (wired in LU-5).
 func buildScannerFindings(results map[string]*common.ProbeResult) *lstypes.ScannerFindings {
 	sf := &lstypes.ScannerFindings{}
 
@@ -110,7 +130,18 @@ func buildScannerFindings(results map[string]*common.ProbeResult) *lstypes.Scann
 			if result.ScannerFields.Compliance != nil {
 				sf.Compliance = *result.ScannerFields.Compliance
 			}
-		// LU-5: ai_governance, security_posture, privacy
+		case "ai_governance":
+			if result.ScannerFields.AIGovernance != nil {
+				sf.AIGovernance = *result.ScannerFields.AIGovernance
+			}
+		case "security_posture":
+			if result.ScannerFields.SecurityPosture != nil {
+				sf.SecurityPosture = *result.ScannerFields.SecurityPosture
+			}
+		case "privacy":
+			if result.ScannerFields.Privacy != nil {
+				sf.Privacy = *result.ScannerFields.Privacy
+			}
 		}
 	}
 

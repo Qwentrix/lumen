@@ -1,0 +1,47 @@
+id: SECPOS_STALE_ACCOUNTS
+domain: security_posture
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-SECPOS-008 == no_process
+    - Q-SECPOS-008 == manual_inconsistent
+    - Q-SECPOS-DD-006 == no_vendor_governance
+    - Q-SECPOS-053 == no_access_review
+    - Q-SECPOS-053 == ad_hoc_no_schedule
+title: "Stale accounts — no consistent access revocation or periodic review"
+description_short: "Access is not consistently revoked when employees leave, and periodic access reviews are absent."
+description_long: "Stale accounts are a persistent attack surface. A former employee or contractor who retains access can exfiltrate data or serve as an entry point for a threat actor who purchased or phished those credentials. The 2024 Verizon DBIR found that abuse of valid credentials accounts for 44% of breaches. Without periodic access reviews, accounts accumulate privileges over time through role changes — a phenomenon known as privilege creep. Regulatory frameworks including SOC 2, ISO 27001, and HIPAA mandate periodic user access reviews and prompt deprovisioning on role changes or departure."
+frameworks:
+  - id: "NIST CSF PR.AA-05"
+    text: "Access permissions, entitlements, and authorisations are managed, enforced, and reviewed"
+  - id: "CIS Control 5.3"
+    text: "Disable dormant accounts and remove accounts that are no longer authorised"
+  - id: "ISO 27001:2022 A.5.18"
+    text: "Access rights — establish, modify, review, revoke"
+  - id: "SOC 2 CC6.2"
+    text: "Prior to issuing system credentials, user identity is registered and authorised"
+  - id: "FedRAMP AC-2(3)"
+    text: "Disable inactive accounts after defined inactivity period"
+  - id: "CISA Zero Trust Pillar: Identity"
+    text: "Continuous validation of identity entitlements"
+micelium_product:
+  - product: Sovera
+    role: Automated access certification workflows and policy-driven entitlement reviews
+  - product: Sense
+    role: Detects anomalous activity from dormant or suspicious accounts
+  - product: Proof
+    role: Access review audit trail and evidence collection for compliance reporting
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Implement an automated process to disable accounts within hours of an employee leaving. Run quarterly access reviews so managers certify which accounts still need access. Remove or disable any account inactive for more than 90 days."
+remediation_technical: "Integrate your IdP with your HR system via SCIM or a lifecycle management platform (SailPoint, Saviynt, Entra Identity Governance). Configure automatic account disablement on HR termination trigger with a 24-hour SLA. Implement quarterly access certification campaigns via your IGA tool or IdP. Define an inactivity policy (90 days) with automated enforcement. Extend governance to service accounts and third-party vendor accounts with the same review cadence."

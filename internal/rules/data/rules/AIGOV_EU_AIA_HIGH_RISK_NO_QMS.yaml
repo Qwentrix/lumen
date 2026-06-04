@@ -1,0 +1,42 @@
+id: AIGOV_EU_AIA_HIGH_RISK_NO_QMS
+domain: ai_governance
+severity: high
+default_weight: 0.75
+detect:
+  questionnaire:
+    - Q-AIGOV-DD-028 == no_qms
+    - Q-AIGOV-DD-028 == partial_qms
+title: "No quality management system for high-risk AI — EU AI Act Art. 17 requirement unmet"
+description_short: "A quality management system covering the full lifecycle of high-risk AI systems is absent or incomplete, in violation of EU AI Act Art. 17."
+description_long: "EU AI Act Art. 17 requires providers of high-risk AI systems to establish a quality management system that covers the entire AI lifecycle: requirements definition, design, development, testing, deployment, monitoring, and retirement. The QMS must include documented policies, processes, and roles; systematic testing procedures; post-market monitoring; and mechanisms to ensure continued compliance as the AI system and its context evolve. For deployers operating as de-facto providers (under Art. 25 conditions) this obligation extends to the deployer. A partial QMS that covers some lifecycle stages creates gaps where quality escapes during the uncovered phases — typically between development hand-off and production monitoring. The absence of a QMS is a direct EU AI Act violation for organisations that have been assessed as deploying high-risk AI systems."
+frameworks:
+  - id: "EU AI Act Art. 17"
+    text: "Quality management system — required for providers of high-risk AI systems covering the full AI lifecycle"
+  - id: "EU AI Act Art. 9"
+    text: "Risk management system — requires documented processes that the QMS must operationalise"
+  - id: "ISO 42001 6.1"
+    text: "Planning for AI management system — defines the structure and scope of the quality and risk management system for AI"
+  - id: "NIST AI RMF GOVERN-4.2"
+    text: "Organisational teams commit to maintaining and improving AI risk management processes throughout the AI lifecycle"
+micelium_product:
+  - product: Sigil
+    role: Provides the operational backbone for the AI system QMS — tracking AI lifecycle stages, documenting required artefacts at each stage, and surfacing compliance gaps when required QMS outputs are missing
+  - product: Sovera
+    role: Generates QMS compliance evidence packages aligned to EU AI Act Art. 17 requirements for audit and supervisory authority review
+  - product: Proof
+    role: Attests QMS artefacts with integrity records for regulatory submission
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.3
+  education:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Establish documented processes for how you design, test, deploy, and monitor AI systems — and make sure those processes are followed consistently. This is the quality management system the EU AI Act requires."
+remediation_technical: "Establish an AI QMS covering: (1) requirements definition — capture intended purpose, data requirements, performance targets, and risk appetite before development; (2) design review — gate deployment on design documentation review by a named approver; (3) testing — define test datasets, test types (performance, bias, adversarial), and pass thresholds; (4) deployment approval — require QMS artefact completeness check before production; (5) monitoring — define KPIs and review cadence post-deployment; (6) change management — require QMS artefact update for any material change; (7) retirement — define decommission criteria and documentation requirements. Document all QMS processes in version-controlled operational documentation. Align to EU AI Act Art. 17 and ISO 42001 management system requirements."

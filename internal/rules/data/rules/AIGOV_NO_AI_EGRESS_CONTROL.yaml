@@ -1,0 +1,47 @@
+id: AIGOV_NO_AI_EGRESS_CONTROL
+domain: ai_governance
+severity: critical
+default_weight: 0.90
+detect:
+  questionnaire:
+    - Q-AIGOV-019 == no_controls
+    - Q-AIGOV-DD-017 == no_controls
+    - Q-AIGOV-DD-018 == no_enforcement
+  scanner:
+    - ai_governance.llm_egress_processes_count > 0
+title: "No technical egress controls for AI endpoints — all data classifications can reach external AI"
+description_short: "No technical controls prevent any category of sensitive data from being transmitted to external AI services."
+description_long: "When there are no technical controls on AI egress — no DLP, no network blocking, no content inspection — every employee's AI tool usage represents an uncontrolled data exfiltration channel. Unlike traditional exfiltration, AI API traffic is syntactically indistinguishable from legitimate use, making post-hoc detection difficult. The organisation has no mechanism to determine whether production databases, confidential documents, customer PII, or regulated health data have been submitted to external AI services. GDPR Art. 32 requires appropriate technical measures proportionate to the risk — unrestricted AI egress is incompatible with this requirement for any organisation processing personal data. EU AI Act Art. 26 requires deployers to implement appropriate technical measures. NIST AI RMF MANAGE-4.1 requires that residual risks be treated with commensurate controls. A complete absence of egress controls typically indicates AI governance was not considered during tool adoption."
+frameworks:
+  - id: "GDPR Art. 32"
+    text: "Appropriate technical measures for data security — unrestricted AI egress is a direct breach of this obligation for personal data controllers"
+  - id: "EU AI Act Art. 26(5)"
+    text: "Deployers shall implement appropriate technical and organisational measures — zero technical controls is non-compliant"
+  - id: "NIST AI RMF MANAGE-4.1"
+    text: "Residual risks are monitored and managed with commensurate controls"
+  - id: "HIPAA 164.312(e)(2)(ii)"
+    text: "Encryption and decryption of ePHI in transmission — AI API transmission without controls fails this safeguard"
+  - id: "OWASP LLM Top 10 LLM06"
+    text: "Sensitive Information Disclosure — absence of technical controls is the highest-risk scenario"
+micelium_product:
+  - product: Sigil
+    role: Deploys AI egress enforcement at the system boundary — all AI API calls are proxied through Sigil's policy engine before reaching external providers
+  - product: Sypher
+    role: Enforces document-level DRM policies at the point of egress, preventing classified documents from being submitted to AI endpoints regardless of the channel used
+  - product: Sense
+    role: Provides detective coverage by monitoring AI endpoint traffic volume and data patterns while preventive controls are being implemented
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Block all AI API traffic at the network level immediately for any data-sensitive environment. Then implement proper content inspection before reopening access to approved AI services."
+remediation_technical: "Immediate mitigation: block all external AI API endpoints at the network perimeter or web proxy category. For approved AI use, route all AI API traffic through an inline proxy with content inspection. Implement DLP rules tuned for AI endpoint URL patterns and prompt payload structures. Enforce classification-based blocking: Confidential and Restricted data classifications must be blocked from AI API transmission. Deploy AI-aware endpoint DLP agents to catch browser-based AI tool submissions. Align to NIST AI RMF MANAGE-4.1 and GDPR Art. 32 technical measures requirements."

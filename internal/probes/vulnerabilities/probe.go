@@ -27,6 +27,7 @@ package vulnerabilities
 
 import (
 	"context"
+	"strings"
 
 	lstypes "github.com/Qwentrix/lumen-scoring/pkg/types"
 
@@ -105,7 +106,10 @@ func matchCVEs(idx *nvd.Index, pkgs []nvd.InstalledPackage) (critical, high int)
 				continue
 			}
 			seen[rec.CVE] = struct{}{}
-			switch rec.Severity {
+			// C-1: normalise severity to lowercase so the committed index
+			// (which stores uppercase "CRITICAL"/"HIGH" from the NVD API)
+			// matches correctly without requiring an index regen.
+			switch strings.ToLower(rec.Severity) {
 			case "critical":
 				critical++
 			case "high":
@@ -117,13 +121,22 @@ func matchCVEs(idx *nvd.Index, pkgs []nvd.InstalledPackage) (critical, high int)
 }
 
 // Manifest returns the static access declaration for the vulnerability probe.
-// Windows entries are marked (LU-5) and are not invoked in LU-4.
+// Entries cover all platforms (macOS, Linux, Windows) and are static documentation —
+// no build tags; disclosure is unconditional per the SCANNER_MANIFEST transparency promise.
 func Manifest() common.ManifestEntry {
 	return common.ManifestEntry{
 		DomainID: domainID,
 		OSAPIs: []string{
-			// macOS — package inventory
+			// macOS — .app bundle inventory
 			"/usr/sbin/system_profiler SPApplicationsDataType -json",
+			// macOS — OS version (→ apple:macos CPE entry for OS-level CVEs)
+			"/usr/bin/sw_vers -productVersion",
+			// macOS — package receipts (CLI tools: curl, git, openssl, python, node, openssh)
+			"/usr/sbin/pkgutil --pkgs",
+			"/usr/sbin/pkgutil --pkg-info <receipt-id>",
+			// macOS — Homebrew packages (best-effort; tolerated absent)
+			"/opt/homebrew/bin/brew list --versions",
+			"/usr/local/bin/brew list --versions",
 			// macOS — update age (reads plist; no network)
 			"/usr/bin/defaults read /Library/Preferences/com.apple.SoftwareUpdate LastSuccessfulDate",
 			"/usr/bin/defaults read /Library/Preferences/com.apple.SoftwareUpdate LastFullSuccessfulDate",
@@ -133,9 +146,8 @@ func Manifest() common.ManifestEntry {
 			"rpm -qa --qf '%{NAME}\\t%{VERSION}\\n'",
 			// Linux — update age (RHEL)
 			"rpm -qa --last",
-			// Windows (LU-5 scope only — not invoked in LU-4)
-			"winget list (Windows — LU-5)",
-			"Get-WmiObject Win32_Product (Windows — LU-5)",
+			// Windows — patch recency fallback (when WUA registry key absent)
+			"powershell.exe Get-HotFix (Windows — patch recency fallback)",
 		},
 		FilePaths: []string{
 			// macOS — Software Update plist (read via defaults, not direct file open)
@@ -143,6 +155,12 @@ func Manifest() common.ManifestEntry {
 			// Linux — Debian/Ubuntu update stamps
 			"/var/lib/apt/periodic/update-success-stamp",
 			"/var/log/apt/history.log",
+			// Windows — registry: installed programs (64-bit, 32-bit, and user-scope)
+			`HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall (Windows registry — DisplayName scan)`,
+			`HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall (Windows registry — 32-bit view)`,
+			`HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall (Windows registry — DisplayName scan)`,
+			// Windows — patch recency primary source
+			`HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\Results\Install (Windows registry — LastSuccessTime)`,
 		},
 		NetworkCalls: []string{}, // ZERO — fully offline
 	}

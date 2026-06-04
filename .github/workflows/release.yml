@@ -197,19 +197,38 @@ jobs:
           security delete-keychain "${{ env.KEYCHAIN_NAME }}" 2>/dev/null || true
 
       # -----------------------------------------------------------------------
-      # Windows — Authenticode sign + MSI (stub — LU-5 EV cert via LU-3)
+      # Windows — UNSIGNED binary (ENT-108 / LU-5)
+      #
+      # OQ-3 (EV code-signing cert) is UNRESOLVED.
+      # The Windows binary is produced by the "Build binary" step above but is
+      # NOT Authenticode-signed. SmartScreen will warn on first run on clean VMs.
+      #
+      # BLOCKED ON OQ-3 — Do NOT add signing steps until the EV cert exists.
+      # When OQ-3 resolves, replace the echo below with:
+      #
+      #   signtool sign \
+      #     /fd sha256 \
+      #     /tr http://timestamp.digicert.com /td sha256 \
+      #     /f certificate.pfx /p "$env:WINDOWS_SIGN_PASS" \
+      #     lumen.exe
+      #
+      # Required secret: WINDOWS_EV_CERT_PFX_BASE64 (base64 of .pfx)
+      #                  WINDOWS_SIGN_PASS          (pfx passphrase)
+      # See docs/WINDOWS_SIGNING.md for the full provisioning checklist.
       # -----------------------------------------------------------------------
-      - name: "[Windows] Authenticode sign binary (TODO)"
+      - name: "[Windows] Authenticode sign binary (BLOCKED on OQ-3 — unsigned)"
         if: matrix.goos == 'windows'
+        shell: bash
         run: |
-          # TODO: signtool sign /fd sha256 /tr http://timestamp.digicert.com /td sha256
-          #       /f certificate.pfx /p $env:WINDOWS_SIGN_PASS lumen.exe
-          echo "TODO: Windows Authenticode stub — implement in LU-5 (EV cert via LU-3)"
+          echo "NOTICE: Windows binary is UNSIGNED (OQ-3 EV cert unresolved)."
+          echo "SmartScreen will warn on clean Windows 11 VMs."
+          echo "See .goreleaser.yaml and docs/WINDOWS_SIGNING.md for the signing TODO."
 
-      - name: "[Windows] Build .msi installer (TODO)"
+      - name: "[Windows] Build .msi installer (deferred to post-OQ-3)"
         if: matrix.goos == 'windows'
+        shell: bash
         run: |
-          echo "TODO: Windows .msi stub — implement in LU-5"
+          echo "TODO: Windows .msi packaging — deferred until OQ-3 EV cert is provisioned."
 
       # -----------------------------------------------------------------------
       # Linux — .deb and .rpm (deferred to LU-5)

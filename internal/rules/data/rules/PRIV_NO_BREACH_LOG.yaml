@@ -1,0 +1,46 @@
+id: PRIV_NO_BREACH_LOG
+domain: privacy
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-PRIV-038 == no_log
+    - Q-PRIV-038 == notifiable_only
+    - Q-PRIV-050 == yes_breach_and_inquiry
+    - Q-PRIV-050 == yes_breach_only
+title: "Personal data breach log is absent or covers only notifiable incidents"
+description_short: "The organization does not maintain a complete log of personal data breaches and near-misses, or logs only incidents that meet the notification threshold — failing the GDPR Art. 33(5) internal records requirement."
+description_long: "GDPR Art. 33(5) requires controllers to document all personal data breaches, regardless of whether notification to the supervisory authority is required. This internal record must include: facts, effects, and remedial actions taken. The requirement explicitly covers incidents that do not meet the notification threshold — the controller must be able to demonstrate why notification was not required. Organizations that log only notifiable breaches cannot demonstrate Art. 5(2) accountability for sub-threshold incidents. Supervisory authorities routinely request the breach log during audits and investigations; an incomplete or absent log is strong evidence of systemic governance failure. Where a breach or regulatory inquiry has already occurred (Q-PRIV-050), absence of a comprehensive breach log may constitute an additional violation in the investigation."
+frameworks:
+  - id: "GDPR Art. 33(5)"
+    text: "Internal breach documentation required for all incidents regardless of notification threshold"
+  - id: "GDPR Art. 5(2)"
+    text: "Accountability — controller must be able to demonstrate compliance including breach management"
+  - id: "HIPAA 45 CFR §164.414"
+    text: "Documentation of breach notification — all breach investigations and decisions must be retained for 6 years"
+  - id: "ISO 27018 §9.3"
+    text: "Cloud provider breach log must be maintained and available to customers on request"
+  - id: "NIST Privacy Framework RS.CO-1"
+    text: "Breach response activities are documented including decisions made and communications sent"
+micelium_product:
+  - product: Proof
+    role: Provides a centralized breach log with structured incident records, near-miss tracking, and evidence documentation for regulatory inspection
+  - product: Pulse
+    role: Automates incident intake and routes breach events to the appropriate response workflow, ensuring every incident is captured
+  - product: Sense
+    role: Detects anomalous access patterns that may indicate unreported near-miss incidents before they escalate
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Keep a log of every personal data breach and near-miss, even when no regulatory notification is required. For sub-threshold incidents, record why you determined notification was not required — this is your proof of due diligence."
+remediation_technical: "1. Implement a breach register that captures: incident date, discovery date, data categories affected, estimated number of data subjects affected, cause, nature of breach, likely consequences, remediation actions, and notification decision with documented rationale. 2. Require all incidents to be logged regardless of notification threshold; add a mandatory triage field for notification decision with supporting reasoning. 3. Train IT and security teams to route all potential breaches (including near-misses and suspected incidents) to the breach register. 4. Retain breach records for a minimum of 3 years (GDPR limitation period for regulatory action); extend to 6 years for HIPAA-relevant incidents. 5. Review breach register quarterly to identify systemic patterns requiring process improvement."

@@ -27,8 +27,10 @@ jobs:
         with:
           repository: Qwentrix/lumen-scoring
           path: lumen-scoring
-          # Pin to the SHA embedded in internal/rules/data/content-snapshot.meta.json.
-          # Update this ref when re-embedding content or upgrading lumen-scoring.
+          # Tracking lumen-scoring@main until v0.1.0 is tagged; pin to the tag/SHA
+          # once published.  Note: the embedded-content source_sha in
+          # internal/rules/data/content-snapshot.meta.json is the MICELIUM repo
+          # SHA — a different repository entirely, not the lumen-scoring SHA.
           ref: main
 
       - name: Set up Go
@@ -64,8 +66,10 @@ jobs:
         with:
           repository: Qwentrix/lumen-scoring
           path: lumen-scoring
-          # Pin to the SHA embedded in internal/rules/data/content-snapshot.meta.json.
-          # Update this ref when re-embedding content or upgrading lumen-scoring.
+          # Tracking lumen-scoring@main until v0.1.0 is tagged; pin to the tag/SHA
+          # once published.  Note: the embedded-content source_sha in
+          # internal/rules/data/content-snapshot.meta.json is the MICELIUM repo
+          # SHA — a different repository entirely, not the lumen-scoring SHA.
           ref: main
 
       - name: Set up Go
@@ -133,15 +137,37 @@ jobs:
     name: ci/no-default-network-call
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      # -----------------------------------------------------------------------
+      # Dual checkout: scanner repo into ./lumen/ and the lumen-scoring sibling
+      # into ./lumen-scoring/ so the go.mod replace directive
+      # (replace github.com/Qwentrix/lumen-scoring => ../lumen-scoring) resolves
+      # correctly.  Pattern mirrors release.yml §Checkout.
+      # -----------------------------------------------------------------------
+      - name: Checkout lumen (scanner)
+        uses: actions/checkout@v4
+        with:
+          path: lumen
+
+      - name: Checkout lumen-scoring (replace dependency)
+        uses: actions/checkout@v4
+        with:
+          repository: Qwentrix/lumen-scoring
+          path: lumen-scoring
+          # Tracking lumen-scoring@main until v0.1.0 is tagged; pin to the tag/SHA
+          # once published.  Note: the embedded-content source_sha in
+          # internal/rules/data/content-snapshot.meta.json is the MICELIUM repo
+          # SHA — a different repository entirely, not the lumen-scoring SHA.
+          ref: main
 
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version: "1.22"
           cache: true
+          cache-dependency-path: lumen/go.sum
 
       - name: Build lumen binary
+        working-directory: lumen
         run: go build -o lumen-ci ./cmd/lumen
 
       - name: Run TestNoDefaultNetworkCalls (plain)
@@ -149,6 +175,7 @@ jobs:
         # an atomic counter and fails the test.  In LU-1 all probes are stubs so
         # this passes trivially; the gate prevents LU-4+ probe work from adding
         # accidental HTTP calls.
+        working-directory: lumen
         run: go test -v -run TestNoDefaultNetworkCalls ./internal/netcheck/...
 
       - name: Run TestNoDefaultNetworkCalls (network-namespace isolation)
@@ -160,6 +187,7 @@ jobs:
         # unshare succeeds on ubuntu-latest without requiring true root.
         # Together with the plain run above, these two layers form the complete
         # zero-network gate documented in SCANNER_MANIFEST.md §Zero-Network CI Gates.
+        working-directory: lumen
         run: >
           sudo unshare --net --map-root-user
           go test -v -run TestNoDefaultNetworkCalls ./internal/netcheck/...
@@ -171,15 +199,37 @@ jobs:
     name: ci/version-smoke
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      # -----------------------------------------------------------------------
+      # Dual checkout: scanner repo into ./lumen/ and the lumen-scoring sibling
+      # into ./lumen-scoring/ so the go.mod replace directive
+      # (replace github.com/Qwentrix/lumen-scoring => ../lumen-scoring) resolves
+      # correctly.  Pattern mirrors release.yml §Checkout.
+      # -----------------------------------------------------------------------
+      - name: Checkout lumen (scanner)
+        uses: actions/checkout@v4
+        with:
+          path: lumen
+
+      - name: Checkout lumen-scoring (replace dependency)
+        uses: actions/checkout@v4
+        with:
+          repository: Qwentrix/lumen-scoring
+          path: lumen-scoring
+          # Tracking lumen-scoring@main until v0.1.0 is tagged; pin to the tag/SHA
+          # once published.  Note: the embedded-content source_sha in
+          # internal/rules/data/content-snapshot.meta.json is the MICELIUM repo
+          # SHA — a different repository entirely, not the lumen-scoring SHA.
+          ref: main
 
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version: "1.22"
           cache: true
+          cache-dependency-path: lumen/go.sum
 
       - name: Build and check lumen --version
+        working-directory: lumen
         run: |
           go build -o lumen-ci ./cmd/lumen
           ./lumen-ci --version

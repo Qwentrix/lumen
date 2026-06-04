@@ -1,0 +1,44 @@
+id: AIGOV_EU_AIA_UNCLASSIFIED
+domain: ai_governance
+severity: critical
+default_weight: 0.90
+detect:
+  questionnaire:
+    - Q-AIGOV-029 == yes_one_or_more
+    - Q-AIGOV-030 == not_classified
+    - Q-AIGOV-030 == partially_classified
+    - Q-AIGOV-DD-031 == no_legal_review
+title: "AI systems not classified under EU AI Act risk tiers — high-risk obligations unidentified"
+description_short: "AI systems deployed in potentially regulated contexts have not been classified under EU AI Act risk tiers, leaving applicable legal obligations unknown."
+description_long: "The EU AI Act establishes a risk-tiered compliance framework that took effect in August 2024 with phased enforcement beginning in 2025. Organisations deploying AI in contexts listed in Annex III — employee hiring, credit decisions, medical diagnosis, law enforcement support, critical infrastructure, education — are deployers of high-risk AI systems under the Act and face mandatory obligations: quality management system, technical documentation (Art. 11), registration (Art. 49), human oversight measures (Art. 14), and transparency obligations (Art. 13). Without risk classification, the organisation does not know which obligations apply and therefore cannot comply with them. Partial classification is insufficient because unclassified systems create unknown compliance exposure. The EU AI Act applies to all organisations with operations or customers in the EU, regardless of where the organisation is headquartered."
+frameworks:
+  - id: "EU AI Act Art. 6"
+    text: "Classification rules for high-risk AI systems — any system matching Annex III use cases must be classified"
+  - id: "EU AI Act Annex III"
+    text: "High-risk AI systems — eight categories including employment, credit, healthcare, law enforcement, and critical infrastructure"
+  - id: "EU AI Act Art. 9"
+    text: "Risk management system — required for all high-risk AI systems; triggered by classification"
+  - id: "NIST AI RMF MAP-1.5"
+    text: "Organisational risk tolerances are applied to AI system classification to determine required controls"
+micelium_product:
+  - product: Sigil
+    role: Provides an AI system classification workflow aligned to EU AI Act Annex III categories, guiding organisations through risk-tier assignment and triggering appropriate compliance obligations per classification result
+  - product: Sovera
+    role: Maps classification results to applicable EU AI Act obligations and generates compliance gap analyses for each high-risk AI system identified
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.4
+  education:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Conduct an EU AI Act classification review for all AI systems your organisation uses in hiring, lending, medical, government, or educational contexts. Determine which systems are high-risk under the Act and identify what compliance obligations apply before enforcement deadlines."
+remediation_technical: "Conduct a structured EU AI Act classification exercise: (1) inventory all AI systems used in any context touching Annex III categories (employment, credit, health, law enforcement, critical infrastructure, education, biometric); (2) apply the Art. 6 classification rules with legal counsel review; (3) for each high-risk system identified, map applicable obligations — Art. 9 risk management, Art. 11 technical documentation, Art. 12 logging, Art. 13 transparency, Art. 14 human oversight, Art. 49 registration; (4) conduct a compliance gap analysis against current state; (5) develop a remediation roadmap with enforcement timeline context. Document classification decisions with legal review evidence. Repeat classification review annually and when new AI systems are deployed."

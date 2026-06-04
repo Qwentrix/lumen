@@ -1,0 +1,46 @@
+id: PRIV_NO_TIA
+domain: privacy
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-PRIV-033 == no_assessment
+    - Q-PRIV-DD-027 == no_tia
+title: "No Transfer Impact Assessments conducted for cross-border transfers to high-risk jurisdictions"
+description_short: "The organization transfers personal data to countries where the legal system may compel data disclosure without conducting Transfer Impact Assessments to evaluate whether the GDPR transfer mechanism provides adequate protection in practice."
+description_long: "Following the Schrems II judgment (C-311/18), the EDPB issued Recommendations 01/2020 requiring that organizations conducting cross-border transfers conduct Transfer Impact Assessments (TIAs) to assess whether the laws of the recipient country undermine the protections of the SCCs or BCRs. Simply executing SCCs with a US provider does not provide GDPR-compliant protection if US surveillance law (FISA §702, EO 12333) can compel access to the data — the TIA must assess this risk and document supplementary measures where needed. The 2021 SCCs include a TIA obligation in Clause 14. Failing to conduct TIAs for transfers to the US, China, Russia, and other jurisdictions with broad government access laws is a compliance gap that European DPAs have enforced against."
+frameworks:
+  - id: "GDPR Art. 46"
+    text: "Transfer safeguards require assessment that recipient country protections are adequate in practice, not just in contract"
+  - id: "Commission Implementing Decision EU 2021/914 Clause 14"
+    text: "2021 SCCs include mandatory representations about recipient country law and requirement to assess government access powers"
+  - id: "EDPB Recommendations 01/2020"
+    text: "Transfer Impact Assessment required for transfers where recipient country law may undermine SCC protections"
+  - id: "ISO 27018 §5.4"
+    text: "Cross-border transfers should be assessed against the legal environment of the recipient country"
+  - id: "NIST Privacy Framework GV.PO-2"
+    text: "Privacy obligations include assessing legal environment of countries where data is transferred"
+micelium_product:
+  - product: Sovera
+    role: Provides geo-fenced key custody as a supplementary measure addressing TIA risks — key destruction capability prevents compelled access even if server access is obtained
+  - product: Proof
+    role: Manages TIA documentation, country-specific legal assessments, and supplementary measures evidence for each transfer
+  - product: Sypher
+    role: Implements end-to-end encryption as a supplementary measure — data is technically inaccessible without the encryption key even if the storage environment is compromised
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.6
+  legal:
+    weight_multiplier: 1.5
+  technology:
+    weight_multiplier: 1.4
+  it_services:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "For every cross-border transfer to a country without an EU adequacy decision, assess whether that country's laws would allow its government to access the data you are transferring. If the answer is yes and you cannot implement supplementary measures to prevent it, the transfer may not be lawful."
+remediation_technical: "1. For each existing SCC-covered transfer, conduct a TIA following the EDPB 3-step framework: (a) assess the transfer, (b) assess the recipient country's legal framework for government access, (c) determine whether the SCC protections are effective in practice. 2. Document the TIA per the 2021 SCCs Clause 14 requirements: parties' representation of knowledge of recipient country law, assessment of whether laws impinge on SCC effectiveness. 3. Where TIA identifies risks: implement supplementary measures — end-to-end encryption with key custody outside the recipient country is the primary recommended technical measure. 4. Where supplementary measures cannot eliminate the risk: consider whether the transfer should proceed and document the risk acceptance or transfer suspension decision. 5. Review TIAs when recipient country law changes (e.g., US FISA reauthorizations, new surveillance legislation)."

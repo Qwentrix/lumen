@@ -1,0 +1,45 @@
+id: PRIV_DATA_LOCATE_GAP
+domain: privacy
+severity: high
+default_weight: 0.75
+detect:
+  questionnaire:
+    - Q-PRIV-020 == no
+    - Q-PRIV-020 == partial
+    - Q-PRIV-023 == not_covered
+title: "Cannot reliably locate all personal data about an individual across systems"
+description_short: "When responding to a data subject access or deletion request, the organization cannot consistently find all personal data held about the requesting individual across all systems — including databases, backups, and SaaS tools."
+description_long: "GDPR Arts. 15–17 require organizations to respond to subject access and erasure requests completely — not just for data held in primary systems. An incomplete DSAR response that omits data held in backups, SaaS tools, or sub-processors is a violation regardless of intent. CCPA §1798.100 requires disclosure of all personal information collected across all systems. Where sub-processor data is not included in DSAR responses (Q-PRIV-023 == not_covered), the organization is structurally incapable of meeting its statutory obligations. The inability to locate data also means deletion requests cannot be fully honored, creating ongoing unlawful retention."
+frameworks:
+  - id: "GDPR Art. 15"
+    text: "Right of access — data subject is entitled to confirmation of all personal data held, across all processing"
+  - id: "GDPR Art. 17"
+    text: "Right to erasure — requires locating and deleting all copies including backups and sub-processors"
+  - id: "CCPA §1798.100"
+    text: "Right to know — disclosure must cover all personal information collected across all systems"
+  - id: "HIPAA 45 CFR §164.524"
+    text: "Right of access to PHI — covered entity must provide access to all designated record sets"
+  - id: "ISO 27018 §9"
+    text: "Data subject rights fulfilment requires comprehensive data location capability"
+micelium_product:
+  - product: Sypher
+    role: Provides data-level tagging and classification that makes personal data discoverable across all systems during DSAR fulfilment
+  - product: Sovera
+    role: Maintains data lineage metadata enabling cross-system personal data location queries
+  - product: Proof
+    role: Generates DSAR response evidence packages that document all located data and the fulfilment steps taken
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  retail:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Map every system — including backups, SaaS tools, and sub-processors — where personal data about your customers might be held. When you receive a DSAR, you need to be able to search all of these systems, not just your primary database."
+remediation_technical: "1. Complete a system-of-record inventory for personal data, including: primary databases, backup systems, SaaS platforms (CRM, support, marketing), analytics warehouses, and data shared with sub-processors. 2. Implement search capabilities or export mechanisms for each system that allow personal data retrieval by individual identifier (email, user ID). 3. Establish sub-processor DPA clauses requiring DSAR assistance within 5 business days. 4. Build a DSAR workflow that triggers parallel lookups across all system-of-record categories. 5. Test the complete lookup pipeline with mock DSARs before a real request arrives."

@@ -1,0 +1,47 @@
+id: SECPOS_PRIV_ACCESS_GAP
+domain: security_posture
+severity: critical
+default_weight: 0.90
+detect:
+  questionnaire:
+    - Q-SECPOS-006 == no_mfa_on_privileged
+    - Q-SECPOS-006 == same_mfa_as_standard
+    - Q-SECPOS-010 == no_least_privilege
+title: "Privileged access lacks stronger authentication or least-privilege controls"
+description_short: "Privileged and administrator accounts are not subject to stronger MFA or least-privilege access controls."
+description_long: "Administrator and privileged accounts are the highest-value targets in any attack chain. Without step-up authentication (phishing-resistant MFA, hardware key, or passkey) and least-privilege enforcement, a single compromised credential gives attackers administrative reach across all systems. CISA and NSA joint advisories identify weak privileged-access controls as the root cause in the majority of ransomware and nation-state intrusions. CIS Control 5 and NIST SP 800-53 AC-6 mandate that privileged access be tightly bounded to specific tasks and time windows."
+frameworks:
+  - id: "NIST CSF PR.AA-05"
+    text: "Access permissions, entitlements, and authorisations are defined in a policy, managed, enforced, and reviewed"
+  - id: "CIS Control 5.4"
+    text: "Restrict administrator privileges to dedicated administrator accounts"
+  - id: "ISO 27001:2022 A.8.2"
+    text: "Privileged access rights — grant, review, revoke"
+  - id: "SOC 2 CC6.3"
+    text: "Role-based access and review of user access"
+  - id: "FedRAMP AC-6(1)"
+    text: "Least privilege — authorise access to security functions"
+  - id: "CISA Zero Trust Pillar: Identity"
+    text: "Phishing-resistant MFA required for privileged access"
+micelium_product:
+  - product: Sypher
+    role: Data-level access enforcement independent of whether privileged accounts are correctly scoped
+  - product: Sense
+    role: Behavioural anomaly detection flags privilege misuse and lateral movement by admin accounts
+  - product: Sovera
+    role: Policy enforcement for privileged-access governance and access review workflows
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  energy:
+    weight_multiplier: 1.4
+  manufacturing:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Require hardware security keys or passkeys for all administrator accounts. Separate admin accounts from daily-use accounts. Apply the principle of least privilege so admins only have access to what they need for each task."
+remediation_technical: "Enforce FIDO2/WebAuthn or PIV-based MFA for all privileged accounts using Conditional Access policies. Implement distinct break-glass admin accounts separate from standard user identities. Apply RBAC or ABAC with fine-grained scope. Conduct quarterly access reviews with manager certification. Integrate with a PAM solution (CyberArk, BeyondTrust, Delinea) for session recording and just-in-time access elevation."

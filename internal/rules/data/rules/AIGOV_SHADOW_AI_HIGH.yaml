@@ -1,0 +1,36 @@
+id: AIGOV_SHADOW_AI_HIGH
+domain: ai_governance
+severity: critical
+default_weight: 0.9
+detect:
+  questionnaire:
+    - Q-AIGOV-003 == widespread
+  scanner:
+    - ai_governance.shadow_ai_apps_count > 3
+    - ai_governance.browser_extensions_ai_count > 3
+title: "Widespread shadow AI usage"
+description_short: "Employees are widely using unapproved AI tools for work tasks."
+description_long: "Widespread use of unsanctioned AI tools means confidential business data, PII, and trade secrets are routinely processed by external AI systems outside any contractual data-processing agreement. This creates direct GDPR/HIPAA exposure, IP leakage risk, and uncontrolled AI risk."
+frameworks:
+  - id: "GDPR Art. 28"
+    text: "Processor must be bound by a contract protecting data subject rights"
+  - id: "NIST AI RMF GOVERN-1.1"
+    text: "Policies, processes, procedures, and practices across the organisation related to the mapping, measuring, and managing of AI risks are in place"
+micelium_product:
+  - product: Sigil
+    role: Shadow AI detection, inventory, and policy enforcement
+  - product: Sense
+    role: Network-level detection of unsanctioned AI service traffic
+industry_overlays:
+  legal:
+    weight_multiplier: 1.6
+  healthcare:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Audit which AI tools employees are using, block unapproved ones, and provide approved alternatives that meet your data-handling requirements."
+remediation_technical: "Deploy DLP and CASB to detect AI service traffic (ChatGPT, Claude, Gemini, Copilot consumer endpoints). Block at proxy level. Provision approved enterprise AI tools with DPA coverage. Train staff on permitted tools."

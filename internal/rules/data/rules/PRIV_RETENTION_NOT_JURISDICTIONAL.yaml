@@ -1,0 +1,43 @@
+id: PRIV_RETENTION_NOT_JURISDICTIONAL
+domain: privacy
+severity: medium
+default_weight: 0.45
+detect:
+  questionnaire:
+    - Q-PRIV-DD-023 == single_global_schedule
+title: "Single global retention schedule applied regardless of jurisdiction — conflicting legal requirements unaddressed"
+description_short: "All personal data is subject to a single global retention schedule that does not differentiate by the jurisdiction of the data subject, meaning conflicting minimum/maximum retention requirements across GDPR, HIPAA, CCPA, and applicable local laws are not addressed."
+description_long: "Retention obligations conflict across jurisdictions in ways a single global schedule cannot resolve. GDPR Art. 5(1)(e) requires deletion after the purpose expires (maximum retention principle), while US financial regulations (SEC, FINRA), employment law, and healthcare regulations (HIPAA) impose minimum retention requirements. EU employment law typically requires longer retention for employment-related records than CCPA's California-specific requirements. When a single global schedule applies, the organization either retains EU data too long (GDPR violation) or deletes US regulated records too early (US regulatory violation). Jurisdiction-differentiated retention schedules — or a documented analysis of the longest legally permissible retention period across applicable jurisdictions with the documented rationale — are necessary for multi-jurisdiction compliance."
+frameworks:
+  - id: "GDPR Art. 5(1)(e)"
+    text: "Storage limitation — data kept no longer than necessary; EU subjects' data should not be retained beyond EU purposes"
+  - id: "HIPAA 45 CFR §164.530(j)"
+    text: "Medical records and covered entity documents must be retained for at least 6 years — conflicts with GDPR minimization"
+  - id: "CCPA §1798.100(e)"
+    text: "California residents' data not retained beyond reasonable necessity — may differ from HIPAA or EU minimums"
+  - id: "ISO 27018 §5.4"
+    text: "Retention of personal data should reflect legal requirements of the applicable jurisdictions"
+  - id: "NIST Privacy Framework CT.DM-1"
+    text: "Data management practices are maintained consistent with applicable legal requirements including jurisdiction-specific retention rules"
+micelium_product:
+  - product: Sovera
+    role: Manages jurisdiction-differentiated retention schedules and applies the correct schedule based on the data subject's jurisdiction tag
+  - product: Ark
+    role: Enforces jurisdiction-specific retention periods in backup and archival storage, ensuring different schedules for EU vs. US data
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  it_services:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Review your retention schedules for each jurisdiction where you have users. A single schedule often means you are keeping European data too long or deleting US-regulated records too early. Document the legal requirements per jurisdiction and differentiate your schedules accordingly."
+remediation_technical: "1. Map applicable retention obligations by jurisdiction and data type: GDPR storage limitation, HIPAA minimum retention, SEC/FINRA financial records requirements, state employment law records, CCPA reasonable necessity standard. 2. Identify conflicts: where HIPAA requires 6-year minimum and GDPR requires deletion after purpose expires (which may be shorter), document the conflict and apply the longer legally required period with the statutory basis noted. 3. Implement jurisdiction tagging on personal data at collection: record the data subject's jurisdiction to enable jurisdiction-specific retention enforcement. 4. Update the retention policy to include per-jurisdiction schedules and the documented basis for each. 5. Configure retention enforcement systems to apply jurisdiction-specific rules to each data subject's records. 6. Review jurisdictional schedules annually and when new jurisdictions come into scope."

@@ -1,0 +1,44 @@
+id: AIGOV_EU_AIA_TECH_DOC_GAP
+domain: ai_governance
+severity: high
+default_weight: 0.80
+detect:
+  questionnaire:
+    - Q-AIGOV-DD-027 == no_documentation
+    - Q-AIGOV-DD-027 == partial_documentation
+    - Q-AIGOV-DD-030 == no_model_cards
+    - Q-AIGOV-DD-030 == partial_coverage
+title: "EU AI Act technical documentation incomplete — Art. 11 package missing or partial"
+description_short: "High-risk AI systems lack the technical documentation package required by EU AI Act Art. 11, including intended purpose, design specs, and test results."
+description_long: "EU AI Act Art. 11 and Annex IV require providers and relevant deployers of high-risk AI systems to maintain a comprehensive technical documentation package covering: intended purpose and system description; design specifications including architecture; training data description and governance; performance testing methodology and results; risk management measures; human oversight capabilities; and version history. Without this documentation, the organisation cannot demonstrate compliance to a national supervisory authority, cannot satisfy a market surveillance inspection, and does not have the baseline documentation needed to produce a conformity assessment. Model cards — while not identical to the Art. 11 package — represent the minimum starting point for knowing what a deployed AI system does and how it behaves. Partial documentation creates an audit trail that may reveal the gap to regulators who ask follow-up questions."
+frameworks:
+  - id: "EU AI Act Art. 11"
+    text: "Technical documentation — high-risk AI providers and relevant deployers must maintain specific technical documentation"
+  - id: "EU AI Act Annex IV"
+    text: "Technical documentation contents — prescribes the specific elements required in the Art. 11 documentation package"
+  - id: "EU AI Act Art. 17"
+    text: "Quality management system — technical documentation is a required output of the QMS"
+  - id: "ISO 42001 A.9.5"
+    text: "Documentation of AI systems — organisations shall document AI system characteristics, limitations, and testing results"
+micelium_product:
+  - product: Sigil
+    role: Provides a structured documentation workspace for each AI system in the registry, with templates aligned to EU AI Act Annex IV requirements and completeness tracking
+  - product: Sovera
+    role: Monitors technical documentation completeness against EU AI Act obligations and generates compliance evidence packages for supervisory authority requests
+  - product: Proof
+    role: Packages technical documentation with integrity attestation for regulatory submission
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.4
+  education:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "For each AI system used in a regulated context, create and maintain technical documentation that describes what it does, how it was built and tested, what its known limitations are, and how humans can oversee and override it."
+remediation_technical: "For each high-risk AI system, build an EU AI Act Annex IV documentation package covering: (1) general description — intended purpose, version, deployment context; (2) design and development information — architecture, training methodology; (3) information on training and validation data — sources, curation, governance; (4) logging and monitoring specification; (5) risk management measures taken; (6) human oversight measures; (7) performance test results. Version-control all documentation alongside the AI system itself. For third-party AI systems where the vendor is the provider, obtain the vendor's Annex IV documentation and supplement with your deployment-specific additions. Set a review trigger for documentation updates when the AI system is modified or the use context changes."

@@ -1,0 +1,30 @@
+id: AIGOV_PARTIAL_AUP
+domain: ai_governance
+severity: medium
+default_weight: 0.4
+detect:
+  questionnaire:
+    - Q-AIGOV-001 == partial_policy
+  scanner:
+    - ai_governance.shadow_ai_apps_count > 0
+    - ai_governance.browser_extensions_ai_count > 1
+title: "AI acceptable use policy not formally enforced"
+description_short: "AI use guidelines exist but lack formal enforcement mechanisms."
+description_long: "Informal guidelines without enforcement are insufficient under the EU AI Act and NIST AI RMF. Employees may be unaware of the policy or choose to disregard it without consequence, leading to the same data-leakage and governance failures as having no policy."
+frameworks:
+  - id: "EU AI Act Art. 26"
+    text: "Obligations of deployers of high-risk AI systems"
+  - id: "NIST AI RMF GOVERN-1.2"
+    text: "Accountability structures are in place so that appropriate teams are responsible for AI risks"
+micelium_product:
+  - product: Sigil
+    role: Policy enforcement layer for AI tool usage
+industry_overlays:
+  government:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Formalise AI guidelines into an enforceable policy with training, acknowledgement sign-off, and technical controls."
+remediation_technical: "Require annual policy acknowledgement via your HR/GRC system. Enforce via IdP access controls on approved AI tools. Implement monitoring for unsanctioned AI service traffic."

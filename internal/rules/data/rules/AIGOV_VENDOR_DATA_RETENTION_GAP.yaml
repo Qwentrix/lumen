@@ -1,0 +1,44 @@
+id: AIGOV_VENDOR_DATA_RETENTION_GAP
+domain: ai_governance
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-AIGOV-013 == not_reviewed
+    - Q-AIGOV-013 == reviewed_informally
+    - Q-AIGOV-048 == not_verified
+    - Q-AIGOV-054 == not_reviewed
+  scanner:
+    - ai_governance.llm_egress_processes_count > 0
+title: "AI vendor data-retention terms not reviewed — submitted data may be retained indefinitely or used for training"
+description_short: "Data-retention terms with AI API providers have not been formally reviewed or contractually confirmed, leaving submitted data at risk of indefinite retention or training use."
+description_long: "AI vendors have widely varying data-retention policies — from no retention (API-only, data discarded after response) to indefinite retention with training use rights. Without a formal review of these terms, the organisation does not know whether the personal data, intellectual property, or regulated information it submits to AI services is being retained and for how long. This creates direct GDPR Art. 5(1)(e) storage-limitation violations if personal data is submitted to a service that retains it indefinitely without a lawful basis. It also creates IP risk if trade secrets or proprietary code are submitted to a service that retains and potentially uses that data for training. Data-residency requirements in healthcare, financial, and government sectors add an additional dimension — AI vendor infrastructure may not satisfy sovereignty requirements if not explicitly verified."
+frameworks:
+  - id: "GDPR Art. 5(1)(e)"
+    text: "Storage limitation — personal data shall not be kept longer than necessary; AI vendor retention terms must be reviewed to verify compliance"
+  - id: "GDPR Art. 28"
+    text: "Processor obligations — the controller must confirm the processor's data-retention practices meet GDPR requirements"
+  - id: "EU AI Act Art. 26(5)"
+    text: "Deployers shall implement appropriate technical and organisational measures including understanding of data flows to AI systems"
+  - id: "NIST AI RMF GOVERN-6.1"
+    text: "Supply-chain risks including vendor data-handling practices are identified and assessed"
+micelium_product:
+  - product: Sigil
+    role: Maintains a registry of AI vendor data-retention terms with automated alerts when terms change or review cycles are due
+  - product: Sovera
+    role: Maps AI vendor data-retention practices against applicable regulatory requirements to surface retention-term compliance gaps
+  - product: Sypher
+    role: Applies DRM controls to data submitted to AI endpoints, providing a compensating control that limits the value of retained data even if vendor retention is confirmed
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Find out from each AI vendor whether they keep the data you submit and for how long. Confirm that they are not using it to train their models. Get this in writing and check it is still true at each contract renewal."
+remediation_technical: "Conduct a formal data-retention review for each AI API vendor: (1) obtain the vendor's current data-retention documentation (privacy policy, DPA, API terms); (2) identify the retention period for API request/response data and whether it is used for training; (3) document findings in the AI vendor risk register with review date and confirmed terms; (4) trigger re-review whenever the vendor updates its privacy policy or terms of service; (5) for vendors processing personal data, confirm GDPR Art. 28 DPA coverage including retention terms; (6) for healthcare and government deployments, verify data-residency compliance against sovereign requirements. Align to GDPR Art. 5(1)(e) storage-limitation principle."

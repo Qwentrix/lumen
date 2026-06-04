@@ -1,0 +1,39 @@
+id: SECPOS_RTO_GAP
+domain: security_posture
+severity: medium
+default_weight: 0.45
+detect:
+  questionnaire:
+    - Q-SECPOS-033 == weekly_or_less
+title: "Backup frequency does not meet RPO — weekly or less-frequent backups"
+description_short: "Backup frequency is weekly or less, meaning up to a week of data loss is possible in a recovery scenario."
+description_long: "Recovery point objective (RPO) defines the maximum data loss an organisation can tolerate. Weekly backups mean that in a ransomware or system failure event, up to seven days of transactions, records, and operational data can be permanently lost. For most organisations, a week of lost data represents significant financial and reputational impact. The backup frequency must match the business's actual RPO — systems processing daily transactions or clinical records typically require daily or continuous backup to meet realistic recovery expectations and regulatory requirements."
+frameworks:
+  - id: "NIST SP 800-34 Rev 1"
+    text: "Contingency planning — recovery point objectives drive backup frequency"
+  - id: "CIS Control 11.1"
+    text: "Establish and maintain a data recovery practice"
+  - id: "ISO 27001:2022 A.8.13"
+    text: "Information backup — frequency aligned to business requirements"
+  - id: "SOC 2 A1.2"
+    text: "Availability commitments and system requirements including recovery objectives"
+  - id: "FedRAMP CP-9"
+    text: "System backup — frequency defined to meet recovery point objectives"
+  - id: "CISA Zero Trust Pillar: Data"
+    text: "Data resilience with backup frequency matching operational risk tolerance"
+micelium_product:
+  - product: Proof
+    role: Data archival and recovery evidence supporting RPO compliance reporting
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.3
+  retail:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Increase your backup frequency so the maximum data loss you could experience matches what your business can tolerate. Critical systems should back up daily or more frequently — losing a week of work is not acceptable for most organisations."
+remediation_technical: "Perform a business impact analysis to define RPO per system tier. For Tier 1 systems (transactions, clinical records, financial data): implement continuous replication or at minimum hourly snapshots. For Tier 2 (operational data): daily full backup with incremental every 4 hours. For Tier 3 (non-critical): daily backup acceptable. Modern backup platforms (Veeam, Commvault, Rubrik) support incremental-forever with short RPO at low storage cost. For cloud workloads, use snapshot policies to automate frequency. Validate that backup windows do not exceed the gap between RPO and the backup cycle time."

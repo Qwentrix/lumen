@@ -1,0 +1,55 @@
+id: PRIV_RETENTION_NOT_ENFORCED
+domain: privacy
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-PRIV-025 == never_deleted
+    - Q-PRIV-025 == ad_hoc
+    - Q-PRIV-028 == policy_only
+    - Q-PRIV-028 == partial_enforcement
+    - Q-PRIV-DD-024 == informal_expectation
+    - Q-PRIV-DD-025 == no_enforcement
+    - Q-PRIV-DD-025 == fully_manual
+    - Q-PRIV-DD-026 == backups_excluded
+    - Q-PRIV-DD-026 == unknown
+title: "Retention policy exists but is not technically enforced — personal data not deleted at expiry"
+description_short: "A retention policy defines schedules but personal data is not automatically or reliably deleted when retention periods expire, meaning data accumulates beyond lawful retention limits."
+description_long: "A retention policy document without enforcement is a compliance liability — it demonstrates awareness of the obligation without meeting it, and may make it harder to claim a good-faith defence. GDPR Art. 5(1)(e) storage limitation requires action, not intent. Where deletion is ad hoc or manual, the policy relies on individuals remembering to run purge processes — which does not happen consistently. Backups excluded from the retention policy (Q-PRIV-DD-026 == backups_excluded) mean personal data persists indefinitely in backups even when deleted from primary storage, making the effective retention period infinite. Third-party processor retention not contractually enforced (Q-PRIV-DD-024 == informal_expectation) means data shared with processors may persist beyond the retention period with no mechanism to remediate. HIPAA §164.530(j) requires both minimum retention periods and compliance with applicable state law maximum retention limits."
+frameworks:
+  - id: "GDPR Art. 5(1)(e)"
+    text: "Storage limitation — personal data must not be retained longer than necessary; policy alone is insufficient without enforcement"
+  - id: "GDPR Art. 25"
+    text: "Data protection by default — retention enforcement must be implemented by default, not optional"
+  - id: "CCPA §1798.100(e)"
+    text: "Personal information must not be retained beyond reasonable necessity — requires active enforcement"
+  - id: "HIPAA 45 CFR §164.530(j)"
+    text: "Required records must be retained for applicable periods and not destroyed before minimum period"
+  - id: "ISO 27001 A.8.3"
+    text: "Media disposal — physical and electronic media must be disposed of in accordance with retention schedules"
+  - id: "NIST Privacy Framework CT.DM-1"
+    text: "Data is managed consistent with privacy principles — retention enforcement is a data management obligation"
+micelium_product:
+  - product: Ark
+    role: Automates retention enforcement — triggers deletion or anonymization at retention expiry across primary storage, backups, and snapshots
+  - product: Sypher
+    role: Time-limits DRM access rights so data becomes inaccessible when retention expires, even if physical deletion is deferred
+  - product: Sovera
+    role: Tracks retention enforcement across processor relationships, ensuring contractual retention obligations are reflected in DPAs and monitored
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.7
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.5
+  retail:
+    weight_multiplier: 1.3
+  technology:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Having a retention policy is only useful if data is actually deleted when the schedule says it should be. Implement automated deletion jobs that run without manual intervention, and make sure backups are included — data in backups is still personal data."
+remediation_technical: "1. Implement automated retention enforcement jobs: scheduled processes that delete or anonymize personal data when retention periods expire, without requiring manual initiation. 2. Ensure backup retention schedules align with primary data retention: configure backup lifecycle policies to delete backup data at primary retention expiry. 3. Include retention enforcement in DPAs: require processors to confirm deletion of personal data within 30 days of retention expiry or contract termination. 4. Implement retention enforcement monitoring: track which data categories have had retention jobs run and verify completeness. 5. Where automated deletion is not technically feasible for some systems, implement compensating controls: access revocation at retention expiry (cryptographic erasure or DRM access expiry). 6. Audit retention enforcement annually: sample data to verify records past their retention date have been deleted."

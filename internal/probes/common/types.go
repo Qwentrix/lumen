@@ -34,12 +34,12 @@ type ManifestEntry struct {
 // Exactly one field is non-nil per ProbeResult, matching the probe's domain.
 // The offline scoring path uses ScannerFields (not FindingHints) for deterministic
 // scoring via the lumen-scoring engine.
-//
-// LU-5 will add AIGovernance, SecurityPosture, and Privacy fields.
 type ScannerFields struct {
 	Vulnerabilities *types.VulnerabilityFindings
 	Compliance      *types.ComplianceFindings
-	// AIGovernance, SecurityPosture, Privacy added in LU-5.
+	AIGovernance    *types.AIGovernanceFindings    // populated by the ai_governance probe (LU-5)
+	SecurityPosture *types.SecurityPostureFindings // populated by the security_posture probe (LU-5)
+	Privacy         *types.PrivacyFindings         // populated by the privacy probe (LU-5, opt-in only)
 }
 
 // ProbeResult is the structured output of a single probe run.

@@ -1,0 +1,50 @@
+id: PRIV_DPIA_NOT_COMPLETED
+domain: privacy
+severity: high
+default_weight: 0.75
+detect:
+  questionnaire:
+    - Q-PRIV-DD-034 == none_completed
+    - Q-PRIV-DD-034 == some_completed
+title: "DPIAs not completed for all GDPR Art. 35 high-risk processing activities"
+description_short: "High-risk processing activities including large-scale profiling, systematic monitoring, and processing of special-category data are operating without completed, documented Data Protection Impact Assessments."
+description_long: "GDPR Art. 35 mandates a DPIA before commencing processing that is likely to result in high risk to natural persons — including systematic and extensive profiling, processing of special-category data on a large scale, and systematic monitoring of public areas. Operating high-risk processing without a completed DPIA is a direct Art. 35 violation, regardless of whether any actual harm has occurred. Regulators treat absence of DPIAs as evidence of systemic non-compliance and it is routinely cited in enforcement decisions. Partial completion — where some but not all high-risk activities have DPIAs — is also a violation for the uncovered activities. Under Art. 35(7) the DPIA must document processing purposes, necessity and proportionality assessment, risks, and mitigation measures."
+frameworks:
+  - id: "GDPR Art. 35"
+    text: "DPIA mandatory for high-risk processing — systematic profiling, special-category data at scale, systematic monitoring"
+  - id: "GDPR Art. 35(7)"
+    text: "DPIA must include description, necessity assessment, risk evaluation, and mitigation measures"
+  - id: "GDPR Art. 36"
+    text: "Prior consultation with supervisory authority required when residual risk after DPIA remains high"
+  - id: "HIPAA 45 CFR §164.308(a)(1)"
+    text: "Risk analysis required before implementing processing of PHI"
+  - id: "ISO 27018 §5.2"
+    text: "Risk assessment for personal data processing operations"
+  - id: "NIST Privacy Framework ID.RA-P"
+    text: "Privacy risk assessment — contextual factors and privacy risks are identified for each processing activity"
+micelium_product:
+  - product: Proof
+    role: Provides DPIA templates, document management, and evidence artefacts for GDPR Art. 35 compliance documentation
+  - product: Sense
+    role: Provides behavioral data for the risk assessment component of DPIAs involving monitoring or profiling activities
+  - product: Sovera
+    role: Documents the organizational and technical measures that mitigate DPIA-identified risks
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  education:
+    weight_multiplier: 1.4
+  it_services:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Identify every processing activity that meets GDPR Art. 35 high-risk criteria and ensure a completed, documented DPIA exists for each one before that processing continues. Do not start new high-risk processing without a completed DPIA."
+remediation_technical: "1. Conduct a processing inventory audit against the Art. 35 high-risk criteria list (WP248/EDPB guidelines): profiling with legal/significant effects, large-scale special-category data, systematic public monitoring, new technologies, automated decision-making. 2. For each high-risk activity lacking a DPIA, complete a DPIA under Art. 35(7): description of processing, necessity/proportionality assessment, risk evaluation, mitigation measures. 3. Have DPIAs reviewed and approved by the DPO or qualified counsel before relying on them. 4. Where residual risk remains high after DPIA, consult the supervisory authority per Art. 36 before commencing. 5. Implement a DPIA screening checklist as a gate in the new product/feature approval workflow."

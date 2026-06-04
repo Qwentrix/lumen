@@ -1,0 +1,40 @@
+id: SECPOS_NO_MTTD_MTTR
+domain: security_posture
+severity: medium
+default_weight: 0.40
+detect:
+  questionnaire:
+    - Q-SECPOS-048 == not_tracked
+    - Q-SECPOS-DD-041 == mttd_over_4h_or_unknown
+title: "MTTD and MTTR not tracked — incident response effectiveness unmeasured"
+description_short: "Mean time to detect and mean time to respond to incidents are not tracked or reviewed."
+description_long: "What is not measured cannot be improved. MTTD and MTTR are the primary operational metrics for security programme effectiveness. Without tracking these, an organisation cannot demonstrate improvement to leadership or cyber insurers, cannot identify whether tooling changes are having an effect, and cannot benchmark against industry standards. IBM CODB 2024 reports global averages of 204 days MTTD and 73 days MTTR — organisations with tracked and targeted metrics achieve significantly better performance. Cyber insurance pricing increasingly references MTTD/MTTR as a factor in risk scoring."
+frameworks:
+  - id: "NIST CSF DE.AE-07"
+    text: "Cyber threat intelligence and other contextual information are integrated into the analysis of adverse events"
+  - id: "CIS Control 17.8"
+    text: "Conduct post-incident reviews — includes measurement of detection and response times"
+  - id: "ISO 27001:2022 A.5.26"
+    text: "Response to information security incidents — effectiveness measurement"
+  - id: "SOC 2 CC7.4"
+    text: "Security events are identified and responded to — timeliness is a criterion"
+  - id: "FedRAMP IR-8"
+    text: "Incident response plan — includes performance objectives"
+  - id: "CISA Zero Trust Pillar: Visibility and Analytics"
+    text: "Analytics-driven improvement of detection and response performance"
+micelium_product:
+  - product: Sense
+    role: Real-time detection metrics and alert-lifecycle tracking enabling MTTD/MTTR measurement
+  - product: Proof
+    role: Incident timeline audit trail enabling post-event MTTD/MTTR calculation
+industry_overlays:
+  financial:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Start tracking how long it takes to detect and respond to security incidents. Even manual tracking in a spreadsheet is a starting point. Set targets and review progress monthly. This gives you the data to demonstrate the value of your security investments to leadership."
+remediation_technical: "Instrument your SIEM and ticketing system to automatically capture: alert creation time (detection proxy), analyst acknowledgement time, containment time, and resolution time. Calculate MTTD (from incident start to detection), MTTContain (detection to host isolation or account disable), and MTTR (detection to full resolution). Define targets per severity tier: P1 MTTD < 1h, MTTContain < 4h; P2 MTTD < 4h, MTTContain < 24h. Track weekly trend in SIEM dashboard and report monthly to CISO and quarterly to leadership. Use metrics to justify tooling investments and staffing decisions."

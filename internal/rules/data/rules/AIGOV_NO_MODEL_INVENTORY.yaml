@@ -1,0 +1,35 @@
+id: AIGOV_NO_MODEL_INVENTORY
+domain: ai_governance
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-AIGOV-002 == no
+  scanner:
+    - ai_governance.shadow_ai_apps_count > 0
+    - ai_governance.llm_egress_processes_count > 0
+    - ai_governance.mcp_servers_running > 0
+title: "No AI model inventory"
+description_short: "AI/ML models in production are not inventoried or tracked."
+description_long: "Without a model inventory, organisations cannot assess regulatory risk (EU AI Act risk tiers), respond to model incidents, retire outdated models, or demonstrate governance to auditors. The EU AI Act requires deployers to maintain documentation of high-risk AI systems they use."
+frameworks:
+  - id: "EU AI Act Art. 13"
+    text: "Transparency and provision of information to deployers"
+  - id: "NIST AI RMF MAP-1.1"
+    text: "Context is established for the AI risk assessment, including the organisation, system, and use case"
+micelium_product:
+  - product: Sigil
+    role: AI model registry and risk tier classification
+industry_overlays:
+  technology:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Create a model registry listing each AI/ML model in production: use case, data inputs, risk tier, owner, and last review date."
+remediation_technical: "Implement a model registry (MLflow, Vertex AI Model Registry, or a structured spreadsheet). Tag each model with EU AI Act risk tier. Automate registry updates from CI/CD deployment pipelines."

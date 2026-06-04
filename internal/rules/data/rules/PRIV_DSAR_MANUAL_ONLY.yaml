@@ -1,0 +1,45 @@
+id: PRIV_DSAR_MANUAL_ONLY
+domain: privacy
+severity: medium
+default_weight: 0.45
+detect:
+  questionnaire:
+    - Q-PRIV-022 == fully_manual
+    - Q-PRIV-023 == ad_hoc_coordination
+    - Q-PRIV-DD-016 == not_addressed
+title: "DSAR fulfilment is fully manual with no automation tooling"
+description_short: "All data subject request fulfilment steps — data discovery, export, and deletion — are handled manually, creating scale risk, inconsistency, and deadline exposure as request volumes grow."
+description_long: "Manual DSAR processes that rely on individual staff members to search systems, compile data, and coordinate with sub-processors are not scalable and are prone to human error. As DSAR volumes increase — driven by consumer awareness and automated privacy rights tools — organizations relying entirely on manual processes face growing deadline risk and inconsistency. GDPR Art. 12 requires responding to requests 'without undue delay' — a standard that becomes increasingly difficult to meet manually at scale. Where partial access requests involving interleaved third-party data are not addressed at all (Q-PRIV-DD-016 == not_addressed), the organization is additionally at risk of either over-disclosing third-party data or under-fulfilling the subject's rights."
+frameworks:
+  - id: "GDPR Art. 12"
+    text: "Transparent information, communication and modalities — responses must be timely and complete without undue delay"
+  - id: "GDPR Art. 15–17"
+    text: "Data subject rights — access, rectification, erasure require systematic fulfilment capability"
+  - id: "CCPA §1798.100"
+    text: "Right to know and delete — requires consistent, documented fulfilment processes"
+  - id: "HIPAA 45 CFR §164.524"
+    text: "Right of access — requires a consistent, documented process for PHI access fulfilment"
+  - id: "ISO 27018 §9"
+    text: "Policies for handling data subject requests should be documented and operationally effective"
+micelium_product:
+  - product: Proof
+    role: Automates DSAR intake, data discovery coordination, response assembly, and audit trail generation
+  - product: Sypher
+    role: Provides tagged data exports that accelerate the personal data discovery step of DSAR fulfilment
+  - product: Share
+    role: Enables secure delivery of DSAR response packages to data subjects with access controls
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.3
+  legal:
+    weight_multiplier: 1.3
+  technology:
+    weight_multiplier: 1.3
+  retail:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Automate the repetitive parts of the DSAR process — especially data discovery and sub-processor coordination — so that your team can focus on the judgment-intensive steps like redaction and identity verification. Manual-only processes break down as request volume increases."
+remediation_technical: "1. Implement a DSAR workflow tool that automates intake, deadline tracking, and sub-processor notification. 2. Build automated data discovery queries for primary databases keyed on user identifier (email, user ID, account number). 3. Develop automated export scripts for primary data stores that generate GDPR Art. 20-compliant, machine-readable output. 4. Establish sub-processor DSAR assistance SLAs in DPAs (5 business days) and automate notification on DSAR receipt. 5. Develop a documented redaction process for partial access requests involving interleaved third-party data. 6. Track and measure automation coverage — percentage of DSAR steps requiring no manual intervention."

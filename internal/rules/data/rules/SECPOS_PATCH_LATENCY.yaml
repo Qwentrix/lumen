@@ -1,0 +1,44 @@
+id: SECPOS_PATCH_LATENCY
+domain: security_posture
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-SECPOS-014 == over_month_or_unknown
+    - Q-SECPOS-014 == within_month
+title: "Critical patches deployed slowly — endpoint patching latency exceeds two weeks"
+description_short: "Critical operating system patches take more than two weeks to deploy after vendor release."
+description_long: "The interval between patch release and exploitation has compressed dramatically: CISA's analysis shows that 60% of exploited CVEs in 2023 were weaponised within two weeks of disclosure. Patch latency beyond two weeks for critical vulnerabilities means organisations are in a state of known exposure for a predictable window that threat actors actively target. FedRAMP and CIS Controls both specify patch deployment SLAs: critical patches within 72 hours for internet-facing systems. Ransomware groups routinely scan for and exploit recently-patched vulnerabilities against unpatched systems."
+frameworks:
+  - id: "NIST CSF ID.RA-01"
+    text: "Vulnerabilities in assets are identified, validated, and recorded"
+  - id: "CIS Control 7.3"
+    text: "Remediate detected vulnerabilities — critical within one month"
+  - id: "CIS Control 7.4"
+    text: "Manage OS vulnerabilities with automated patching"
+  - id: "ISO 27001:2022 A.8.8"
+    text: "Management of technical vulnerabilities"
+  - id: "SOC 2 CC7.1"
+    text: "Detection of vulnerabilities in infrastructure components"
+  - id: "FedRAMP SI-2"
+    text: "Flaw remediation — critical patches within defined SLA"
+  - id: "CISA Zero Trust Pillar: Devices"
+    text: "Device health enforced through patch compliance as access gate"
+micelium_product:
+  - product: Sense
+    role: Correlates unpatched CVE exposure with network activity to detect active exploitation attempts
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  energy:
+    weight_multiplier: 1.5
+  manufacturing:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Deploy critical patches within 72 hours for internet-facing systems and within two weeks for internal systems. Automate patch deployment so it doesn't require manual intervention. Track patch compliance centrally to know your coverage."
+remediation_technical: "Define patch SLAs by severity tier: critical/CVSS ≥9.0 within 72 hours for external assets, within 7 days for internal; high within 14 days. Automate deployment via WSUS/MECM, Jamf, or a patch management platform (Tanium, Automox). Integrate vulnerability scanner findings with your patching tool to auto-prioritise. Track compliance rate against SLA in your SIEM dashboard. Use Conditional Access to block devices that fall outside compliance from accessing sensitive resources until patched."

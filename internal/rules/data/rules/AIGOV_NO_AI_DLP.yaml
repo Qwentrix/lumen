@@ -1,0 +1,58 @@
+id: AIGOV_NO_AI_DLP
+domain: ai_governance
+severity: high
+default_weight: 0.75
+detect:
+  questionnaire:
+    - Q-AIGOV-004 == partial_controls
+    - Q-AIGOV-018 == manual_policy_guidance
+  scanner:
+    - ai_governance.shadow_ai_apps_count > 0
+    - ai_governance.browser_extensions_ai_count > 0
+    - ai_governance.llm_egress_processes_count > 0
+    - Q-AIGOV-019 == policy_only
+    - Q-AIGOV-020 == general_guidance_only
+    - Q-AIGOV-021 == no_dlp
+    - Q-AIGOV-021 == general_dlp_not_ai_specific
+    - Q-AIGOV-DD-017 == policy_only_no_technical_block
+    - Q-AIGOV-DD-018 == network_block_no_inspection
+    - Q-AIGOV-DD-020 == manual_report_only
+    - Q-AIGOV-DD-022 == no_policy
+    - Q-AIGOV-DD-022 == developer_guidelines
+    - Q-AIGOV-051 == privacy_informally_considered
+title: "No AI-specific DLP controls — sensitive data can reach external AI endpoints"
+description_short: "Data-loss-prevention controls exist only in policy or are not tuned for AI API traffic, leaving sensitive data exposure to user judgment."
+description_long: "Policy-only data controls have a fundamental weakness: they depend on every individual employee making the correct judgment call every time. AI interfaces — especially conversational LLMs — invite users to paste large amounts of context, often including sensitive data, as a natural part of usage. Without technical DLP controls at the AI egress layer (inline proxy inspection, API gateway content inspection, or AI-aware endpoint DLP), sensitive data reaches external AI services at a rate proportional to usage volume. GDPR Art. 32 requires appropriate technical measures for personal data protection. HIPAA 45 CFR 164.312(a)(1) requires technical access controls and transmission security. NIST AI RMF MANAGE-2.4 requires controls to manage risks of data exposure through AI systems. DLP rules not tuned for AI endpoints miss the specific URL/API patterns and content contexts (prompt payloads, RAG context windows) that characterise AI data flows."
+frameworks:
+  - id: "GDPR Art. 32"
+    text: "Technical and organisational measures for data security — AI egress without DLP fails the 'appropriate technical measures' test"
+  - id: "NIST AI RMF MANAGE-2.4"
+    text: "Risk controls are in place to manage AI-related data privacy and security risks"
+  - id: "EU AI Act Art. 26(5)"
+    text: "Deployers shall implement appropriate technical and organisational measures to ensure AI use complies with instructions for use"
+  - id: "OWASP LLM Top 10 LLM06"
+    text: "Sensitive Information Disclosure — requires technical controls beyond policy guidance"
+  - id: "HIPAA 164.312(a)(1)"
+    text: "Technical access controls and transmission security for PHI — applies to AI API transmission of health data"
+micelium_product:
+  - product: Sigil
+    role: Enforces AI-specific DLP policies at the agent and API boundary, with content classification before data leaves the organisation's control
+  - product: Sypher
+    role: Applies DRM classification labels to data at rest, enabling DLP systems to identify sensitive content in AI prompts before transmission
+  - product: Sense
+    role: Detects anomalous AI egress patterns — volume spikes, unusual data classifications submitted — as a compensating detective control
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Put technical controls in place — not just policy — to stop sensitive data from being submitted to AI services. At a minimum, log what data is being sent and alert when it looks sensitive."
+remediation_technical: "Deploy AI-specific DLP at the egress layer: either an inline proxy that inspects prompt payloads against content classifiers, or an API gateway policy that evaluates request bodies. Configure DLP rules for AI endpoint URL patterns (api.openai.com, api.anthropic.com, azure.openai.com, etc.) with content classifiers for PII, PHI, PCI data, and internal IP classifications. Implement prompt data-minimisation guidelines for developers constructing RAG pipelines. Log all AI API submissions with user, service, content hash, and classification result. Integrate alerts with SIEM for anomalous AI egress volume."

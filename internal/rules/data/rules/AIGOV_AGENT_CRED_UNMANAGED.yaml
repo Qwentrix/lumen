@@ -1,0 +1,44 @@
+id: AIGOV_AGENT_CRED_UNMANAGED
+domain: ai_governance
+severity: high
+default_weight: 0.75
+detect:
+  questionnaire:
+    - Q-AIGOV-052 == no_rotation
+    - Q-AIGOV-052 == periodic_rotation_only
+    - Q-AIGOV-DD-025 == env_vars_no_rotation
+    - Q-AIGOV-DD-025 == secrets_manager_manual_rotation
+  scanner:
+    - ai_governance.mcp_servers_running > 0
+title: "AI agent credentials not managed — API keys unrotated or stored insecurely"
+description_short: "API keys and credentials used by AI agents are not rotated on personnel or security events, or are stored in environment variables without a secrets manager."
+description_long: "AI API keys with persistent access to large-context models represent high-value targets. An unrotated shared key that was provisioned two years ago and shared across multiple systems cannot be attributed to a specific actor and cannot be quickly revoked without affecting all dependent systems. When a developer leaves or a system is compromised, an unrotated key means the former employee or attacker retains effective access to all AI services it covers. Credentials stored in environment variables or code repositories are routinely exposed through git history leaks, container image scans, and CI/CD log exposure. NIST SP 800-204D recommends credential lifecycle management for AI APIs equivalent to that applied to any privileged access. EU AI Act Art. 9 risk management requirements implicitly cover credential security as a component of the risk management system for AI deployments."
+frameworks:
+  - id: "NIST AI RMF GOVERN-1.2"
+    text: "Accountability structures for AI risk management — credential lifecycle management establishes clear accountability for AI API access"
+  - id: "NIST AI RMF MANAGE-1.1"
+    text: "Risk controls are applied — credential rotation and secrets management are fundamental AI operational controls"
+  - id: "EU AI Act Art. 9"
+    text: "Risk management system — credential security for AI API access is a component of technical risk management"
+  - id: "OWASP LLM Top 10 LLM09"
+    text: "Misinformation — compromised API keys can be used to inject malicious model outputs into production workflows"
+micelium_product:
+  - product: Sigil
+    role: Manages AI agent credential lifecycle — provisioning, rotation schedules, event-triggered revocation, and least-privilege scoping per agent identity
+  - product: Sense
+    role: Detects anomalous API usage patterns from potentially compromised credentials, including unusual geographic origins or usage-volume spikes
+industry_overlays:
+  technology:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.4
+  it_services:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Store AI API keys in a proper secrets manager — not in code or environment variables. Rotate keys whenever someone who knew them leaves, and set up automatic rotation on a regular schedule."
+remediation_technical: "Migrate all AI API credentials to a secrets manager (HashiCorp Vault, AWS Secrets Manager, Azure Key Vault). Provision per-agent service accounts with individual keys rather than shared keys so that any single key can be revoked without disrupting other agents. Configure automated rotation on two triggers: (1) time-based (90 days or per organisational policy); (2) event-based (personnel departure, suspected compromise, agent retirement). Implement usage monitoring on each key to detect post-compromise misuse. Remove all AI API keys from environment variables, code repositories, and CI/CD logs. Conduct a secret-scanning sweep of existing git history."

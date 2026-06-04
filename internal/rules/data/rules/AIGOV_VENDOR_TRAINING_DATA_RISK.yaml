@@ -1,0 +1,41 @@
+id: AIGOV_VENDOR_TRAINING_DATA_RISK
+domain: ai_governance
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-AIGOV-017 == not_reviewed
+    - Q-AIGOV-DD-016 == not_assessed
+    - Q-AIGOV-DD-016 == informal_inquiry
+title: "AI vendor training data provenance not assessed — bias and IP contamination risk unmitigated"
+description_short: "AI vendor training data provenance has not been formally assessed, leaving unknown bias risk, copyright contamination, and data-sovereignty exposure."
+description_long: "Training data provenance determines the behaviour, biases, and legal exposure of an AI model. A model trained on scraped internet data without consent may produce biased outputs in regulated decision contexts (credit, hiring, medical triage) and may be subject to copyright litigation that renders the vendor's service legally uncertain. Without a formal provenance review, the organisation cannot determine whether models used in regulated workflows have been tested for representational bias across relevant demographic groups, whether the vendor has sufficient IP indemnification, or whether the training data included data from jurisdictions with conflicting legal frameworks. For regulated industries — financial services using models for credit decisions, healthcare using diagnostic AI, government using AI for public service eligibility — these gaps have direct regulatory exposure under EU AI Act Annex III high-risk AI classification requirements and sector-specific AI regulations."
+frameworks:
+  - id: "EU AI Act Art. 10"
+    text: "Data and data governance for high-risk AI — training data shall be subject to governance practices including examination for biases"
+  - id: "NIST AI RMF MAP-5.2"
+    text: "Practices and personnel for AI risk management include review of training data provenance and known limitations"
+  - id: "EU AI Act Art. 13"
+    text: "Transparency — high-risk AI systems shall provide information about their training data characteristics to support oversight"
+  - id: "ISO 42001 A.8.4"
+    text: "Data for AI systems — organisations shall assess data used in AI systems for quality, representativeness, and appropriate provenance"
+micelium_product:
+  - product: Sigil
+    role: Structures vendor due-diligence reviews to include model card review and training data provenance documentation as part of AI vendor approval workflow
+  - product: Sovera
+    role: Tracks training data risk assessments per vendor and surfaces findings in the compliance risk register for regulated industry requirements
+industry_overlays:
+  financial:
+    weight_multiplier: 1.5
+  healthcare:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.4
+  education:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Ask AI vendors to provide a model card that describes what data their model was trained on, what biases have been identified, and how it was tested for fairness. Do not use AI models in regulated decisions without this information."
+remediation_technical: "For any AI model used in regulated decision workflows: (1) require the vendor to provide a model card or system card documenting training data sources, data-governance practices, known biases and limitations, and demographic testing results; (2) evaluate the model card against the specific use case — a model tested on US census demographics may not be appropriate for a different regional deployment context; (3) review the vendor's IP indemnification posture — particularly relevant for code-generation models where training data copyright exposure is an active area of litigation; (4) document findings and risk acceptance decisions. For high-risk AI Act contexts, align to Art. 10 data governance requirements. Evaluate using NIST AI RMF MAP-5.2."

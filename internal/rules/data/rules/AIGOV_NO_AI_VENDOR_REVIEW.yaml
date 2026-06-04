@@ -1,0 +1,47 @@
+id: AIGOV_NO_AI_VENDOR_REVIEW
+domain: ai_governance
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-AIGOV-014 == no_process
+    - Q-AIGOV-014 == security_only
+    - Q-AIGOV-048 == verified_on_request
+    - Q-AIGOV-050 == initial_only
+    - Q-AIGOV-050 == no_reviews
+    - Q-AIGOV-DD-012 == standard_security_only
+    - Q-AIGOV-DD-012 == no_questionnaire
+    - Q-AIGOV-DD-013 == not_collected
+    - Q-AIGOV-DD-014 == not_tracked
+title: "No AI-specific vendor review — AI providers assessed only with generic security criteria"
+description_short: "AI vendors and API providers are not assessed against AI-specific criteria covering training data, bias testing, data-retention terms, and model documentation."
+description_long: "Standard vendor security questionnaires were designed for SaaS data processors, not AI model providers. A generic security review that checks for SOC 2 and ISO 27001 misses the specific risks that AI vendors introduce: whether submitted data is used for model training (and thus retained indefinitely), whether models have been tested for bias in outputs affecting your use case, whether model cards document known limitations, and whether contractual protections exist against unilateral model changes. Deploying AI vendor services without AI-specific due diligence creates compliance exposure under GDPR Art. 28 (processor obligations), EU AI Act Art. 25 (deployer obligations), and NIST AI RMF GOVERN-6.1 (supply-chain risk). An AI vendor's SOC 2 report does not answer any of these questions. The gap is compounded when certifications collected at onboarding are not re-verified at renewal — models and provider policies change."
+frameworks:
+  - id: "EU AI Act Art. 25"
+    text: "Obligations of deployers — requires understanding of the AI system's design and intended purpose, obtainable only through structured vendor review"
+  - id: "GDPR Art. 28"
+    text: "Processor obligations — controllers must ensure AI API providers meet data protection requirements; AI-specific review is required to confirm"
+  - id: "NIST AI RMF GOVERN-6.1"
+    text: "AI supply-chain and third-party risks are assessed within the AI risk governance framework"
+  - id: "ISO 42001 A.6.1.3"
+    text: "AI supply chain — AI risks from suppliers are assessed using AI-specific criteria"
+micelium_product:
+  - product: Sigil
+    role: Provides a structured AI vendor assessment framework built into the vendor onboarding workflow, covering AI-specific criteria including data-retention terms and model documentation"
+  - product: Sovera
+    role: Tracks AI vendor compliance certifications with expiry monitoring and automated renewal-review triggers
+industry_overlays:
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Before using any AI service, ask the vendor specific questions: Will you use our data to train models? Where is our data stored? Do you have model cards documenting known limitations? And review the answers formally before approval."
+remediation_technical: "Develop or adopt an AI-specific vendor due-diligence questionnaire covering: training data provenance and opt-out rights; model card availability and documentation of known limitations and biases; data-retention terms (how long is submitted data stored, is it used for training); data-residency and sovereignty compliance; security certifications with expiry tracking; and incident notification obligations. Run this questionnaire for all new AI vendor onboarding and on an annual review cycle for existing vendors. Document results in the AI risk register with a named owner. Align to NIST AI RMF GOVERN-6.1 and EU AI Act Art. 25."

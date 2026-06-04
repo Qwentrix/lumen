@@ -1,0 +1,39 @@
+id: AIGOV_NO_AI_VENDOR_CONTRACT_PROTECTIONS
+domain: ai_governance
+severity: medium
+default_weight: 0.55
+detect:
+  questionnaire:
+    - Q-AIGOV-017 == reviewed_terms_only
+    - Q-AIGOV-054 == assumed_permitted
+    - Q-AIGOV-DD-015 == no_protections
+title: "AI vendor contracts lack specific data protection and model-change protections"
+description_short: "AI vendor relationships rely on standard terms without contractual protections against data training use, unilateral model changes, or model-change notification."
+description_long: "Standard AI API terms of service are written for the vendor's benefit, not the deployer's. Without additional contractual protections, the vendor retains the right to use submitted data for training, to change the underlying model without notice (potentially breaking dependent workflows), and to modify pricing unilaterally. Relying only on standard terms also means the organisation has not confirmed that AI use is permitted under its own customer contracts — which may contain restrictions on subprocessors or data sharing that preclude certain AI API use. GDPR Art. 28 requires that data processors have written agreements covering specific obligations; standard API terms typically do not constitute an adequate Data Processing Agreement. EU AI Act Art. 25 requires deployers to maintain documentation of the AI systems they use, which implies contractual evidence of the relationship and its terms."
+frameworks:
+  - id: "GDPR Art. 28"
+    text: "Processor agreement — processing by a third-party processor shall be governed by a contract covering specific data protection obligations"
+  - id: "EU AI Act Art. 25"
+    text: "Obligations of deployers — documentation requirements imply formal vendor relationships with defined terms"
+  - id: "NIST AI RMF GOVERN-6.2"
+    text: "Policies and procedures are in place for AI supply-chain risk management including contractual terms"
+micelium_product:
+  - product: Sigil
+    role: Maintains a vendor contract registry with tracking of AI-specific contractual protections and renewal triggers
+  - product: Sovera
+    role: Surfaces contractual compliance gaps — where AI vendor terms conflict with regulatory obligations or customer DPAs — as compliance findings
+industry_overlays:
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Negotiate data processing addenda with AI vendors that explicitly prohibit using your data for model training and require notification before significant model changes. Check that your customer contracts do not prohibit the AI vendors you are using."
+remediation_technical: "For each AI API vendor processing personal data or proprietary information: (1) negotiate a Data Processing Addendum (DPA) that prohibits training on submitted data, specifies data-residency requirements, and includes breach notification obligations; (2) add a model-change notification clause requiring minimum 30-day advance notice for material changes to model behaviour; (3) review all customer DPAs and contracts to identify any restrictions on third-party data processors or AI subprocessors that would prohibit specific AI vendor relationships; (4) document all executed DPAs in the AI vendor risk register. Align to GDPR Art. 28 and NIST AI RMF GOVERN-6.2."

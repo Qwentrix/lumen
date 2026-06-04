@@ -1,0 +1,46 @@
+id: SECPOS_NO_JIT_PAM
+domain: security_posture
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-SECPOS-009 == no_inventory
+    - Q-SECPOS-009 == inventoried_not_rotated
+    - Q-SECPOS-DD-004 == no_jit
+    - Q-SECPOS-DD-005 == no_pam_tool
+title: "No just-in-time privileged access or PAM — standing admin accounts uncontrolled"
+description_short: "Privileged accounts have persistent standing access with no just-in-time elevation or PAM tooling."
+description_long: "Standing privileged access means that a compromised credential immediately grants administrative capability with no time limit. Just-in-time (JIT) access reduces the window of exposure to the duration of a specific task. PAM platforms (CyberArk, BeyondTrust, Delinea) enforce least-privilege, record sessions, and enable approval workflows for sensitive operations. Without these controls, attackers who compromise a privileged account have unrestricted persistent access. Regulatory frameworks including FedRAMP AC-6 and PCI DSS Req 7 require that privileged access be limited to the minimum required on a need-to-know and need-to-use basis."
+frameworks:
+  - id: "NIST CSF PR.AA-05"
+    text: "Access permissions and entitlements are defined, managed, and enforced"
+  - id: "CIS Control 5.4"
+    text: "Restrict and audit administrator privileges — use dedicated admin accounts"
+  - id: "ISO 27001:2022 A.8.2"
+    text: "Privileged access rights lifecycle management"
+  - id: "SOC 2 CC6.3"
+    text: "Role-based access controls and periodic review"
+  - id: "FedRAMP AC-6(2)"
+    text: "Least privilege — non-privileged access for non-security functions"
+  - id: "CISA Zero Trust Pillar: Identity"
+    text: "Just-in-time privileged access with continuous verification"
+micelium_product:
+  - product: Sovera
+    role: Policy-driven access approval workflows and privileged-account governance
+  - product: Sense
+    role: Session-level behavioural analytics to detect misuse of privileged sessions
+  - product: Proof
+    role: Privileged session audit trail for compliance and forensic investigation
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  energy:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Implement a privileged access management tool that requires users to check out credentials for specific tasks with a time limit, rather than having always-on admin accounts. Inventory all service accounts and API keys and rotate them on a regular schedule."
+remediation_technical: "Deploy a PAM platform and configure JIT access elevation: administrators request access, receive a time-limited credential, and sessions are recorded. Integrate PAM with your SIEM for session log ingestion. Inventory all service accounts and API keys using a secrets manager (HashiCorp Vault, AWS Secrets Manager). Define rotation schedules per credential type — service accounts: 90 days, API keys: 180 days. Eliminate shared privileged accounts; assign individual accounts with full attribution."

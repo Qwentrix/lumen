@@ -1,0 +1,35 @@
+id: PRIV_NO_DATA_MAP
+domain: privacy
+severity: high
+default_weight: 0.7
+detect:
+  questionnaire:
+    - Q-PRIV-001 == no_mapping
+title: "No data mapping performed"
+description_short: "No exercise has been conducted to identify where personal data is stored and processed."
+description_long: "Data mapping (Record of Processing Activities under GDPR Art. 30) is the foundation of every privacy programme. Without it, organisations cannot identify breach scope, respond to DSARs accurately, enforce retention periods, or demonstrate accountability to regulators. GDPR Art. 30 mandates a RoPA for most organisations."
+frameworks:
+  - id: "GDPR Art. 30"
+    text: "Records of processing activities"
+  - id: "HIPAA 164.308(a)(1)"
+    text: "Risk analysis — identify all ePHI locations"
+  - id: "NIST Privacy Framework PR.DS-P1"
+    text: "Data are managed consistent with the organisation's risk strategy to protect individuals' privacy"
+micelium_product:
+  - product: Share
+    role: Data flow discovery and classification for personal data movements
+  - product: Proof
+    role: RoPA documentation and evidence management
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.3
+  legal:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Conduct a data mapping exercise to document all personal data your organisation holds: what data, where stored, who has access, and for what purpose."
+remediation_technical: "Build a Record of Processing Activities (RoPA) spreadsheet or GRC-platform record. Enumerate data flows via network traffic analysis, application catalogue review, and stakeholder interviews. Automate ongoing discovery with a DSPM tool (e.g. BigID, Varonis). Assign a data owner to each processing activity."

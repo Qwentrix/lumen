@@ -1,0 +1,38 @@
+id: AIGOV_AUP_STALE
+domain: ai_governance
+severity: medium
+default_weight: 0.40
+detect:
+  questionnaire:
+    - Q-AIGOV-011 == never_reviewed
+    - Q-AIGOV-011 == ad_hoc
+    - Q-AIGOV-049 == no_process
+    - Q-AIGOV-DD-011 == no_process
+title: "AI acceptable use policy is stale — not reviewed since written or lacks a review trigger"
+description_short: "The AI AUP has not been reviewed on a defined schedule and has no trigger mechanism for major new AI capability releases."
+description_long: "The AI landscape changes faster than any other technology domain in the current era. A policy written before the release of autonomous agent modes, multimodal models, or AI-integrated productivity tools may actively mislead employees by not covering the tools they are actually using. An AI AUP that is only reviewed when a problem is identified operates purely reactively — meaning the gap existed before the problem surfaced, during which time employees lacked guidance and the organisation lacked a defensible compliance posture. NIST AI RMF GOVERN-1.4 requires periodic review of AI risk management policies. EU AI Act Art. 9(2)(a) requires providers and deployers to ensure their risk management systems reflect the current state of the AI. ISO 42001 requires documented review cycles for the AI management system."
+frameworks:
+  - id: "NIST AI RMF GOVERN-1.4"
+    text: "Organisational teams and individuals commit to continual AI risk management improvement — requires periodic policy review cycles"
+  - id: "EU AI Act Art. 9(2)(a)"
+    text: "Risk management systems shall be updated continuously to reflect changes in the AI system and its context"
+  - id: "ISO 42001 9.3"
+    text: "Management review — the AI management system shall be reviewed at planned intervals to ensure continued suitability and effectiveness"
+micelium_product:
+  - product: Sigil
+    role: Tracks AI capability releases from registered vendors and triggers policy-review notifications when significant new capabilities are detected
+  - product: Proof
+    role: Documents policy review history and re-acknowledgement cycles as audit evidence
+industry_overlays:
+  technology:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.2
+  government:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Set a calendar reminder to review your AI acceptable use policy at least annually. Also define a trigger that kicks off an expedited review whenever a major new AI capability is released — for example, when a provider announces a new autonomous agent mode."
+remediation_technical: "Establish a dual-cadence review process: (1) scheduled annual review with stakeholder sign-off and version control, and (2) a triggered review process activated by defined events (new autonomous capability releases, AI-related regulatory updates, security incidents involving AI). Document the review in a version-controlled policy management system. Implement re-acknowledgement workflows when policy content changes materially. Align to NIST AI RMF GOVERN-1.4 continuous improvement requirements."

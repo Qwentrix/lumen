@@ -1,0 +1,46 @@
+id: PRIV_DSAR_DEADLINE_RISK
+domain: privacy
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-PRIV-018 == over_45_days
+    - Q-PRIV-018 == unknown
+    - Q-PRIV-DD-017 == not_tracked
+    - Q-PRIV-DD-017 == tracked_manually
+title: "DSAR response times at risk of missing statutory 30/45-day deadlines"
+description_short: "The organization cannot confirm it consistently meets GDPR's 30-day or CCPA's 45-day deadline for responding to data subject requests, either because response times are not tracked or measured times exceed the limit."
+description_long: "GDPR Art. 12(3) requires response to data subject requests within one calendar month (extendable by two months for complex cases, with notice). CCPA §1798.100(d) sets a 45-day deadline (extendable by an additional 45 days with notice). Missing these deadlines is a regulatory violation independent of whether the substantive response is correct. Organizations without tracking mechanisms cannot demonstrate compliance; regulators treat inability to evidence compliance as equivalent to non-compliance. Repeated deadline failures attract enhanced scrutiny and are a leading indicator of systemic DSAR programme weakness. Manual-only tracking (Q-PRIV-DD-017 == tracked_manually) creates systematic risk of near-misses going unescalated."
+frameworks:
+  - id: "GDPR Art. 12(3)"
+    text: "DSAR response required within one calendar month; extension requires notice to data subject"
+  - id: "GDPR Art. 77"
+    text: "Right to lodge complaint with supervisory authority — missed deadlines are directly enforceable"
+  - id: "CCPA §1798.100(d)"
+    text: "45-day response deadline for CCPA consumer requests; 90 days maximum with extension notice"
+  - id: "HIPAA 45 CFR §164.524(b)(2)"
+    text: "30-day response to PHI access requests; 30-day extension requires written notice"
+  - id: "ISO 27018 §9"
+    text: "Timely response to data subject requests is a core cloud privacy obligation"
+micelium_product:
+  - product: Proof
+    role: Tracks DSAR request intake, deadlines, and fulfilment status with automated escalation before deadline breach
+  - product: Pulse
+    role: Automates DSAR workflow steps and provides deadline-tracking dashboards with early-warning escalation
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  retail:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Implement a DSAR tracking system that records every request the moment it arrives, calculates the applicable deadline, and automatically escalates when the deadline is approaching. Not knowing how long your responses take is not a defensible position."
+remediation_technical: "1. Implement a DSAR intake system (ticketing or dedicated privacy workflow tool) that records request receipt timestamp and calculates the applicable deadline (GDPR 30-day, CCPA 45-day, HIPAA 30-day). 2. Configure automated escalation at 50%, 75%, and 90% of the deadline window. 3. Track response SLA metrics: % on time, average response time, escalation rate. 4. Implement extension process: if a 2-month GDPR extension is needed, send legally required notice to data subject within the first month. 5. Integrate with the system-of-record lookup pipeline to reduce manual response time."

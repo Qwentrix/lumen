@@ -1,0 +1,43 @@
+id: SECPOS_SECURITY_BUDGET_FLAT
+domain: security_posture
+severity: medium
+default_weight: 0.40
+detect:
+  questionnaire:
+    - Q-SECPOS-052 == flat
+    - Q-SECPOS-052 == declining
+    - Q-SECPOS-052 == no_dedicated_budget
+title: "Security budget flat or declining — investment not keeping pace with threat environment"
+description_short: "Security budget has not grown in two or more years despite an increasingly complex threat landscape."
+description_long: "The threat environment compounds annually: new attack techniques, new regulatory requirements, and new technology surfaces require continuous investment to defend. A flat security budget means the organisation is effectively reducing its security posture in real terms while threats escalate. Gartner reports that average security spending grew at 11% annually from 2021 to 2024; organisations below this trajectory are falling behind the threat curve. A declining or absent security budget is a leading indicator of control gaps that will materially increase breach probability and cost. Organisations without a dedicated security budget line cannot demonstrate to auditors, regulators, or cyber insurers that security is a management priority."
+frameworks:
+  - id: "NIST CSF GV.OC-03"
+    text: "Organisational cybersecurity expectations are set and communicated to leadership"
+  - id: "CIS Control 17.2"
+    text: "Establish and maintain a security programme — resource allocation"
+  - id: "ISO 27001:2022 A.5.4"
+    text: "Management responsibilities — provision of resources for ISMS"
+  - id: "SOC 2 CC1.2"
+    text: "The entity demonstrates a commitment to competence — resource commitment"
+  - id: "FedRAMP PL-2"
+    text: "System security plan — resource requirements"
+  - id: "CISA Zero Trust Pillar: Governance"
+    text: "Executive and budget commitment as Zero Trust enabler"
+micelium_product:
+  - product: Sovera
+    role: Risk quantification and reporting that builds the business case for security investment
+  - product: Pulse
+    role: Automation reducing per-task cost allowing more security coverage with constrained budget
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.3
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.3
+  manufacturing:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Build a business case for security investment based on risk and regulatory requirements. Present breach-cost benchmarks (IBM CODB 2024) and specific control gaps to executive leadership. A dedicated, growing security budget is both a control requirement and a board governance matter."
+remediation_technical: "Develop a risk-based security investment case: map identified control gaps to breach probability and cost using IBM CODB 2024 data and cyber insurance pricing data. Quantify risk reduction per investment using FAIR methodology or equivalent. Benchmark current security spend as a percentage of IT budget and revenue against industry peers (Gartner/ESG benchmarks). Present to the board with a 3-year investment roadmap mapping spend to control maturity targets. Leverage risk quantification to demonstrate ROI: well-scoped security investments in MFA, EDR, and SIEM typically return 5–10x in avoided breach costs within 18 months."

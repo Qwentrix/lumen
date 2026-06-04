@@ -115,7 +115,6 @@ func (r *Recorder) RecordNetwork(url string) {
 func (r *Recorder) Write(path string) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	r.finishedAt() // update finished timestamp
 
 	m := Manifest{
 		ScanID:         r.scanID,
@@ -159,8 +158,6 @@ func DefaultManifestPath() string {
 	return filepath.Join(home, ".lumen", fmt.Sprintf("manifest-%s.json", scanID))
 }
 
-// finishedAt is called under the lock; no-op because the timestamp is recorded in Write.
-func (r *Recorder) finishedAt() {}
 
 // newScanID generates a UUID-v4-like identifier using crypto/rand.
 // We avoid importing google/uuid to keep the dependency footprint minimal and

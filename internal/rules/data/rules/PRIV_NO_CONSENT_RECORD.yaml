@@ -1,0 +1,52 @@
+id: PRIV_NO_CONSENT_RECORD
+domain: privacy
+severity: high
+default_weight: 0.75
+detect:
+  questionnaire:
+    - Q-PRIV-012 == unsure
+    - Q-PRIV-013 == no_withdrawal_mechanism
+    - Q-PRIV-014 == no_record
+    - Q-PRIV-014 == partial_record
+    - Q-PRIV-015 == no_records
+    - Q-PRIV-015 == stored_not_queryable
+    - Q-PRIV-DD-009 == deleted_with_account
+    - Q-PRIV-DD-009 == no_process
+    - Q-PRIV-DD-011 == no_legal_review
+    - Q-PRIV-DD-012 == implicit_default
+title: "No structured consent record — consent lawful basis is not demonstrable"
+description_short: "The organization relies on consent as a lawful basis for processing but cannot demonstrate that valid consent was obtained, maintained, or that a withdrawal mechanism exists."
+description_long: "GDPR Art. 7(1) places the burden of proof on the controller to demonstrate valid consent. Where consent records do not exist, are incomplete, or are deleted with the user account, the controller cannot demonstrate the lawful basis for any consent-dependent processing. This means that every consent-based processing operation is potentially an Art. 6 violation (no lawful basis). Where implicit consent is used as default (GDPR explicitly prohibits pre-ticked boxes and silence as consent — Art. 7 and Recital 32), or where no withdrawal mechanism exists (Art. 7(3)), the original consent is invalid regardless of what records exist. CCPA similarly requires an accessible and functional opt-out mechanism. Absence of structured consent records with timestamps, notice versions, and specific purposes makes it impossible to defend against a data subject complaint alleging unlawful processing."
+frameworks:
+  - id: "GDPR Art. 7(1)"
+    text: "Controller bears burden of proof to demonstrate consent was validly given"
+  - id: "GDPR Art. 7(3)"
+    text: "Withdrawal mechanism required — as easy as giving consent"
+  - id: "GDPR Recital 32"
+    text: "Silence, pre-ticked boxes, or inactivity do not constitute consent — affirmative action required"
+  - id: "CCPA §1798.120"
+    text: "Right to opt out — functional opt-out mechanism required"
+  - id: "ISO 27018 §5.3"
+    text: "Consent for use of personal data in marketing must be documented and retrievable"
+  - id: "NIST Privacy Framework CT.PO-1"
+    text: "Consent is recorded in a way that supports demonstration of compliance"
+micelium_product:
+  - product: Proof
+    role: Maintains structured, queryable consent records with timestamp, notice version, and purpose for each user — demonstrating Art. 7(1) compliance
+  - product: Sypher
+    role: Enforces consent-bound access controls so processing cannot occur absent a valid consent record
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  technology:
+    weight_multiplier: 1.4
+  retail:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.3
+  legal:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "For every processing activity where consent is your lawful basis, you must be able to produce a record showing who consented, to what, when, and what notice they were shown. You also need a functional withdrawal mechanism that is as easy to use as the original consent flow."
+remediation_technical: "1. Define the data model for consent records: user identifier, processing purpose(s), consent timestamp, privacy notice version shown, consent method (explicit click, signature), consent source (web, mobile, in-person). 2. Implement consent capture that creates this record at the point of consent — not retroactively. 3. Retain consent records independently of user accounts: when an account is deleted, consent records should be retained for the legal limitation period (typically 3 years) then deleted separately. 4. Implement a consent preference center accessible to users at any time, allowing withdrawal per purpose. 5. Ensure consent records are queryable by user identifier for DSAR responses. 6. Eliminate implicit consent mechanisms (pre-ticked boxes, scrolling as consent) and replace with affirmative action flows. 7. Have jurisdiction-specific consent flows reviewed by legal counsel."

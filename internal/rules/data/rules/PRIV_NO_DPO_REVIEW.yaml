@@ -1,0 +1,42 @@
+id: PRIV_NO_DPO_REVIEW
+domain: privacy
+severity: medium
+default_weight: 0.55
+detect:
+  questionnaire:
+    - Q-PRIV-DD-035 == no_review
+    - Q-PRIV-DD-035 == internal_review_only
+title: "DPIAs not reviewed by DPO or qualified legal counsel before high-risk processing commences"
+description_short: "Data Protection Impact Assessments are conducted but reviewed only internally, without DPO or external legal counsel sign-off, undermining the independence and quality of the risk assessment."
+description_long: "GDPR Art. 38(1) requires that the DPO be involved 'in all matters relating to the protection of personal data', which includes DPIA review. Art. 35(2) specifically mandates DPO involvement when DPIAs are conducted. An internal review conducted only by the team proposing the processing activity has an inherent conflict of interest — it lacks the independence needed to identify risks that the proposing team may minimize or overlook. Where no DPO exists and DPIAs are reviewed internally only, the DPIA's quality and independence cannot be demonstrated to regulators. Supervisory authorities have specifically cited lack of DPO involvement in DPIAs as a governance failure in enforcement decisions. Where residual risk remains high after DPIA, Art. 36 requires prior consultation with the supervisory authority — a step that cannot be triggered without qualified review identifying high residual risk."
+frameworks:
+  - id: "GDPR Art. 35(2)"
+    text: "DPO must be involved when DPIA is conducted — independence and expertise requirement"
+  - id: "GDPR Art. 38(1)"
+    text: "DPO must be involved in all matters relating to protection of personal data"
+  - id: "GDPR Art. 36"
+    text: "Prior consultation with supervisory authority required when residual DPIA risk is high — requires qualified review to identify this"
+  - id: "ISO 27018 §5.2"
+    text: "Risk assessment results should be reviewed by an appropriately qualified party"
+  - id: "NIST Privacy Framework ID.RA-P"
+    text: "Privacy risk assessment results reviewed by appropriate organizational roles"
+micelium_product:
+  - product: Proof
+    role: Manages DPIA workflows with review routing to DPO or designated counsel, ensuring sign-off is captured and evidenced before processing commences
+  - product: Sovera
+    role: Tracks DPIA review status and escalates uncompleted reviews before planned launch dates
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "DPIAs must be reviewed by your DPO or qualified privacy counsel before the processing they cover begins. Internal-only review by the team proposing the processing does not provide the independence GDPR requires."
+remediation_technical: "1. Implement a DPIA sign-off workflow that routes completed DPIAs to the DPO (or designated external DPO/counsel) for review before processing is approved to commence. 2. If no DPO is in place, establish access to external DPO-as-a-service or privacy counsel for DPIA review engagements. 3. Document DPO review findings, any recommended risk mitigations, and the final sign-off decision with date and reviewer identity. 4. Where the DPO recommends additional mitigations, require these to be implemented before launch. 5. Where residual risk remains high after mitigation, implement the Art. 36 prior consultation process with the supervisory authority. 6. Retain DPIA review records as evidence of governance in regulatory audits."

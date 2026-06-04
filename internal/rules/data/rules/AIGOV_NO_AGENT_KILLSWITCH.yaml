@@ -1,0 +1,43 @@
+id: AIGOV_NO_AGENT_KILLSWITCH
+domain: ai_governance
+severity: critical
+default_weight: 0.85
+detect:
+  questionnaire:
+    - Q-AIGOV-027 == no_kill_switch
+    - Q-AIGOV-DD-026 == no_limits
+    - Q-AIGOV-DD-041 == no_failure_detection
+  scanner:
+    - ai_governance.mcp_servers_running > 0
+title: "No kill-switch or circuit-breaker for autonomous AI agents"
+description_short: "No mechanism exists to immediately halt an autonomous AI agent when it behaves unexpectedly or consumes runaway resources."
+description_long: "A kill-switch or circuit-breaker is the last line of defence against an AI agent that is misbehaving, has been compromised through prompt injection, or is caught in a loop consuming resources. Without this mechanism, an incident that begins with incorrect agent behaviour can escalate without bound: the agent continues executing, potentially modifying data, sending communications, or consuming API budget until it either completes or an engineer manually terminates it through out-of-band means. EU AI Act Art. 9(2)(b) and Art. 14(4)(e) explicitly require that high-risk AI systems can be interrupted. NIST AI RMF MANAGE-1.3 requires that deployed AI systems have defined stopping conditions. The absence of resource limits additionally creates denial-of-service exposure — a misconfigured agentic workflow can exhaust API rate limits, generate unexpected costs, or hold locks that affect other systems."
+frameworks:
+  - id: "EU AI Act Art. 9(2)(b)"
+    text: "Risk management — high-risk AI systems shall include measures to stop the AI system if it poses risks"
+  - id: "EU AI Act Art. 14(4)(e)"
+    text: "Human oversight — the ability to decide to not use a high-risk AI system in a given situation, to interrupt operation"
+  - id: "NIST AI RMF MANAGE-1.3"
+    text: "Risk controls include defined stopping conditions and circuit-breaker mechanisms for autonomous AI systems"
+  - id: "OWASP LLM Top 10 LLM08"
+    text: "Excessive Agency — circuit-breakers and resource limits are primary recommended controls for agentic systems"
+micelium_product:
+  - product: Sigil
+    role: Provides automated circuit-breaker enforcement at the agent orchestration layer — anomaly thresholds, resource consumption limits, and one-click kill from the governance console
+  - product: Sense
+    role: Detects behavioural anomalies in agent action patterns that trigger circuit-breaker alerts, providing the detection layer that activates the kill-switch
+industry_overlays:
+  technology:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  it_services:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Every AI agent in your environment needs a stop button. Whether it is an automated circuit-breaker that fires when the agent behaves unexpectedly, or a simple manual kill-switch that any engineer can trigger, there must be a way to halt the agent immediately."
+remediation_technical: "Implement two layers of agent termination capability: (1) automated circuit-breaker — define thresholds for actions per time window, error rate, resource consumption, and out-of-scope action attempts; when any threshold is breached, the agent is automatically suspended and an alert is fired; (2) manual kill-switch — a single authenticated API call or console action that immediately terminates all active instances of a named agent and revokes its API credentials. Additionally, set token-budget, API-call-rate, and cost-cap limits on all agentic workflows. Test the kill-switch on a defined cadence. Document the termination procedure in agent runbooks. Align to EU AI Act Art. 14(4)(e) and NIST AI RMF MANAGE-1.3."

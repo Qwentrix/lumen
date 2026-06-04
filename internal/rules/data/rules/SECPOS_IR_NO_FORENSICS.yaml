@@ -1,0 +1,39 @@
+id: SECPOS_IR_NO_FORENSICS
+domain: security_posture
+severity: medium
+default_weight: 0.45
+detect:
+  questionnaire:
+    - Q-SECPOS-DD-042 == no_forensic_process
+title: "No forensic evidence collection process or chain-of-custody"
+description_short: "No defined digital forensics process or chain-of-custody for incident evidence collection."
+description_long: "Digital forensics and chain-of-custody processes are required for two distinct purposes: understanding what happened (root cause analysis and scope determination) and proving what happened (regulatory reporting, law enforcement, and cyber insurance claims). Without a defined process, evidence is contaminated through normal system operation (log rotation, memory clearing), collected in legally non-admissible ways, or simply lost. Regulatory breach notification (GDPR, HIPAA, PCI DSS) requires organisations to demonstrate the scope of a breach — which requires forensic evidence. Cyber insurance claims adjusters require documented evidence of incident scope and cause."
+frameworks:
+  - id: "NIST SP 800-86"
+    text: "Guide to integrating forensic techniques into incident response"
+  - id: "CIS Control 17.7"
+    text: "Conduct post-incident reviews — forensic analysis of evidence"
+  - id: "ISO 27001:2022 A.5.28"
+    text: "Collection of evidence — procedures for identification and preservation"
+  - id: "SOC 2 CC7.5"
+    text: "Identified incidents are contained — evidence preservation for root cause analysis"
+  - id: "FedRAMP IR-4(6)"
+    text: "Incident handling — correlation with ongoing incidents"
+  - id: "CISA Zero Trust Pillar: Visibility and Analytics"
+    text: "Forensic capability supporting incident investigation"
+micelium_product:
+  - product: Proof
+    role: Tamper-evident audit trail and evidence preservation meeting chain-of-custody requirements
+  - product: Sense
+    role: Rich endpoint and network telemetry preserved for forensic investigation
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Document a process for collecting digital evidence during an incident that preserves its integrity. This includes taking forensic images of affected systems before any remediation, maintaining a chain of custody log, and storing evidence in a location where it cannot be altered."
+remediation_technical: "Establish a digital forensics SOP covering: live evidence collection (running processes, memory dump, network connections) before any system remediation; disk imaging using forensic tools (FTK Imager, dc3dd) with hash verification (MD5 + SHA-256); chain-of-custody log (who collected, when, how, storage location, access log). Define evidence storage: write-once media or WORM-enabled cloud storage with access audit logging. Document evidence retention periods by incident type: data breach evidence retained for at least 3 years for regulatory purposes. Train IR team on basic forensics procedures and have an IR retainer in place for complex forensics investigations."

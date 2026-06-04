@@ -1,0 +1,42 @@
+id: SECPOS_BYOD_UNGOVERNED
+domain: security_posture
+severity: high
+default_weight: 0.60
+detect:
+  questionnaire:
+    - Q-SECPOS-013 == byod_no_mdm
+    - Q-SECPOS-DD-012 == dev_unmanaged
+title: "BYOD permitted without MDM enrollment or device posture check"
+description_short: "Personal devices access corporate resources without MDM enrollment or security posture verification."
+description_long: "Unmanaged BYOD devices are outside the organisation's security perimeter in every meaningful way: no EDR, no patch control, no encryption enforcement, no remote wipe capability. When a user's personal device is compromised — common via home network exploits, malicious apps, or personal phishing — corporate credentials and data stored on that device are directly exposed. Conditional access policies require device compliance as a gate for corporate resource access. Without MDM, device compliance cannot be assessed, and Zero Trust device-trust controls cannot function."
+frameworks:
+  - id: "NIST CSF PR.PS-04"
+    text: "Log records are generated to support security monitoring"
+  - id: "CIS Control 4.4"
+    text: "Use unique passwords — device posture controls complement this for managed devices"
+  - id: "ISO 27001:2022 A.6.4"
+    text: "Teleworking — security measures for mobile and remote devices"
+  - id: "SOC 2 CC6.6"
+    text: "Security measures restrict access to information assets from outside boundary"
+  - id: "FedRAMP AC-19"
+    text: "Access control for mobile devices"
+  - id: "CISA Zero Trust Pillar: Devices"
+    text: "Device compliance as a prerequisite for corporate resource access"
+micelium_product:
+  - product: Sypher
+    role: Enforces data encryption policies so data on unmanaged devices remains protected
+  - product: Sovera
+    role: Policy-driven access controls can restrict sensitive data access to compliant devices
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  energy:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Require MDM enrollment for any device — personal or corporate — that accesses corporate email, files, or applications. Use conditional access to block unmanaged devices. Enable remote wipe capability on enrolled devices for when they are lost or stolen."
+remediation_technical: "Enforce device compliance as a Conditional Access requirement: MDM-enrolled and compliant state required. Configure MDM (Intune, Jamf, Workspace ONE) with BYOD profiles that separate corporate and personal data containers. For high-sensitivity environments, prohibit personal devices entirely and provide corporate-managed devices. Integrate MDM compliance status into your Zero Trust access policy. Define acceptable-use and remote-wipe consent in BYOD policy documentation."

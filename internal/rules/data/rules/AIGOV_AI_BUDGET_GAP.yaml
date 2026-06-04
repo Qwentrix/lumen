@@ -1,0 +1,37 @@
+id: AIGOV_AI_BUDGET_GAP
+domain: ai_governance
+severity: low
+default_weight: 0.30
+detect:
+  questionnaire:
+    - Q-AIGOV-047 == no_budget
+    - Q-AIGOV-DD-036 == decreasing_or_no_budget
+    - Q-AIGOV-DD-036 == flat
+title: "No dedicated AI governance budget — governance programme is unfunded or underfunded relative to AI adoption"
+description_short: "The AI governance programme has no dedicated budget or the budget is not scaling with AI tool adoption growth."
+description_long: "AI governance without dedicated resources defaults to best-effort contributions from people whose primary responsibilities lie elsewhere. Controls are not implemented, vendor reviews are delayed, training is skipped, and incident reviews are superficial — not due to intent but due to competing priorities and resource constraints. A flat governance budget in an environment of growing AI tool adoption means governance coverage per tool is declining — a structural deterioration that may not be visible until an incident occurs. NIST AI RMF GOVERN-2.1 emphasises that effective AI risk management requires resource commitment proportionate to the risk. The EU AI Act's compliance obligations — QMS, technical documentation, registration, training — have direct resource costs that cannot be absorbed as overhead. A governance programme without a budget is a programme that exists in policy but not in practice."
+frameworks:
+  - id: "NIST AI RMF GOVERN-2.1"
+    text: "Policies and processes are resourced to implement AI risk management proportionate to the organisation's AI use and risk exposure"
+  - id: "EU AI Act Art. 17"
+    text: "Quality management system — requires dedicated processes and resources; unfunded programmes cannot meet this requirement"
+  - id: "ISO 42001 7.1"
+    text: "Resources — organisations shall determine and provide the resources needed for the establishment and maintenance of the AI management system"
+micelium_product:
+  - product: Sigil
+    role: Provides tooling that reduces per-control implementation cost through automation — registry management, vendor review workflows, and compliance tracking that would otherwise require dedicated headcount
+  - product: Sovera
+    role: Generates ROI-framing compliance reports for budget justification — mapping ungoverned AI risks to regulatory penalty exposure and reputational cost estimates
+industry_overlays:
+  technology:
+    weight_multiplier: 1.3
+  financial:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Establish a dedicated budget line for AI governance. Even a modest allocation enables the most impactful controls: an approved-tools list, vendor review documentation, and AUP updates. Without any budget, governance exists only on paper."
+remediation_technical: "Develop an AI governance budget proposal covering: (1) tooling — AI policy management, DLP tuning for AI endpoints, vendor review platform; (2) personnel — part-time or dedicated AI governance role, or vendor for initial programme build; (3) training — annual AI literacy training and EU AI Act compliance training per applicable headcount; (4) external counsel — EU AI Act classification review and DPA negotiation. Size the budget proportionate to the number of AI tools in use and the regulatory risk surface. Present to leadership with regulatory penalty exposure quantification as justification. Revisit annually and as AI adoption grows. Align to ISO 42001 7.1 resource requirements."

@@ -1,0 +1,42 @@
+id: AIGOV_AUP_ENFORCEMENT_GAP
+domain: ai_governance
+severity: medium
+default_weight: 0.45
+detect:
+  questionnaire:
+    - Q-AIGOV-010 == not_communicated
+    - Q-AIGOV-012 == no_enforcement
+    - Q-AIGOV-DD-008 == not_acknowledged
+    - Q-AIGOV-DD-008 == acknowledged_not_logged
+    - Q-AIGOV-DD-009 == vague_no_specifics
+  scanner:
+    - ai_governance.shadow_ai_apps_count > 0
+    - ai_governance.browser_extensions_ai_count > 1
+title: "AI acceptable use policy not enforced — no acknowledgement tracking or defined consequences"
+description_short: "An AI AUP exists but lacks enforcement mechanisms: acknowledgement is not tracked or consequences for violations are not defined."
+description_long: "An AI acceptable use policy without documented acknowledgement tracking and defined enforcement consequences is a document rather than a control. Regulators consistently distinguish between the existence of a policy and evidence of its implementation. GDPR supervisory authorities have penalised organisations for having policies that were not communicated or enforced. HIPAA requires demonstrated workforce training, not just policy existence. When an AI-related incident occurs and evidence of policy enforcement is absent, the organisation faces elevated regulatory exposure because it cannot demonstrate the policy was operational. A policy acknowledged by fewer than 100% of staff means some employees operate without any declared obligation — and without a digital record, proving compliance to an auditor is impossible."
+frameworks:
+  - id: "NIST AI RMF GOVERN-2.2"
+    text: "The risk or impact assessment processes and outcomes are communicated to relevant AI actors — requires demonstrated distribution and acknowledgement"
+  - id: "EU AI Act Art. 26(6)"
+    text: "Deployers shall ensure relevant staff have been trained — training completion records are implied as evidence"
+  - id: "ISO 42001 A.7.2"
+    text: "AI awareness and training — organisations shall ensure personnel understand AI policy obligations"
+micelium_product:
+  - product: Sigil
+    role: Provides policy acknowledgement tracking linked to AI tool access provisioning — access is contingent on confirmed AUP acknowledgement
+  - product: Proof
+    role: Generates audit-ready evidence of AUP acknowledgement records, policy version history, and enforcement actions
+industry_overlays:
+  financial:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Require every employee and contractor to acknowledge the AI acceptable use policy with a digital signature. Track completion so you can show auditors who has and has not acknowledged it. Define what happens if someone violates the policy."
+remediation_technical: "Implement a policy acknowledgement workflow with per-user, per-version records stored with timestamps. Tie AI tool access provisioning to completed acknowledgement — users who have not acknowledged the current policy version cannot access approved AI tools. Define escalating consequences in the policy (verbal warning → written warning → access removal). Conduct annual re-acknowledgement when policy is updated. Store records in a queryable system for audit retrieval."

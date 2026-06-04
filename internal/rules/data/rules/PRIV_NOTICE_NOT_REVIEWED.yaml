@@ -1,0 +1,45 @@
+id: PRIV_NOTICE_NOT_REVIEWED
+domain: privacy
+severity: medium
+default_weight: 0.45
+detect:
+  questionnaire:
+    - Q-PRIV-047 == no_review
+    - Q-PRIV-047 == reviewed_ad_hoc
+    - Q-PRIV-054 == no_internal_policy
+title: "Privacy notice not regularly reviewed by legal — may be inaccurate or non-compliant"
+description_short: "The privacy notice is not reviewed by legal counsel on at least an annual basis and there is no internal privacy policy with annual employee acknowledgement, increasing the risk of inaccurate disclosures and non-compliant notice content."
+description_long: "GDPR Arts. 13–14 require privacy notices to accurately reflect all processing activities, lawful bases, data subject rights, data retention periods, and transfer details at the time of collection. A privacy notice that has not been updated to reflect processing changes (new features, new processors, changed purposes) contains inaccurate mandatory disclosures — which is itself a GDPR violation and potential misleading conduct. Ad hoc review only when someone notices a problem means that changes accumulate unnoticed, making the notice progressively less accurate over time. Internal privacy policies that are not formally acknowledged by employees cannot be enforced or demonstrated to regulators as evidence of staff awareness training. CCPA §1798.130(a)(5) requires privacy notices to be updated annually and to reflect the previous 12 months of data practices."
+frameworks:
+  - id: "GDPR Art. 13"
+    text: "Information to be provided at data collection — must be accurate at time of collection"
+  - id: "GDPR Art. 14"
+    text: "Information where data not directly collected — must be kept current and accurate"
+  - id: "GDPR Art. 12"
+    text: "Transparent communication — notices must be accurate, up to date, and intelligible"
+  - id: "CCPA §1798.130(a)(5)"
+    text: "Privacy notice must be updated annually and reflect prior 12 months' data practices"
+  - id: "ISO 27018 §5.1"
+    text: "Cloud providers must maintain accurate and current privacy notices for customers"
+  - id: "NIST Privacy Framework CT.PO-1"
+    text: "Privacy notices and consent mechanisms are maintained and reflect current processing activities"
+micelium_product:
+  - product: Proof
+    role: Manages privacy notice review schedules, version history, and legal sign-off records — ensuring notices are current and demonstrably reviewed
+  - product: Sovera
+    role: Tracks changes to data processing activities that should trigger privacy notice updates
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.3
+  technology:
+    weight_multiplier: 1.3
+  legal:
+    weight_multiplier: 1.3
+  retail:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Have your privacy notice reviewed by legal counsel at least once a year, and whenever you add new processing activities, change processors, or change data purposes. An outdated notice that does not match your actual practices is worse than a simple omission — it is inaccurate disclosure."
+remediation_technical: "1. Implement an annual privacy notice review cycle: scheduled legal counsel review against current ROPA and processing activities; update required before the annual review date passes. 2. Establish change-triggered notice review: adding a new processing purpose, new processor, new SaaS tool processing personal data, or change in data transfers triggers a notice review within 30 days. 3. Maintain a version-controlled notice history with review dates, reviewer identity, and approved-by records. 4. Implement an internal privacy policy with annual employee acknowledgement: distribute to all staff handling personal data, capture acknowledgements, and track non-completions. 5. Audit the notice against the Art. 30 ROPA at each review to ensure every processing activity, purpose, lawful basis, retention period, and transfer is accurately reflected."

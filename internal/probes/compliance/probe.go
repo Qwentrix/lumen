@@ -80,8 +80,8 @@ func Run(ctx context.Context) (*common.ProbeResult, error) {
 }
 
 // Manifest returns the static access declaration for the compliance probe.
-// Lists every OS API and file path this probe may access on any platform.
-// Windows entries are marked (LU-5) to distinguish them from the LU-4 scope.
+// Entries cover all platforms (macOS, Linux, Windows) and are static documentation —
+// no build tags; disclosure is unconditional per the SCANNER_MANIFEST transparency promise.
 func Manifest() common.ManifestEntry {
 	return common.ManifestEntry{
 		DomainID: domainID,
@@ -103,9 +103,6 @@ func Manifest() common.ManifestEntry {
 			"gsettings get org.gnome.desktop.screensaver lock-enabled",
 			"gsettings get org.gnome.desktop.screensaver lock-delay",
 			"gsettings get org.gnome.desktop.session idle-delay",
-			// Windows (LU-5 scope only — not invoked in LU-4)
-			"Get-BitLockerVolume (Windows — LU-5)",
-			"Get-NetFirewallProfile (Windows — LU-5)",
 		},
 		FilePaths: []string{
 			// macOS — firewall fallback plist
@@ -114,6 +111,14 @@ func Manifest() common.ManifestEntry {
 			"/etc/crypttab",
 			// Linux — firewall
 			"/etc/ufw/ufw.conf",
+			// Windows — BitLocker encryption state
+			`HKLM\SYSTEM\CurrentControlSet\Control\BitLocker\Volume (Windows registry — BitLocker ProtectionStatus)`,
+			// Windows — BitLocker Group Policy fallback
+			`HKLM\SOFTWARE\Policies\Microsoft\FVE (Windows registry — BitLocker FVE policy fallback)`,
+			// Windows — Firewall profile states
+			`HKLM\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy (Windows registry — firewall profiles)`,
+			// Windows — Screen lock / screensaver settings
+			`HKCU\Control Panel\Desktop (Windows registry — screen lock)`,
 		},
 		NetworkCalls: []string{}, // ZERO — this probe is fully offline
 	}

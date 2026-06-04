@@ -1,0 +1,46 @@
+id: SECPOS_NO_AWARENESS_TRAINING
+domain: security_posture
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-SECPOS-034 == no_training
+    - Q-SECPOS-034 == ad_hoc_no_cadence
+    - Q-SECPOS-037 == no_awareness
+    - Q-SECPOS-038 == no_training
+    - Q-SECPOS-DD-030 == no_training
+    - Q-SECPOS-DD-032 == not_measured
+title: "No security awareness training programme"
+description_short: "Employees receive no regular security awareness training — phishing and social engineering defences are absent."
+description_long: "Human error is the primary initial access vector in 74% of breaches according to Verizon DBIR 2024. Without security awareness training, employees cannot recognise phishing, social engineering, or BEC attempts. New employees represent an especially high-risk window: they are unfamiliar with communication norms and are more likely to comply with unusual requests. Every major compliance framework — HIPAA, PCI DSS, SOC 2, ISO 27001, FedRAMP — requires security awareness training for all staff. The investment ROI is consistently among the highest of any security control: $1 of training investment reduces breach-related costs by $8 according to Ponemon benchmarks."
+frameworks:
+  - id: "NIST CSF PR.AT-01"
+    text: "Personnel are provided with awareness and training for their roles"
+  - id: "CIS Control 14.1"
+    text: "Establish and maintain a security awareness programme"
+  - id: "ISO 27001:2022 A.6.3"
+    text: "Information security awareness, education, and training"
+  - id: "SOC 2 CC2.2"
+    text: "The entity communicates internally including security responsibilities"
+  - id: "FedRAMP AT-2"
+    text: "Literacy training and awareness — all users"
+  - id: "CISA Zero Trust Pillar: Identity"
+    text: "Human-factor risk reduction as identity security control"
+micelium_product:
+  - product: Sense
+    role: Detects anomalous user behaviour that may indicate a successful phishing compromise despite training gaps
+  - product: Pulse
+    role: Automated training assignment and completion workflow integration
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  manufacturing:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Launch a security awareness training programme immediately. Run short monthly modules plus an annual comprehensive course. Require completion before new hires get system access. Measure completion rates and track whether phishing click rates improve over time."
+remediation_technical: "Deploy a security awareness training platform (KnowBe4, Proofpoint Security Awareness, Cofense, Curricula). Define a training schedule: onboarding module before system access, monthly micro-learning (5–10 minutes), annual comprehensive refresh. Track completion rates and enforce for all staff. Integrate with HR system for automatic assignment on hire. Baseline and measure quarterly phishing click rates, suspicious-email report rates, and training completion percentage. Report metrics to CISO and executive leadership. Link non-completion to access review decisions."

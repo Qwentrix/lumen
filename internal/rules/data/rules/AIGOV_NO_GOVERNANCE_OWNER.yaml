@@ -1,0 +1,35 @@
+id: AIGOV_NO_GOVERNANCE_OWNER
+domain: ai_governance
+severity: high
+default_weight: 0.6
+detect:
+  questionnaire:
+    - Q-AIGOV-DD-002 == no
+title: "No designated AI governance owner"
+description_short: "No individual or committee is accountable for AI risk."
+description_long: "The EU AI Act requires deployers of high-risk AI to assign a responsible person. Without a named owner, AI risk is unmanaged by design — incidents lack an escalation path, regulatory inquiries have no point of contact, and AI governance programmes cannot be sustained."
+frameworks:
+  - id: "EU AI Act Art. 26"
+    text: "Designate a point of contact for high-risk AI deployers"
+  - id: "NIST AI RMF GOVERN-2.2"
+    text: "The organisation's teams involved in the AI development and deployment lifecycle are committed to and accountable for transparency"
+micelium_product:
+  - product: Sigil
+    role: AI governance programme structure and accountability tracking
+industry_overlays:
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.3
+  technology:
+    weight_multiplier: 1.3
+  education:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Designate an AI governance lead or form a cross-functional AI risk committee with executive sponsorship."
+remediation_technical: "Define the committee charter: membership (legal, security, data, business), meeting cadence, escalation paths, and reporting line to the board. Register AI governance owner in your RACI framework."

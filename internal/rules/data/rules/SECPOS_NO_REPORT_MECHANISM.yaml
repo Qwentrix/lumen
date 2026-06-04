@@ -1,0 +1,40 @@
+id: SECPOS_NO_REPORT_MECHANISM
+domain: security_posture
+severity: medium
+default_weight: 0.40
+detect:
+  questionnaire:
+    - Q-SECPOS-036 == no_report_mechanism
+    - Q-SECPOS-036 == tell_a_colleague_or_it
+title: "No defined mechanism for employees to report suspicious emails or security incidents"
+description_short: "No clear process exists for employees to report phishing, suspicious activity, or security concerns."
+description_long: "Employees who notice phishing emails, unusual activity, or security incidents are the most cost-effective detection mechanism available — but only if there is a clear, low-friction path to report. Informal verbal reporting is unreliable: employees do not report, reports get lost, and no SIEM ticket is created. Without a formal reporting mechanism, real phishing campaigns go unreported, incident response is delayed, and threat intelligence is lost. Studies show that security teams with high employee report rates detect active campaigns 40–70% faster than those without. A one-click email report button with automatic SIEM integration is the gold standard."
+frameworks:
+  - id: "NIST CSF DE.AE-05"
+    text: "Incident alert thresholds are established — employee reporting is a key input"
+  - id: "CIS Control 17.3"
+    text: "Establish and maintain an enterprise process for reporting security incidents"
+  - id: "ISO 27001:2022 A.6.8"
+    text: "Information security event reporting"
+  - id: "SOC 2 CC7.3"
+    text: "Evaluation of security events to identify incidents — includes employee reports"
+  - id: "FedRAMP IR-6"
+    text: "Incident reporting — mechanism for all personnel to report"
+  - id: "CISA Zero Trust Pillar: Visibility and Analytics"
+    text: "Employee-generated security signals as part of monitoring telemetry"
+micelium_product:
+  - product: Sense
+    role: Employee-reported events ingested as signals into the behavioural risk engine
+  - product: Pulse
+    role: Automated incident ticket creation from employee report submissions
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.3
+  financial:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Give employees a simple, single way to report suspicious emails and security incidents. A one-click report button in the email client is ideal. Ensure reports go directly to the security team and create an investigation ticket automatically."
+remediation_technical: "Deploy an email report button (KnowBe4 PhishAlarm, Microsoft Report Message, Cofense Reporter) that automatically creates a SIEM/ticketing system alert. Alternatively, create a dedicated security@ mailbox with an auto-responder confirming receipt and a process for triaging within 4 hours. Publish the reporting mechanism in security training and onboarding materials. Track report-rate as a KPI (target: >10% of employees report at least one suspicious email per quarter). Acknowledge and close the loop with reporters — positive reinforcement increases future reporting rates."

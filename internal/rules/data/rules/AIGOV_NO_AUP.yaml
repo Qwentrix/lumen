@@ -1,0 +1,34 @@
+id: AIGOV_NO_AUP
+domain: ai_governance
+severity: high
+default_weight: 0.7
+detect:
+  questionnaire:
+    - Q-AIGOV-001 == no_policy
+  scanner:
+    - ai_governance.shadow_ai_apps_count > 0
+    - ai_governance.browser_extensions_ai_count > 1
+title: "No AI acceptable use policy"
+description_short: "No policy governs employee use of AI tools."
+description_long: "Without an AI Acceptable Use Policy, employees may submit confidential data to external LLMs, use AI to generate regulated outputs without review, or rely on AI for high-stakes decisions without human oversight. This creates direct exposure to GDPR, EU AI Act, and sector-specific AI regulations."
+frameworks:
+  - id: "NIST AI RMF GOVERN-1.1"
+    text: "Policies, processes, procedures, and practices across the organisation related to the mapping, measuring, and managing of AI risks are in place"
+  - id: "EU AI Act Art. 4"
+    text: "AI literacy — providers and deployers shall ensure their staff have sufficient AI literacy to operate and oversee AI tools"
+micelium_product:
+  - product: Sigil
+    role: AI governance policy enforcement and shadow-AI detection
+industry_overlays:
+  government:
+    weight_multiplier: 1.5
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Publish an AI acceptable use policy that defines approved tools, prohibited uses (e.g. submitting PII to public LLMs), and consequences for non-compliance."
+remediation_technical: "Draft policy covering: approved AI tool register, data classification restrictions, human oversight requirements for high-stakes outputs, and AI incident reporting. Enforce via DLP rules on SaaS AI endpoints."

@@ -1,0 +1,44 @@
+id: AIGOV_NO_AGENT_AUDIT_TRAIL
+domain: ai_governance
+severity: high
+default_weight: 0.80
+detect:
+  questionnaire:
+    - Q-AIGOV-028 == no_audit_log
+    - Q-AIGOV-028 == logged_not_tamper_evident
+    - Q-AIGOV-041 == yes_ungoverned
+    - Q-AIGOV-DD-040 == no_monitoring
+  scanner:
+    - ai_governance.mcp_servers_running > 0
+title: "No tamper-evident audit trail for AI agent actions"
+description_short: "AI agent actions are not logged or the audit log is not tamper-evident, preventing reliable incident investigation and compliance evidence."
+description_long: "AI agents acting autonomously on behalf of users and systems must leave a tamper-evident audit trail — otherwise there is no reliable basis for attributing actions to agents, investigating incidents, or demonstrating compliance. A log that is not tamper-evident can be altered after the fact, whether deliberately or accidentally, removing its value as evidence. EU AI Act Art. 12 requires logging capabilities for high-risk AI systems to enable human oversight. When an agent sends an unauthorised communication, modifies production data, or exfiltrates information, the investigation depends entirely on the integrity of the audit log. NIST AI RMF MEASURE-2.7 requires continuous monitoring of AI system behaviour with documented records. Without an immutable audit trail, the organisation cannot scope the blast radius of an agent incident, satisfy regulatory audit requests, or defend against liability claims arising from agent actions."
+frameworks:
+  - id: "EU AI Act Art. 12"
+    text: "Logging capabilities — high-risk AI systems shall have automatic logging of events enabling post-hoc review"
+  - id: "NIST AI RMF MEASURE-2.7"
+    text: "AI system behaviour is monitored and documented — requires structured, reliable audit records"
+  - id: "ISO 42001 A.9.4"
+    text: "Logging and monitoring of AI systems — events related to AI system operation shall be recorded and protected"
+  - id: "OWASP LLM Top 10 LLM08"
+    text: "Excessive Agency — audit trails of agent actions are a fundamental recommended control"
+micelium_product:
+  - product: Sigil
+    role: Provides tamper-evident agent action logging with cryptographic integrity protection — every agent action is logged with user attribution, timestamp, action type, and outcome
+  - product: Proof
+    role: Exports agent audit logs with chain-of-custody metadata for regulatory investigations and compliance evidence packages
+industry_overlays:
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Log every action your AI agents take in a way that cannot be altered after the fact. Include who triggered the agent, what it did, what the outcome was, and when."
+remediation_technical: "Implement structured agent action logging capturing: agent identity, triggering user or system, action type and target (file path, API endpoint, message recipient), action outcome (success/failure/blocked), timestamp (UTC), and contextual metadata. Store logs in an append-only, tamper-evident store (WORM storage, immutable log stream, or cryptographically chained log entries). Set log retention to meet applicable regulatory minimums. Implement log integrity alerts that fire if expected log entries are absent (gap detection). Route logs to SIEM for correlation with security events. Test log recovery procedure annually. Align to EU AI Act Art. 12 and NIST AI RMF MEASURE-2.7."
