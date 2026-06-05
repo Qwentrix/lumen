@@ -1,0 +1,34 @@
+id: COMP_GDPR_NO_TRANSFER_MECHANISM
+domain: compliance
+severity: critical
+default_weight: 0.90
+detect:
+  questionnaire:
+    - Q-COMP-DD-027 == no_mechanism_in_place
+title: "No GDPR transfer mechanism in place for cross-border data flows"
+description_short: "EU personal data is transferred cross-border without any lawful transfer mechanism such as Standard Contractual Clauses, an adequacy decision, or the EU-U.S. DPF."
+description_long: "Transferring EU personal data to a third country without a lawful transfer mechanism is a direct violation of GDPR Chapter V (Arts. 44–49). This is one of the most heavily enforced areas of GDPR: the European Data Protection Board and national supervisory authorities have issued substantial fines specifically for illegal cross-border transfers. The absence of a transfer mechanism means every transfer of EU personal data to a non-adequate country — including routine use of US-based cloud services without SCCs or DPF certification — is unlawful. Following the Schrems II ruling, reliance on Privacy Shield was invalidated, and organisations must use 2021 EC Standard Contractual Clauses, binding corporate rules, or certification under the EU-U.S. Data Privacy Framework."
+frameworks:
+  - id: "GDPR Art. 44"
+    text: "General principle for transfers — transfers only permitted with appropriate safeguards"
+  - id: "GDPR Art. 46"
+    text: "Transfers subject to appropriate safeguards — SCCs, BCRs, approved codes of conduct"
+  - id: "GDPR Art. 49"
+    text: "Derogations for specific situations — limited exceptions only"
+  - id: "EDPB Guidelines 05/2021"
+    text: "Supplementary measures for transfers — technical and contractual safeguards"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.5
+  technology:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.5
+  it_services:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Immediately identify every cross-border transfer of EU personal data and put in place a lawful transfer mechanism for each. Transfers without a mechanism are illegal and must be halted or addressed urgently."
+remediation_technical: "Audit all data transfers from EU/EEA to third countries. For each transfer destination: (1) Check if the destination country has an EU adequacy decision (UK, Switzerland, Israel, Japan, etc). (2) For transfers to the US: check if the recipient is DPF-certified at https://www.privacyshield.gov/ps/participant-search or execute 2021 EC Module 1–4 SCCs as appropriate. (3) For intra-group transfers: consider Binding Corporate Rules. (4) Document the transfer mechanism in the ROPA. Engage DPA counsel for complex transfer scenarios. Implement transfer impact assessments (TIAs) where required."

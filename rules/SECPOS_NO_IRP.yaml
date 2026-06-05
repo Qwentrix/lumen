@@ -1,0 +1,28 @@
+id: SECPOS_NO_IRP
+domain: security_posture
+severity: critical
+default_weight: 0.90
+detect:
+  questionnaire:
+    - Q-SECPOS-001 == no_plan
+title: "No incident response plan"
+description_short: "No formal incident response plan exists."
+description_long: "Without an incident response plan, organisations face chaotic, costly, and legally risky responses to breaches. IBM CODB 2024 found that organisations with an IRP and regular tabletop exercises save an average of $1.49M per incident. Regulatory breach notification deadlines (GDPR 72h, HIPAA 60 days) are routinely missed without a plan."
+frameworks:
+  - id: "NIST SP 800-61 Rev 2"
+    text: "Computer security incident handling guide"
+  - id: "ISO 27001:2022 A.5.26"
+    text: "Response to information security incidents"
+  - id: "HIPAA 164.308(a)(6)"
+    text: "Security incident procedures"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Develop a written incident response plan covering detection, containment, eradication, recovery, and post-incident review. Test it with a tabletop exercise."
+remediation_technical: "Adopt the NIST SP 800-61 lifecycle. Assign IR roles (incident commander, comms lead, technical lead). Define playbooks for ransomware, data breach, and DDoS scenarios. Integrate with your SIEM for automated alerting. Run tabletop exercises annually."

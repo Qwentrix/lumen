@@ -1,0 +1,34 @@
+id: COMP_NO_VENDOR_AGREEMENT
+domain: compliance
+severity: high
+default_weight: 0.75
+detect:
+  questionnaire:
+    - Q-COMP-013 == no
+title: "No formal data agreements with data-handling vendors"
+description_short: "Vendors and subprocessors that handle sensitive data have no formal data processing agreement, BAA, or DPA in place."
+description_long: "When vendors process sensitive data — PHI, PII, cardholder data — without a formal agreement governing their obligations, the organisation retains full regulatory liability for how that data is handled. HIPAA requires signed Business Associate Agreements (BAAs) before any PHI is shared with a third party; a covered entity that shares PHI without a BAA is in direct violation regardless of what the vendor does. GDPR Article 28 requires a Data Processing Agreement (DPA) before any personal data is processed by a controller's processor. PCI DSS Req 12.8.2 requires written agreements with all service providers. The absence of formal agreements also means the organisation cannot contractually require the vendor to notify it of breaches, maintain specific controls, or submit to audit."
+frameworks:
+  - id: "HIPAA 164.308(b)(1)"
+    text: "Business associate contracts — required before any PHI is disclosed to a business associate"
+  - id: "GDPR Art. 28"
+    text: "Processor obligations — controller must have a written contract governing processor's activities"
+  - id: "PCI DSS Req 12.8.2"
+    text: "Written agreement including acknowledgement of service provider responsibility for security of cardholder data"
+  - id: "ISO 27001 A.15.1.2"
+    text: "Addressing security within supplier agreements — formal agreements must address information security requirements"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.8
+  financial:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  technology:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Sign a formal data agreement with every vendor that handles your sensitive data before you share any data with them. For healthcare data, this means a BAA. For EU personal data, this means a DPA. For payment data, this means a PCI-compliant service provider agreement."
+remediation_technical: "Audit all current vendor relationships to identify those handling sensitive data without formal agreements. Immediately obtain signed BAAs (HIPAA), DPAs (GDPR Art. 28), and/or PCI service provider acknowledgements from all data-handling vendors. Build agreement execution into the vendor onboarding process so no vendor receives data access without a signed agreement. Maintain a vendor agreement register with agreement type, execution date, and renewal date. Review agreements annually and when vendor services materially change."

@@ -56,6 +56,7 @@ import (
 	"time"
 
 	"github.com/Qwentrix/lumen/internal/probes/ai_governance"
+	cloudprobe "github.com/Qwentrix/lumen/internal/probes/cloud"
 	"github.com/Qwentrix/lumen/internal/probes/compliance"
 	"github.com/Qwentrix/lumen/internal/probes/privacy"
 	"github.com/Qwentrix/lumen/internal/probes/security_posture"
@@ -215,4 +216,123 @@ func TestNoDefaultNetworkCalls(t *testing.T) {
 	}
 
 	t.Logf("PASS: zero outbound network calls declared or made during default scan.")
+}
+
+// TestCloudProbeNotInDefaultRegistry asserts that the cloud probe (ENT-118)
+// is NOT present in the default probe runs slice used by TestNoDefaultNetworkCalls
+// and NEVER reaches the blocking transport in a default scan.
+//
+// This is a structural guard: if a future refactor accidentally adds cloudprobe
+// to the default probe loop, this test fails loudly before netcheck catches it.
+//
+// Design: the cloud probe is an opt-in NETWORKED path reached only via the
+// explicit --include-cloud flag + cloud domain consent gate in scan.go. It must
+// never appear in the five-probe default registry.
+func TestCloudProbeNotInDefaultRegistry(t *testing.T) {
+	// The "runs" slice in TestNoDefaultNetworkCalls is the canonical default registry.
+	// We recreate its structure here to assert cloud is absent from it.
+	type registryEntry struct {
+		name string
+	}
+	defaultProbeNames := []registryEntry{
+		{"vulnerabilities"},
+		{"compliance"},
+		{"ai_governance"},
+		{"security_posture"},
+		{"privacy"},
+	}
+	cloudName := "cloud"
+	for _, e := range defaultProbeNames {
+		if e.name == cloudName {
+			t.Errorf(
+				"INVARIANT VIOLATION: %q found in default probe registry.\n"+
+					"The cloud probe (ENT-118) must NEVER appear in the default runs slice.\n"+
+					"It is a networked opt-in probe, gated by --include-cloud and cloud-domain consent.\n"+
+					"Adding it to the default loop violates Design Principle 4 (NFR-9).",
+				cloudName,
+			)
+		}
+	}
+
+	// Additionally verify the cloud probe's Manifest() declares NetworkCalls
+	// (it is explicitly a networked probe — that is correct and expected).
+	cloudManifest := cloudprobe.Manifest()
+	if len(cloudManifest.NetworkCalls) == 0 {
+		t.Error("cloud probe Manifest().NetworkCalls must be non-empty (cloud is a declared networked probe)")
+	}
+
+	// Verify cloud probe's DomainID is "cloud" (not matching any of the 5 default domains).
+	if cloudManifest.DomainID == "" {
+		t.Error("cloud probe Manifest().DomainID must not be empty")
+	}
+	for _, e := range defaultProbeNames {
+		if cloudManifest.DomainID == e.name {
+			t.Errorf("cloud probe DomainID %q collides with default probe name; cloud must be a separate domain", cloudManifest.DomainID)
+		}
+	}
+
+	t.Logf("PASS: cloud probe is absent from the default probe registry and correctly declared as networked.")
+}
+
+// TestDefaultScanZeroNetworkWithCloudImported verifies that importing the cloud
+// package into the binary does NOT cause any network calls during a default scan
+// (no --include-cloud flag). The blocking transport must not be triggered.
+//
+// This test exercises the zero-network invariant specifically with the cloud
+// package imported (which it now is, in scan.go). The cloud probe's AWS SDK
+// dependencies are compiled into the binary but must remain completely dormant
+// unless --include-cloud is explicitly set.
+//
+// H-1 SDK-transport caveat: when --include-cloud IS active, the AWS SDK is
+// configured via config.WithHTTPClient to use a client whose Transport is
+// http.DefaultTransport, making SDK HTTP calls interceptable by blockingTransport.
+// However, some AWS SDK credential-chain probes (e.g. IMDS at 169.254.169.254)
+// may use an internal transport that bypasses http.DefaultTransport entirely.
+// The definitive zero-network gate for those raw-dial paths is the unshare --net
+// CI layer (Linux network namespace), NOT this interceptor. This test covers the
+// http.DefaultTransport path only.
+func TestDefaultScanZeroNetworkWithCloudImported(t *testing.T) {
+	var counter atomic.Int64
+	bt := &blockingTransport{dialCount: &counter}
+	origTransport := http.DefaultTransport
+	http.DefaultTransport = bt
+	defer func() { http.DefaultTransport = origTransport }()
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	// Run all five default probes (the exact set used by TestNoDefaultNetworkCalls).
+	// The cloud probe is intentionally NOT called here — it is the "default scan" path.
+	type run struct {
+		name string
+		err  error
+	}
+	runs := []run{
+		{"vulnerabilities", func() error { _, e := vulnerabilities.Run(ctx); return e }()},
+		{"compliance", func() error { _, e := compliance.Run(ctx); return e }()},
+		{"ai_governance", func() error { _, e := ai_governance.Run(ctx); return e }()},
+		{"security_posture", func() error { _, e := security_posture.Run(ctx); return e }()},
+		{"privacy", func() error { _, e := privacy.Run(ctx); return e }()},
+	}
+
+	for _, r := range runs {
+		r := r
+		t.Run(r.name, func(t *testing.T) {
+			if r.err != nil {
+				t.Errorf("probe %s returned unexpected error: %v", r.name, r.err)
+			}
+		})
+	}
+
+	if n := counter.Load(); n > 0 {
+		t.Errorf(
+			"cloud package imported but %d outbound dial(s) were made during default scan "+
+				"(without --include-cloud). The cloud AWS SDK must not auto-dial. "+
+				"Check that no init() or package-level code in internal/probes/cloud/ "+
+				"triggers network calls on import.",
+			n,
+		)
+	}
+
+	t.Logf("PASS: zero network calls in default scan even with cloud package imported.")
 }

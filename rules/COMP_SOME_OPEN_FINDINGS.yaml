@@ -1,0 +1,30 @@
+id: COMP_SOME_OPEN_FINDINGS
+domain: compliance
+severity: medium
+default_weight: 0.40
+detect:
+  questionnaire:
+    - Q-COMP-DD-010 == one_to_three_open
+title: "One to three audit findings remain unresolved from the last audit"
+description_short: "Between one and three findings from the last audit cycle remain open and unresolved."
+description_long: "One to three unresolved audit findings is a manageable but real compliance gap. Carrying even a single observation forward into the next audit cycle without resolution demonstrates that the organisation's remediation process did not close all known gaps. Enterprise customers reviewing SOC 2 management responses look for evidence of complete follow-through on prior observations. For frameworks with regulatory consequences such as PCI DSS and HIPAA, allowing findings to persist demonstrates a pattern of incomplete control operation. While fewer open findings indicate a better functioning programme than COMP_OPEN_AUDIT_FINDINGS (four or more), any unresolved finding represents a known gap accepted by management — which, if it recurs in the next audit, becomes a pattern of non-compliance."
+frameworks:
+  - id: "SOC 2 CC4.2"
+    text: "Evaluates and communicates internal control deficiencies — findings must be tracked to resolution"
+  - id: "ISO 27001 Clause 10.1"
+    text: "Nonconformity and corrective action — all nonconformities must be closed within a defined timeline"
+  - id: "PCI DSS Req 12.3.4"
+    text: "Review security requirements and controls to confirm adequacy — prior findings should be closed"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Close your remaining audit findings before the next audit cycle — even a small number of unresolved findings signals incomplete follow-through to auditors and customers."
+remediation_technical: "For each open finding, document: the root cause, the remediation action taken or planned, the evidence that will demonstrate closure, the responsible owner, and the target completion date. Prioritise findings that are likely to recur in the next audit. For findings that cannot be fully remediated, implement compensating controls and document the accepted residual risk. Provide the auditor with a management response that includes the remediation status of each prior finding before the next engagement begins."

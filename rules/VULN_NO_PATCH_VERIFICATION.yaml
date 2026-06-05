@@ -1,0 +1,34 @@
+id: VULN_NO_PATCH_VERIFICATION
+domain: vulnerabilities
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-VULN-007 == no_verification
+title: "No post-patch verification — patches are applied but success is not confirmed"
+description_short: "No verification process confirms that patches have been successfully applied across the environment after each patch cycle."
+description_long: "Applying patches without verification means that failed patch deployments, rollbacks triggered by application compatibility issues, or systems missed by the deployment tool remain undetected. An organisation that assumes patches are applied based on deployment tool logs — without scanning to verify — will have a false sense of remediation completeness. Failed or incomplete patches are a recurring finding in breach post-mortems: systems believed to be patched were not, and the attacker exploited exactly those gaps. NIST SP 800-53 SI-2 requires that organisations verify flaw remediation, not just schedule it. CIS Control 7 requires confirmation of patch application as part of the remediation lifecycle."
+frameworks:
+  - id: "NIST SP 800-53 SI-2"
+    text: "Flaw Remediation — verify the installation of software updates and confirm remediation effectiveness"
+  - id: "CIS Control 7"
+    text: "Continuous Vulnerability Management — scan after patching to confirm successful remediation across all systems"
+  - id: "PCI DSS Req 11.3"
+    text: "Internal vulnerability scanning — perform post-remediation scans to verify vulnerabilities have been resolved"
+industry_overlays:
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.3
+  technology:
+    weight_multiplier: 1.3
+  it_services:
+    weight_multiplier: 1.3
+  retail:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "After every patch cycle, run a compliance scan to confirm that patches were successfully applied. Deployment tools report success rates, not verified remediation — your scanner tells you the actual state of the environment."
+remediation_technical: "Implement post-patch verification scanning as a mandatory step in your patch management process. After each patch cycle, run an authenticated vulnerability scan targeted at the patched systems and verify that the CVEs targeted by the patch are no longer reported. Use scan results as the closure criterion for patch tickets — not deployment tool logs. For critical patches, require verification within 24 hours of the patch window. Track verification failure rates as a KPI to identify deployment tool gaps."

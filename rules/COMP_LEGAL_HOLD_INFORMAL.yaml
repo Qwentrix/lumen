@@ -1,0 +1,32 @@
+id: COMP_LEGAL_HOLD_INFORMAL
+domain: compliance
+severity: medium
+default_weight: 0.50
+detect:
+  questionnaire:
+    - Q-COMP-DD-013 == ad_hoc_legal_hold
+title: "Legal hold process is ad hoc with no documented procedures"
+description_short: "Legal holds can be applied ad hoc, but there is no documented process for suspending automated data deletion during litigation or regulatory inquiry."
+description_long: "An ad hoc legal hold process creates serious litigation risk. If automated retention policies delete data after a litigation hold should have been applied, the organisation may face spoliation sanctions — courts can instruct juries that deleted evidence would have been adverse, and regulators can treat deletion during an inquiry as obstruction. The US Federal Rules of Civil Procedure Rule 37(e) addresses electronically stored information (ESI) preservation obligations. A documented legal hold process ensures: hold notices are issued promptly when litigation is anticipated, automated deletion is suspended for relevant data, hold compliance is tracked, and holds are lifted appropriately when the matter concludes. Ad hoc holds fail at the critical moment — when a hold is needed urgently and no one knows the procedure."
+frameworks:
+  - id: "FRCP Rule 37(e)"
+    text: "Failure to preserve electronically stored information — spoliation sanctions"
+  - id: "ISO 27001 A.18.1.3"
+    text: "Protection of records — protecting important records from loss, destruction, and falsification"
+  - id: "HIPAA 164.316(b)(2)(i)"
+    text: "Time limit on documentation — six-year retention of PHI-related policies and records"
+  - id: "SEC Rule 17a-4"
+    text: "Books and records preservation — financial services legal hold requirements"
+industry_overlays:
+  legal:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Create a documented legal hold procedure that defines: who can issue a hold, how automated deletion is suspended, how compliance is tracked, and how holds are lifted. Test it before you need it."
+remediation_technical: "Develop a legal hold policy and procedure covering: triggering events (litigation, regulatory subpoena, investigation), hold notice issuance to custodians, technical suspension of retention policies across all relevant systems (email, file storage, backup, cloud apps), hold compliance monitoring, and hold release process. Integrate hold management with your email system (Office 365 In-Place Hold, Google Vault), document management, and backup platform. Conduct an annual legal hold exercise with IT and legal counsel."

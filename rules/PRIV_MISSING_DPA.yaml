@@ -1,0 +1,40 @@
+id: PRIV_MISSING_DPA
+domain: privacy
+severity: high
+default_weight: 0.80
+detect:
+  questionnaire:
+    - Q-PRIV-045 == never_reviewed
+    - Q-PRIV-045 == periodic_review_only
+    - Q-PRIV-DD-040 == not_assessed
+    - Q-PRIV-DD-043 == no_requirement
+    - Q-PRIV-DD-044 == not_monitored
+title: "Data Processing Agreements are outdated, not reviewed, or missing key terms"
+description_short: "Processor DPAs are not reviewed when vendor processing activities change, processor compliance is not assessed after signing, and contracts lack required terms for data return or deletion at termination."
+description_long: "A DPA signed at contract inception but never reviewed is unlikely to reflect current processing reality — especially as SaaS vendors continuously add features that alter the scope of personal data they process. GDPR Art. 28(3) specifies mandatory DPA terms including: processing only on documented instructions, confidentiality obligations, security measures, sub-processor controls, data subject rights assistance, deletion or return obligations, and audit rights. Where DPAs lack data-return or deletion requirements at contract termination (Q-PRIV-DD-043 == no_requirement), personal data may remain at the processor indefinitely after the commercial relationship ends. Where processor compliance is not assessed after signing (Q-PRIV-DD-040 == not_assessed), contractual obligations are unenforceable in practice."
+frameworks:
+  - id: "GDPR Art. 28"
+    text: "Processor contracts — mandatory terms including instructions, security, sub-processors, data subject rights, audit, and deletion"
+  - id: "GDPR Art. 28(3)(g)"
+    text: "Deletion or return of personal data upon termination of services is a mandatory DPA term"
+  - id: "CCPA §1798.140(e)"
+    text: "Service provider agreements must prohibit use of personal information outside the contract terms"
+  - id: "HIPAA 45 CFR §164.504(e)"
+    text: "BAA/DPA must include data return or destruction obligations at contract termination"
+  - id: "ISO 27018 §6"
+    text: "Agreements with cloud service providers must cover personal data lifecycle including end-of-contract disposition"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Review your processor DPAs whenever a vendor materially changes the data they process. Ensure every DPA includes a requirement for the vendor to return or delete your data when the contract ends — and verify they actually do it."
+remediation_technical: "1. Implement a DPA lifecycle management process: initial signing, annual review, and change-triggered review when vendors announce new features affecting personal data processing. 2. Audit all existing DPAs against GDPR Art. 28(3) mandatory terms checklist. 3. Add contract clauses requiring processors to notify you of sub-processor additions and material changes to processing. 4. Include explicit data-return or confirmed-deletion obligations at contract termination with a specified timeframe (e.g., 30 days). 5. Implement a vendor compliance monitoring process: annual questionnaire or review of processor security certifications. 6. Build a processor compliance register tracking DPA status, last review date, open findings, and resolution timelines."

@@ -1,0 +1,41 @@
+id: SECPOS_NO_EDR
+domain: security_posture
+severity: critical
+default_weight: 0.95
+detect:
+  questionnaire:
+    - Q-SECPOS-012 == no_edr
+    - Q-SECPOS-DD-009 == no_triage
+title: "No EDR on endpoints"
+description_short: "No endpoint detection and response solution is deployed or actively monitored."
+description_long: "Without EDR, threats on endpoints are invisible until they cause observable damage such as ransomware encryption or data exfiltration. Antivirus alone detects fewer than 50% of modern fileless and living-off-the-land attacks according to independent red-team studies. EDR provides behavioural telemetry, TTP-based detection, and the ability to remotely isolate a host within seconds of compromise. Cyber insurance underwriters now routinely decline or limit coverage for organisations without EDR. CISA's Known Exploited Vulnerabilities catalogue is exploited almost exclusively against unprotected endpoints."
+frameworks:
+  - id: "NIST CSF DE.CM-01"
+    text: "Networks and network services are monitored to find potentially adverse events"
+  - id: "CIS Control 13.7"
+    text: "Deploy a host-based intrusion detection and response solution"
+  - id: "ISO 27001:2022 A.8.7"
+    text: "Protection against malware — detection and response"
+  - id: "SOC 2 CC7.2"
+    text: "The entity monitors system components for anomalies indicating malicious acts"
+  - id: "FedRAMP SI-3"
+    text: "Malicious code protection on information system components"
+  - id: "CISA Zero Trust Pillar: Devices"
+    text: "Endpoint detection and response as a device trust prerequisite"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  energy:
+    weight_multiplier: 1.4
+  manufacturing:
+    weight_multiplier: 1.4
+  retail:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Deploy an EDR solution on every employee endpoint as a priority. Ensure alerts are actively monitored — unmonitored EDR provides no protection. Consider a managed detection and response (MDR) provider if in-house SOC coverage is not available."
+remediation_technical: "Select an EDR platform (CrowdStrike Falcon, SentinelOne, Microsoft Defender for Endpoint, Palo Alto Cortex XDR). Deploy via MDM or group policy to achieve 100% endpoint coverage within 30 days. Configure automated isolation on critical alerts. Integrate EDR telemetry with your SIEM for cross-source correlation. Establish alert-triage SLAs — critical: 15 minutes, high: 1 hour. If no internal SOC exists, engage an MDR provider for 24/7 coverage."

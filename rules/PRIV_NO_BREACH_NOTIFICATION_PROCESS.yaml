@@ -1,0 +1,44 @@
+id: PRIV_NO_BREACH_NOTIFICATION_PROCESS
+domain: privacy
+severity: critical
+default_weight: 0.90
+detect:
+  questionnaire:
+    - Q-PRIV-035 == no
+    - Q-PRIV-035 == informal_only
+    - Q-PRIV-036 == no_training
+    - Q-PRIV-DD-036 == separate_processes
+    - Q-PRIV-DD-036 == no_ir_plan
+title: "No documented breach notification process aligned with GDPR, HIPAA, or CCPA requirements"
+description_short: "The organization has no documented process for identifying, assessing, and notifying regulators and affected individuals of personal data breaches within the required regulatory timeframes."
+description_long: "GDPR Art. 33 requires notification to the supervisory authority within 72 hours; Art. 34 requires notification to affected data subjects without undue delay for high-risk breaches. HIPAA's Breach Notification Rule (45 CFR §164.400–414) mandates notification to affected individuals within 60 days and media notification for breaches affecting 500+ individuals in a state. CCPA §1798.150 creates a private right of action. Operating without a documented, employee-trained, tested breach notification process means that when a breach occurs, the organization will be simultaneously managing a security incident, making legal determinations, drafting regulatory notifications, and communicating with affected individuals — with no playbook and under time pressure. This is the scenario most likely to result in regulatory violations compounding the original breach."
+frameworks:
+  - id: "GDPR Art. 33"
+    text: "Notification to supervisory authority within 72 hours of breach awareness"
+  - id: "GDPR Art. 34"
+    text: "Communication to data subjects without undue delay for high-risk breaches"
+  - id: "HIPAA 45 CFR §164.400–414"
+    text: "HIPAA Breach Notification Rule — individual, media, and HHS notification requirements"
+  - id: "CCPA §1798.150"
+    text: "Private right of action for unauthorized access due to failure to implement reasonable security"
+  - id: "ISO 27018 §9.3"
+    text: "Personal data breach notification requirements for cloud service providers"
+  - id: "NIST Privacy Framework RS.CO-1"
+    text: "Response communications are coordinated with stakeholders including regulatory authorities"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  retail:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Create a written breach notification playbook before you need it. It should tell your team exactly how to recognize a breach, who to call, how to assess severity, who drafts the regulatory notification, and where to send it — all within 72 hours."
+remediation_technical: "1. Document a breach notification procedure covering: breach detection triggers, initial containment steps, severity assessment framework, internal escalation chain, supervisory authority notification templates and submission contacts per jurisdiction, data subject notification templates, and media notification procedures for HIPAA large-breach scenarios. 2. Integrate the breach notification procedure with the incident response plan — personal data involvement should be a mandatory triage question in every security incident. 3. Train all employees on breach recognition and escalation; conduct role-specific training for IT, legal, and customer-facing teams. 4. Test the procedure annually via tabletop exercise with a time-bounded scenario. 5. Maintain the procedure as a living document, updated when new jurisdictions come into scope or regulations change."

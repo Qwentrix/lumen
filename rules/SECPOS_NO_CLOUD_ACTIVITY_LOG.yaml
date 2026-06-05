@@ -1,0 +1,38 @@
+id: SECPOS_NO_CLOUD_ACTIVITY_LOG
+domain: security_posture
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-SECPOS-027 == no_cloud_log_ingestion
+title: "Cloud API activity not logged or monitored"
+description_short: "Cloud provider audit logs are not collected or ingested into monitoring — cloud activity is invisible."
+description_long: "Cloud control-plane events — IAM policy changes, storage bucket permission modifications, VM creation/deletion, network security group changes — are the primary mechanism by which attackers establish persistence and move resources in cloud environments. AWS CloudTrail, Azure Activity Log, and GCP Audit Logs capture every API call and are essential for detecting cloud-specific attack techniques (MITRE ATT&CK for Cloud). Without ingesting these logs into a SIEM, cloud reconnaissance, resource hijacking, and data exfiltration are invisible. Multiple major cloud breaches (Capital One, Codecov, Uber) involved adversary actions that would have been detectable in cloud audit logs within minutes if monitored."
+frameworks:
+  - id: "NIST CSF DE.CM-01"
+    text: "Networks and network services are monitored to find potentially adverse events"
+  - id: "CIS Control 8.5"
+    text: "Collect detailed audit logs — cloud API and management activities"
+  - id: "ISO 27001:2022 A.8.15"
+    text: "Logging of cloud service provider API and management activities"
+  - id: "SOC 2 CC7.2"
+    text: "Monitoring of all in-scope system components including cloud services"
+  - id: "FedRAMP AU-2(e)"
+    text: "Audit events for cloud-hosted systems including management console access"
+  - id: "CISA Zero Trust Pillar: Visibility and Analytics"
+    text: "Cloud API telemetry as core visibility requirement"
+industry_overlays:
+  technology:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.5
+  healthcare:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  it_services:
+    weight_multiplier: 1.5
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Enable cloud provider audit logging (AWS CloudTrail, Azure Activity Log, GCP Audit Logs) and feed these logs into your SIEM. Set up detection rules for high-risk actions like IAM changes, public bucket creation, and admin account modifications."
+remediation_technical: "Enable CloudTrail (all regions, management and data events) or equivalent across all cloud accounts. Forward to a centralised S3 bucket or Log Analytics workspace with integrity validation. Ingest into your SIEM and create detection rules: new admin IAM role creation, S3 bucket ACL made public, security group rule allowing 0.0.0.0/0, console login without MFA, unusual API call volume. Enable AWS GuardDuty / Microsoft Defender for Cloud / GCP Security Command Center as supplementary cloud-native threat detection. Store audit logs in a separate account to prevent deletion by a compromised primary account."

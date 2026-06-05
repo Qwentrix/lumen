@@ -1,0 +1,35 @@
+id: SECPOS_LOG_RETENTION_SHORT
+domain: security_posture
+severity: medium
+default_weight: 0.45
+detect:
+  questionnaire:
+    - Q-SECPOS-025 == no_defined_retention
+    - Q-SECPOS-025 == under_six_months
+title: "Log retention too short — security events unavailable for investigation or compliance"
+description_short: "Security logs are retained for less than six months, limiting investigation capability and compliance posture."
+description_long: "Attackers with a long dwell time will be investigated retroactively using logs that may no longer exist. NIST SP 800-92 recommends retaining security event logs for at least 12 months with 3 months available for immediate analysis. FedRAMP requires 12 months retention for all audit records. SOC 2 auditors review whether log retention meets the organisation's stated retention policy and applicable regulatory requirements. Forensic investigations routinely require log data from 6–18 months before the incident discovery date. Short retention periods also indicate that security logs are not treated as business-critical data with appropriate backup and resilience."
+frameworks:
+  - id: "NIST SP 800-92"
+    text: "Guide to computer security log management — 12-month minimum retention"
+  - id: "CIS Control 8.3"
+    text: "Ensure adequate storage for logs — retain for at least 12 months"
+  - id: "ISO 27001:2022 A.8.15"
+    text: "Logging — log storage and protection"
+  - id: "SOC 2 CC7.2"
+    text: "Monitoring activities with adequate log retention"
+  - id: "FedRAMP AU-11"
+    text: "Audit record retention — retain for a minimum of one year"
+  - id: "CISA Zero Trust Pillar: Visibility and Analytics"
+    text: "Persistent telemetry retention enabling retrospective analysis"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Retain security logs for at least 12 months, with the most recent 3 months stored hot (immediately searchable) and older logs in cold or archive storage. Define a written log retention policy that specifies the period per log type."
+remediation_technical: "Configure your SIEM or log management platform with tiered retention: 90 days hot/searchable, 12 months warm (lower-cost indexed), and 3 years cold archive for regulated data (S3 Glacier, Azure Blob Archive, GCS Coldline). Define log type-specific retention schedules in your SIEM: authentication logs 1 year, cloud API audit logs 1 year, network flow logs 90 days, application logs 90 days. Protect logs from deletion or modification — use WORM storage or log integrity hashing. Document retention policy and review annually against regulatory changes."

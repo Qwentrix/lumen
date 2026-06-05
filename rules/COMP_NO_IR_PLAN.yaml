@@ -1,0 +1,37 @@
+id: COMP_NO_IR_PLAN
+domain: compliance
+severity: critical
+default_weight: 0.90
+detect:
+  questionnaire:
+    - Q-COMP-020 == no_plan
+    - Q-COMP-020 == informal_only
+title: "No documented incident response plan"
+description_short: "No formal incident response plan exists — responses to security incidents are ad hoc."
+description_long: "Without a documented incident response plan, organisations are unprepared to contain breaches efficiently, leading to extended attacker dwell time, uncontrolled spread, and delayed regulatory notification. HIPAA 164.308(a)(6), PCI DSS 12.10, GDPR Art. 33, and SOC 2 CC7.3 all require documented incident response procedures. Regulators consistently penalise organisations that cannot demonstrate they had a plan — not just that they eventually responded. An informal process also means the organisation has never validated its ability to respond under pressure."
+frameworks:
+  - id: "HIPAA 164.308(a)(6)"
+    text: "Security Incident Procedures — response and reporting requirements"
+  - id: "PCI DSS Req 12.10"
+    text: "Implement an incident response plan"
+  - id: "GDPR Art. 33"
+    text: "Notification of a personal data breach to the supervisory authority"
+  - id: "SOC 2 CC7.3"
+    text: "Evaluation of security events for incident response"
+  - id: "NIST SP 800-61r2"
+    text: "Computer Security Incident Handling Guide"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.3
+  retail:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Create a documented incident response plan that defines roles, escalation paths, communication requirements, and notification timelines. Have the team read and acknowledge it before you need it."
+remediation_technical: "Develop an IRP aligned to NIST SP 800-61r2 covering: preparation, detection, containment, eradication, recovery, and post-incident review. Define legal notification SLAs per applicable regulation (GDPR 72h, HIPAA 60 days, state breach laws). Assign IR roles (incident commander, comms lead, legal, technical lead). Store the plan in a location accessible during a cyber incident (not solely on company systems)."

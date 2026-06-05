@@ -1,0 +1,34 @@
+id: COMP_STATIC_SERVICE_CREDS
+domain: compliance
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-COMP-DD-017 == static_shared_keys
+title: "Service integrations use static shared credentials with no rotation"
+description_short: "Service-to-service integrations rely on static, non-rotating shared keys or credentials."
+description_long: "Static shared credentials that never rotate are an attacker's ideal target. Once obtained — through a code repository, a log file, a configuration dump, or an insider — they provide durable access that may not be detected for months or years, because there is no rotation event to invalidate a stolen credential. Static service credentials also cannot be scoped per service, meaning a single leaked key may provide broader access than intended. PCI DSS Req 8.6, SOC 2 CC6.1, and NIST SP 800-57 all require that credentials be regularly rotated and that service accounts use unique credentials. The combination of static and shared creates the highest credential risk profile short of hardcoded keys."
+frameworks:
+  - id: "PCI DSS Req 8.6"
+    text: "Management of interactive use of application and system accounts — credentials must not be shared or static"
+  - id: "SOC 2 CC6.1"
+    text: "Logical access controls — credentials protecting access must be protected and rotated"
+  - id: "NIST SP 800-57 Part 1"
+    text: "Key management — cryptographic keys and credentials must have defined usage periods and be rotated"
+  - id: "OWASP Top 10 A02:2021"
+    text: "Cryptographic Failures — inadequate key management and static long-lived credentials"
+industry_overlays:
+  technology:
+    weight_multiplier: 1.5
+  it_services:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.5
+  healthcare:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Replace static shared keys with unique, automatically rotating credentials for each service integration. If a key cannot be rotated today, treat it as a critical vulnerability and prioritise migration."
+remediation_technical: "Migrate all static shared service credentials to a secrets manager with automated rotation (HashiCorp Vault, AWS Secrets Manager, Azure Key Vault). Implement unique credentials per service integration — no shared keys between services. Define rotation intervals by sensitivity: high-sensitivity services (30 days), standard services (90 days). Where possible, replace long-lived keys with short-lived tokens or managed identities (AWS IAM roles, Azure Managed Identities, GCP Workload Identity) that eliminate the secret entirely. Scan all code repositories and configuration files for any remaining hardcoded or static credentials and rotate immediately on discovery."

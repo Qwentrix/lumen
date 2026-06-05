@@ -1,0 +1,42 @@
+id: PRIV_DATA_MAP_STALE
+domain: privacy
+severity: medium
+default_weight: 0.50
+detect:
+  questionnaire:
+    - Q-PRIV-005 == over_12_months
+    - Q-PRIV-006 == partial
+    - Q-PRIV-008 == partial
+    - Q-PRIV-011 == cloud_used_not_inventoried
+    - Q-PRIV-DD-003 == spreadsheet_manual
+    - Q-PRIV-DD-004 == reactive_only
+    - Q-PRIV-DD-008 == not_captured_until_audit
+title: "Data map exists but is outdated or incomplete"
+description_short: "The organization has a data map or records of processing activities, but it has not been updated within 12 months or does not cover all processors, SaaS tools, or cloud environments."
+description_long: "A stale or incomplete data map fails to serve its core compliance function. GDPR Art. 30 requires the ROPA to reflect current processing activities — not activities as they were 18 months ago. Organizations that rely on an outdated map when responding to regulatory inquiries, DSARs, or DPIAs are routinely found to be in violation even if they have a document. Cloud services and SaaS tools often process significant volumes of personal data but are among the most frequently omitted from data maps maintained manually. NIST Privacy Framework PR.ID-1 requires maintaining an accurate data processing record as a foundational privacy control."
+frameworks:
+  - id: "GDPR Art. 30"
+    text: "Records of processing activities — must reflect current processing; must be updated when activities change"
+  - id: "GDPR Art. 5(1)(f)"
+    text: "Integrity and confidentiality — requires knowing where data is to protect it appropriately"
+  - id: "CCPA §1798.100"
+    text: "Right to know — requires knowing what data is collected and where it resides"
+  - id: "ISO 27018 §5.4"
+    text: "Maintaining accurate records of personal data held in cloud services"
+  - id: "NIST Privacy Framework PR.ID-1"
+    text: "Data processing inventory — personal data is managed as a resource with current, accurate records"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.3
+  legal:
+    weight_multiplier: 1.3
+  technology:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Review and update your data map at least every 6 months and whenever you adopt a new SaaS tool, change a data processor, or introduce a new processing activity. A stale map is almost as risky as no map at all when regulators come calling."
+remediation_technical: "1. Implement a quarterly data map review gate — assign an owner and calendar it. 2. Add a pre-launch checklist for new SaaS adoption that requires updating the data inventory before go-live. 3. Consider automated data discovery tooling (DSPM) to continuously scan cloud environments for new personal data stores. 4. Integrate the data map with your ROPA: changes to processing activities in the ROPA should trigger data map updates. 5. Include all cloud services, SaaS platforms, and sub-processors in the review scope — not just on-premises systems."

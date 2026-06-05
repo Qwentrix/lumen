@@ -1,0 +1,44 @@
+id: CLOUD_NO_AUDIT_LOGGING
+domain: compliance
+severity: medium
+default_weight: 0.65
+detect:
+  scanner:
+    - cloud.audit_logging_enabled == false
+title: "Cloud audit logging (CloudTrail / Activity Log) not enabled"
+description_short: "Cloud control-plane audit logging is disabled, making it impossible to detect account compromise, investigate incidents, or satisfy regulatory evidence requirements."
+description_long: "Cloud audit logs — AWS CloudTrail, Azure Activity Log, GCP Audit Logs — record every API call and management action taken in the account: IAM changes, resource creation and deletion, network security group modifications, data access, and authentication events. Without these logs, an organisation cannot detect account takeover in progress, reconstruct the timeline of an incident, demonstrate due diligence to regulators, or satisfy compliance evidence requirements. CIS AWS Foundations Benchmark 3.1 requires that CloudTrail is enabled in all regions; 3.2 requires that log file validation is enabled to detect tampering; 3.4 requires that CloudTrail log files are integrated with CloudWatch Logs. NIST 800-53 AU-2 mandates event logging for all systems; AU-9 requires protection of audit logs from tampering. Multiple regulatory frameworks explicitly require cloud audit logs as compliance evidence: FedRAMP AU-2(e) includes cloud management console access events; PCI DSS Req 10.2 requires logging of all individual user access to cardholder data. In breach litigation, the absence of audit logs is treated as a failure to implement reasonable security measures."
+frameworks:
+  - id: "CIS AWS Foundations Benchmark 3.1"
+    text: "Ensure CloudTrail is enabled in all regions"
+  - id: "CIS AWS Foundations Benchmark 3.2"
+    text: "Ensure CloudTrail log file validation is enabled"
+  - id: "CIS AWS Foundations Benchmark 3.4"
+    text: "Ensure CloudTrail trails are integrated with Amazon CloudWatch Logs"
+  - id: "NIST 800-53 AU-2"
+    text: "Event Logging — define and capture audit events across all cloud management activities"
+  - id: "NIST 800-53 AU-9"
+    text: "Protection of Audit Information — protect audit logs from unauthorised access and modification"
+  - id: "ISO 27001:2022 A.8.15"
+    text: "Logging — maintain and protect audit logs for cloud service provider API and management activities"
+  - id: "PCI DSS Req 10.2"
+    text: "Implement audit trails to link all individual user access to cardholder data and administrative actions"
+  - id: "FedRAMP AU-2(e)"
+    text: "Audit events for cloud-hosted systems including management console logins and API calls"
+industry_overlays:
+  financial:
+    weight_multiplier: 1.5
+  healthcare:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.6
+  technology:
+    weight_multiplier: 1.4
+  it_services:
+    weight_multiplier: 1.4
+  retail:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Enable cloud audit logging across all regions and accounts immediately. Store logs in a separate, access-controlled storage location with integrity verification enabled. Set up alerts for high-risk events such as root logins, IAM policy changes, and public bucket creation. Retain logs for at least 12 months (longer for regulated industries)."
+remediation_technical: "AWS: enable CloudTrail for all regions with a multi-region trail: 'aws cloudtrail create-trail --name org-audit-trail --s3-bucket-name <log-bucket> --is-multi-region-trail --enable-log-file-validation'. Enable CloudWatch Logs integration for real-time alerting. Store trail logs in a dedicated security account S3 bucket with Object Lock (WORM) enabled to prevent deletion by a compromised primary account. Enable CloudTrail Insights for anomaly detection. Create CloudWatch metric filters and alarms for: root account usage, IAM policy changes, security group changes, S3 bucket ACL changes, and console logins without MFA (see CIS AWS Benchmark section 4 for the full set of recommended alarms). Azure: ensure Diagnostic Settings are configured on the subscription to route the Activity Log to a Log Analytics workspace and/or storage account. Enable Microsoft Defender for Cloud at Standard tier. GCP: enable Data Access audit logs for all services via the IAM & Admin > Audit Logs console; route to Cloud Logging and export to a Cloud Storage bucket with retention lock."

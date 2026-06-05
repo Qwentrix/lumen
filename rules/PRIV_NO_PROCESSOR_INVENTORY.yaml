@@ -1,0 +1,37 @@
+id: PRIV_NO_PROCESSOR_INVENTORY
+domain: privacy
+severity: high
+default_weight: 0.75
+detect:
+  questionnaire:
+    - Q-PRIV-041 == no
+    - Q-PRIV-041 == partial
+title: "No current processor and sub-processor inventory"
+description_short: "The organization does not maintain a current, complete inventory of all data processors and sub-processors that handle personal data on its behalf."
+description_long: "GDPR Art. 28 requires organizations to engage only processors providing sufficient guarantees, and to document those processors in the Art. 30 ROPA. Without a processor inventory, an organization cannot: verify DPAs exist with all processors, ensure sub-processor visibility, coordinate DSAR responses involving processors, assess the impact of processor security incidents on personal data, or demonstrate to regulators which third parties process personal data on its behalf. An incomplete inventory is functionally equivalent to no inventory for the processors it misses. Shadow IT and SaaS sprawl mean processor inventories degrade rapidly without active maintenance — new tools adopted without procurement review create gaps immediately. CCPA §1798.140(w) requires disclosure of service providers (processors) in the privacy notice, which requires knowing who they are."
+frameworks:
+  - id: "GDPR Art. 28"
+    text: "Processor requirements — controllers must engage only processors providing sufficient guarantees and document them"
+  - id: "GDPR Art. 30(1)(d)"
+    text: "ROPA must include categories of recipients including processors and sub-processors"
+  - id: "CCPA §1798.140(w)"
+    text: "Service provider disclosures in privacy notice require accurate processor inventory"
+  - id: "HIPAA 45 CFR §164.504(e)"
+    text: "BAA required with all business associates — requires knowing who they are"
+  - id: "ISO 27018 §6"
+    text: "Cloud service agreements — customer must know which sub-processors handle their personal data"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Create and maintain a list of every vendor, contractor, and SaaS tool that processes personal data on your behalf. For each one, confirm a DPA is in place and record what data they process and for what purpose."
+remediation_technical: "1. Conduct a processor discovery exercise: review contracts, SaaS subscriptions, cloud services, and development tools to identify every third party receiving personal data. Include secondary processors discovered through procurement records and cloud billing. 2. For each processor, document: name, service description, data categories processed, processing purposes, data locations, DPA status, sub-processor list. 3. Integrate the processor inventory with the Art. 30 ROPA — every processing activity entry should link to the processors involved. 4. Implement a SaaS onboarding gate: new tools processing personal data must be added to the inventory before adoption. 5. Review and update the processor inventory quarterly and whenever new vendors are onboarded or existing vendors change their services."

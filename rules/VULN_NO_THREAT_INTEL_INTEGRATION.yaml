@@ -1,0 +1,34 @@
+id: VULN_NO_THREAT_INTEL_INTEGRATION
+domain: vulnerabilities
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-VULN-028 == no_threat_intel
+title: "No external threat intelligence in vulnerability management"
+description_short: "Vulnerability management does not use external threat intelligence to prioritize remediation."
+description_long: "CVSS scores alone are a poor predictor of real-world exploitation risk. Vulnerabilities with CVSS 7 that are actively exploited in the wild — tracked in the CISA Known Exploited Vulnerabilities (KEV) catalogue or commercial threat intelligence feeds — demand immediate remediation regardless of their theoretical score. Without threat intelligence integration, teams may spend resources patching high-CVSS theoretical risks while actively exploited CVEs on their infrastructure go unaddressed. CISA BOD 22-01 mandates KEV remediation for federal agencies; the practice is a universal best-practice for private sector."
+frameworks:
+  - id: "NIST SP 800-150"
+    text: "Guide to Cyber Threat Information Sharing"
+  - id: "NIST CSF ID.RA-2"
+    text: "Cyber threat intelligence is received from information sharing forums and sources"
+  - id: "CISA BOD 22-01"
+    text: "Reducing the Significant Risk of Known Exploited Vulnerabilities — KEV catalogue"
+  - id: "MITRE ATT&CK"
+    text: "Threat intelligence to prioritize technique-mapped vulnerability remediation"
+industry_overlays:
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  healthcare:
+    weight_multiplier: 1.3
+  energy:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Subscribe to the CISA Known Exploited Vulnerabilities (KEV) catalogue and integrate it into your vulnerability triage workflow so that actively exploited CVEs are always prioritized for immediate remediation."
+remediation_technical: "Integrate the CISA KEV API (https://www.cisa.gov/known-exploited-vulnerabilities-catalog) into your vulnerability management platform. Augment with a commercial threat intelligence feed (Recorded Future, Mandiant, CrowdStrike Falcon Intel). Tag KEV CVEs for SLA escalation — treat them as critical regardless of CVSS. Use EPSS (Exploit Prediction Scoring System) scores as a complementary prioritization signal."

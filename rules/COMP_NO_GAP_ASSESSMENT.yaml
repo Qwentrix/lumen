@@ -1,0 +1,36 @@
+id: COMP_NO_GAP_ASSESSMENT
+domain: compliance
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-COMP-006 == never_done
+title: "No compliance gap assessment ever completed"
+description_short: "The organisation has never completed a gap assessment against its primary compliance framework."
+description_long: "A gap assessment is the starting point for any compliance programme — it identifies the delta between current controls and the requirements of the applicable framework. Without completing one, an organisation is operating its compliance programme blind: it cannot know which controls are missing, which are partially effective, or where its greatest regulatory risk lies. Auditors, enterprise buyers, and cyber insurers all expect evidence that the organisation understands its own compliance posture. Organisations that have never completed a gap assessment typically also have the longest remediation timelines when they finally pursue certification — because the backlog of unaddressed gaps has been growing since day one."
+frameworks:
+  - id: "ISO 27001 Clause 6.1.2"
+    text: "Information security risk assessment — requires identification of gaps against controls"
+  - id: "SOC 2 (AICPA)"
+    text: "Readiness assessment is the industry-standard precursor to a Type I or Type II engagement"
+  - id: "NIST Cybersecurity Framework"
+    text: "Identify function — gap analysis against current and target profile"
+  - id: "FedRAMP SA-3"
+    text: "System development life cycle — gap assessment against security controls required before ATO"
+industry_overlays:
+  technology:
+    weight_multiplier: 1.4
+  it_services:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.5
+  healthcare:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Commission a gap assessment against your primary compliance framework before doing anything else. It will show you where you are, where you need to be, and what to prioritise — without one, any compliance investment is guesswork."
+remediation_technical: "Engage a qualified assessor or use a compliance readiness platform to conduct a gap assessment against your primary framework (SOC 2 TSC, ISO 27001 Annex A, HIPAA Security Rule, PCI DSS requirements). Document each control requirement, current state, gap, and recommended remediation action. Prioritise gaps by regulatory risk and audit likelihood. Use the gap assessment output to build a remediation roadmap with milestones. Schedule a follow-up assessment within 12 months to measure progress."

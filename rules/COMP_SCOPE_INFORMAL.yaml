@@ -1,0 +1,32 @@
+id: COMP_SCOPE_INFORMAL
+domain: compliance
+severity: medium
+default_weight: 0.45
+detect:
+  questionnaire:
+    - Q-COMP-005 == informal_understanding
+title: "Compliance scope based on informal shared understanding — not documented"
+description_short: "Compliance scope exists as an informal team understanding rather than a formally documented and maintained boundary definition."
+description_long: "Informal scope understanding creates compounding risk: different team members may have different interpretations of what is in scope, new systems get built without being evaluated for scope inclusion, and the scope drifts over time without anyone noticing. When an auditor asks for the scope definition, an informal understanding cannot be produced as evidence. Scope definition is typically the first document an auditor requests in any certification engagement. Organisations that cannot produce a documented scope definition signal to auditors that the programme may be immature, and scope gaps discovered during audit often result in the engagement scope expanding unexpectedly — with associated cost and timeline impact."
+frameworks:
+  - id: "ISO 27001 Clause 4.3"
+    text: "Determining the scope of the ISMS — must be formally documented and available"
+  - id: "SOC 2 (AICPA)"
+    text: "System description — a defined scope is required before any SOC 2 engagement"
+  - id: "PCI DSS Req 12.5.2"
+    text: "Documented scope confirmation — scope must be documented and confirmed at least annually"
+industry_overlays:
+  technology:
+    weight_multiplier: 1.3
+  it_services:
+    weight_multiplier: 1.3
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Write down your compliance scope — which systems, data types, and business processes are in scope for each applicable framework. The informal understanding needs to become a documented artefact that survives staff turnover and can be produced to auditors."
+remediation_technical: "Formalise the informal scope understanding into a documented scope definition: enumerate in-scope systems (with system inventory), in-scope data types, in-scope processes, network boundaries and segmentation controls, and third-party connections that are in scope. Review with stakeholders to confirm completeness. Version-control the document and require annual review with sign-off from the compliance owner. Store in the compliance evidence repository and make accessible to auditors. Schedule an annual scope re-confirmation exercise, particularly after infrastructure changes, new product launches, or acquisitions."

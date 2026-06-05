@@ -1,0 +1,30 @@
+id: COMP_GDPR_TRANSFER_VERIFY
+domain: compliance
+severity: medium
+default_weight: 0.40
+detect:
+  questionnaire:
+    - Q-COMP-DD-027 == other_documented_basis
+title: "GDPR transfer basis requires verification — non-standard mechanism in use"
+description_short: "The organisation relies on an undocumented or non-standard basis for cross-border data transfers that should be verified against GDPR Chapter V recognised mechanisms."
+description_long: "GDPR Chapter V exhaustively lists the lawful mechanisms for cross-border transfers: adequacy decisions (Art. 45), standard contractual clauses and other appropriate safeguards (Art. 46), and limited derogations (Art. 49). Relying on a basis not clearly mapped to one of these mechanisms creates legal uncertainty — the transfer may be unlawful even if a document exists. Common examples of questionable bases include outdated Privacy Shield reliance (invalidated by Schrems II), consent-only reliance for routine transfers (not valid under Art. 49 for repetitive transfers), or vague 'contractual necessity' claims. The organisation should verify with DPA-qualified counsel that its documented basis is recognised under GDPR Chapter V."
+frameworks:
+  - id: "GDPR Art. 46"
+    text: "Transfers subject to appropriate safeguards — exhaustive list of recognised mechanisms"
+  - id: "GDPR Art. 49"
+    text: "Derogations — limited to specific, non-repetitive situations only"
+  - id: "EDPB Guidelines 2/2018"
+    text: "Derogations for transfers — conditions under which Art. 49 may be used"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.3
+  financial:
+    weight_multiplier: 1.3
+  technology:
+    weight_multiplier: 1.2
+  legal:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Have a qualified privacy lawyer review your transfer basis documentation and confirm it maps to a mechanism recognised under GDPR Art. 45, 46, or 49. Do not assume a documented basis is lawful without that review."
+remediation_technical: "Review transfer documentation with DPA counsel against the GDPR Chapter V taxonomy. If the basis is: (1) adequacy decision — confirm the decision is current and covers your transfer scenario. (2) SCCs — confirm the 2021 EC SCCs are in use, not the invalidated 2010 version. (3) BCRs — confirm supervisory authority approval is in place. (4) Art. 49 derogation — confirm the transfer is non-repetitive and a genuine emergency or explicit consent basis applies. Update ROPA to correctly categorise the mechanism. Re-evaluate annually."

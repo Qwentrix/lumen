@@ -1,0 +1,32 @@
+id: COMP_MOSTLY_PERIODIC_CONTROLS
+domain: compliance
+severity: medium
+default_weight: 0.40
+detect:
+  questionnaire:
+    - Q-COMP-DD-007 == mostly_periodic
+title: "Most compliance controls are tested only at audit intervals"
+description_short: "The majority of compliance controls are tested only at point-in-time audit intervals rather than monitored continuously."
+description_long: "Controls tested only at audit time may operate correctly for the audit but fail silently between assessments. A control that was operational during a SOC 2 observation period snapshot but failed six months earlier provides no actual security benefit for those six months, and may not be detectable even if examined retrospectively. SOC 2 Type II is specifically designed to assess controls over time, and auditors ask probing questions when they identify exclusively point-in-time testing patterns. ISO 27001 Clause 9.1 requires ongoing monitoring. NIST SP 800-137 defines continuous monitoring as a core component of the Risk Management Framework. Transitioning high-risk controls to continuous monitoring reduces the window of undetected failure and provides audit evidence automatically."
+frameworks:
+  - id: "SOC 2 CC4.1"
+    text: "Monitoring activities — controls should be monitored on an ongoing basis"
+  - id: "ISO 27001 Clause 9.1"
+    text: "Monitoring and measurement — information security performance monitored continuously"
+  - id: "FedRAMP CA-7"
+    text: "Continuous monitoring — defined monitoring strategy with ongoing assessments"
+  - id: "NIST SP 800-137"
+    text: "Information security continuous monitoring — ongoing awareness of the security posture"
+industry_overlays:
+  financial:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.2
+  technology:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Identify your highest-risk controls and shift them from point-in-time testing to continuous automated monitoring. You don't need to automate everything at once — start with controls that protect sensitive data."
+remediation_technical: "Prioritise controls for continuous monitoring based on risk: (1) Access controls — integrate IdP with continuous access review. (2) Encryption — monitor key usage and rotation via KMS APIs. (3) Vulnerability management — integrate scanner with SIEM for continuous alerting. (4) Log integrity — continuous SIEM monitoring. Use a compliance automation platform (Vanta, Drata) to automate evidence collection for these controls. Aim to achieve continuous monitoring for at least 60% of controls by volume within 12 months."

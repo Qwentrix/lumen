@@ -1,0 +1,42 @@
+id: CLOUD_ROOT_NO_MFA
+domain: compliance
+severity: critical
+default_weight: 0.95
+detect:
+  scanner:
+    - cloud.root_mfa_enabled == false
+title: "Cloud account root / global administrator has no MFA"
+description_short: "The cloud account's root or global administrator user does not have multi-factor authentication enabled, leaving the highest-privilege account vulnerable to credential compromise."
+description_long: "The root user (AWS), Global Administrator (Azure AD), or Organisation Admin (GCP) is the single most sensitive identity in a cloud environment. It bypasses every IAM policy and cannot be restricted by service control policies. If an attacker obtains the root credential — through phishing, credential stuffing, or a data breach that exposes the password — they have unconditional control of the entire account: they can delete all resources, exfiltrate all data, create new accounts, modify billing, and prevent recovery. CIS AWS Foundations Benchmark 1.5 requires that MFA is enabled for the root user; this is the first and highest-priority control in the CIS AWS benchmark. NIST 800-53 IA-5 mandates authenticator management including enforcement of multi-factor for privileged accounts. Most cyber insurance providers and enterprise customers now treat root MFA as a minimum contractual requirement. Remediation takes under five minutes; the risk of not doing it is existential."
+frameworks:
+  - id: "CIS AWS Foundations Benchmark 1.5"
+    text: "Ensure MFA is enabled for the root user account"
+  - id: "CIS AWS Foundations Benchmark 1.6"
+    text: "Ensure hardware MFA is enabled for the root user account (enhanced control)"
+  - id: "NIST 800-53 IA-5"
+    text: "Authenticator Management — enforce multi-factor authentication for all privileged user accounts"
+  - id: "NIST 800-53 IA-2(1)"
+    text: "Multi-factor authentication for privileged accounts on network-accessible components"
+  - id: "ISO 27001:2022 A.8.5"
+    text: "Secure authentication — require strong/multi-factor authentication for privileged cloud identities"
+  - id: "SOC 2 CC6.1"
+    text: "Logical access — require MFA for all accounts with elevated or administrative privileges"
+  - id: "PCI DSS Req 8.4.2"
+    text: "MFA is implemented for all access into the cardholder data environment, including administrative access"
+industry_overlays:
+  financial:
+    weight_multiplier: 1.6
+  healthcare:
+    weight_multiplier: 1.6
+  government:
+    weight_multiplier: 1.6
+  energy:
+    weight_multiplier: 1.5
+  retail:
+    weight_multiplier: 1.5
+  technology:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Enable MFA on the cloud account root or global administrator immediately. Use a hardware security key (FIDO2/YubiKey) for the strongest protection, or at minimum a TOTP authenticator app. After enabling MFA, lock the root credentials away and use IAM roles with least privilege for all day-to-day operations — the root account should not be used for routine tasks."
+remediation_technical: "AWS: log in as the root user, go to IAM > My Security Credentials, and add a virtual or hardware MFA device. Preferred: register a FIDO2 hardware security key for the root account per CIS 1.6. After securing root, lock down usage: create CloudWatch/CloudTrail alarm on 'eventName = ConsoleLogin and userType = Root' and alert immediately on any root sign-in. Set an SCP to deny all actions when the request is from root (except emergency break-glass scenarios). Azure: in Azure Active Directory > Properties, enforce MFA for the Global Administrator role via Conditional Access. Enable Privileged Identity Management (PIM) to require MFA activation for all GA role assignments. GCP: enforce org-level policy 'constraints/iam.allowedPolicyMemberDomains' and require 2-step verification for the primary organisation admin via the Google Admin console."

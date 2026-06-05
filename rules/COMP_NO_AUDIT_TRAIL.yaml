@@ -1,0 +1,36 @@
+id: COMP_NO_AUDIT_TRAIL
+domain: compliance
+severity: critical
+default_weight: 0.90
+detect:
+  questionnaire:
+    - Q-COMP-009 == no_structured_trail
+title: "No structured audit trail for compliance records"
+description_short: "No structured audit trail exists for user activities, data access, or system events relevant to compliance obligations."
+description_long: "The absence of a structured audit trail is a critical compliance gap across virtually every major framework. HIPAA 164.312(b) requires hardware, software, and procedural mechanisms that record and examine activity in systems containing ePHI. PCI DSS Req 10 requires audit logs for all system components in the cardholder data environment. FedRAMP AU-2 requires the system to produce audit records. SOC 2 CC7.2 requires system monitoring including audit trail maintenance. Without an audit trail, the organisation cannot detect intrusions, cannot investigate incidents, cannot demonstrate control operation to auditors, and cannot fulfil regulatory obligations to produce evidence of access and activity. In a breach scenario, the absence of logs means the organisation cannot determine what was accessed, by whom, or when — making breach notification scope determination impossible."
+frameworks:
+  - id: "HIPAA 164.312(b)"
+    text: "Audit controls — mechanisms to record and examine activity in information systems with ePHI"
+  - id: "PCI DSS Req 10.2"
+    text: "Implement audit logs to capture user activities for all system components"
+  - id: "FedRAMP AU-2"
+    text: "Event logging — system capability to generate audit records for defined events"
+  - id: "SOC 2 CC7.2"
+    text: "System monitoring — audit trail of user and system activities"
+  - id: "GDPR Art. 5(2)"
+    text: "Accountability principle — demonstrating compliance requires records of processing"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.4
+  retail:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Implement structured logging for all systems containing or processing sensitive data. At minimum, log: user logins, data access, permission changes, and system configuration changes. Retain logs for the minimum required period for each applicable framework."
+remediation_technical: "Deploy centralised logging with a SIEM (Splunk, Elastic, Microsoft Sentinel, Datadog). Enable audit logging on all systems: OS system logs, database audit logs (PostgreSQL audit, MySQL general log, SQL Server audit), application access logs, cloud provider audit logs (AWS CloudTrail, Azure Monitor, GCP Cloud Audit Logs). Forward all logs to SIEM. Retain for minimum required periods: PCI DSS 12 months (3 months online), HIPAA 6 years, FedRAMP per AU-11 (3 years). Protect logs in immutable storage. Test log completeness and SIEM alerting quarterly."

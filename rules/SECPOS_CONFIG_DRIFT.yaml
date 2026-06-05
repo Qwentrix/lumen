@@ -1,0 +1,39 @@
+id: SECPOS_CONFIG_DRIFT
+domain: security_posture
+severity: medium
+default_weight: 0.50
+detect:
+  questionnaire:
+    - Q-SECPOS-040 == no_drift_detection
+    - Q-SECPOS-054 == no_tracking
+    - Q-SECPOS-054 == report_based_no_tracking
+    - Q-SECPOS-DD-036 == no_sla
+title: "No configuration drift detection — hardening baseline not continuously enforced"
+description_short: "No automated drift detection exists — systems can deviate from the hardening baseline without triggering an alert."
+description_long: "Even organisations that start with a hardened baseline accumulate drift over time: emergency changes, software updates, developer workarounds, and unauthorised modifications gradually erode the security posture. Without automated drift detection, these deviations accumulate silently until they create an exploitable gap. Configuration drift is a top finding in red-team engagements: patch exceptions, disabled security services, and overly permissive firewall rules accumulate over months without detection. Continuous configuration monitoring is required by FedRAMP CM-6, CIS Control 4, and ISO 27001 A.8.9."
+frameworks:
+  - id: "NIST CSF ID.AM-06"
+    text: "Cybersecurity roles and responsibilities for the entire workforce are established"
+  - id: "CIS Control 4.2"
+    text: "Establish and maintain a secure configuration process — including drift detection"
+  - id: "ISO 27001:2022 A.8.9"
+    text: "Configuration management — detection of unauthorised changes"
+  - id: "SOC 2 CC7.1"
+    text: "Detection and monitoring of vulnerabilities from configuration changes"
+  - id: "FedRAMP CM-6"
+    text: "Configuration settings — monitoring for deviations"
+  - id: "CISA Zero Trust Pillar: Devices"
+    text: "Continuous device health validation against compliance baseline"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.3
+  financial:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.4
+  energy:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Implement automated drift detection that alerts your team when a system's configuration changes from an approved baseline. Treat any unplanned configuration change as a security event that requires investigation."
+remediation_technical: "Deploy continuous configuration compliance monitoring: use your CSPM for cloud resources, Ansible/Chef InSpec/Puppet for OS configuration, and a vulnerability scanner with compliance-profile checks. Configure drift alerts: any deviation from the approved CIS Benchmark level triggers a finding with owner assignment and remediation SLA. Define SLAs by finding severity: critical within 24 hours, high within 72 hours, medium within 14 days. Integrate configuration compliance status into your SIEM dashboard. Treat configuration drift as a change management event — require change tickets for all production configuration changes and detect undocumented changes automatically."

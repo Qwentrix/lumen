@@ -1,0 +1,36 @@
+id: VULN_CLOUD_IAM_NO_REVIEW
+domain: vulnerabilities
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-VULN-018 == no_review
+title: "No cloud IAM permission review process"
+description_short: "No process exists to review, flag, or remediate over-privileged cloud accounts and service roles."
+description_long: "Without any IAM review process, cloud identities accumulate permissions indefinitely. Developers and service accounts granted elevated access during initial deployment or emergency incidents retain those permissions permanently. Over-privileged identities are among the most exploited attack vectors in cloud breaches — a single compromised credential with broad IAM permissions enables lateral movement, data exfiltration, and service disruption at scale. NIST SP 800-53 AC-6 mandates least-privilege enforcement across the system lifecycle. PCI DSS Req 7 requires that access to system components is restricted to only those individuals whose job requires such access. The absence of any review process is a critical control gap in any cloud-hosted environment."
+frameworks:
+  - id: "NIST SP 800-53 AC-6"
+    text: "Least Privilege — enforce minimum necessary access throughout the system lifecycle"
+  - id: "PCI DSS Req 7"
+    text: "Restrict access to system components and cardholder data to only those individuals whose job requires such access"
+  - id: "CIS Cloud Foundations Benchmark"
+    text: "Ensure no overly permissive IAM policies exist and conduct regular access reviews"
+  - id: "ISO 27001 A.9.2.5"
+    text: "Management shall review users' access rights at regular intervals"
+industry_overlays:
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.3
+  technology:
+    weight_multiplier: 1.3
+  it_services:
+    weight_multiplier: 1.3
+  retail:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Implement a cloud IAM review process immediately. Every cloud identity — human and machine — should be reviewed at least quarterly, with over-privileged accounts flagged and remediated. This is a foundational control for cloud security."
+remediation_technical: "Deploy a CIEM (Cloud Infrastructure Entitlement Management) tool or use native services (AWS IAM Access Analyzer, Azure Privileged Identity Management, GCP Recommender). Establish quarterly access review cadence with documented approvals. Implement permission boundaries and SCPs to enforce least privilege by default. Audit and rotate or deactivate all stale service account keys. Run an immediate one-time cleanup pass to baseline current state."

@@ -1,0 +1,42 @@
+id: CLOUD_PUBLIC_STORAGE
+domain: security_posture
+severity: high
+default_weight: 0.85
+detect:
+  scanner:
+    - cloud.public_storage_count > 0
+title: "Cloud storage bucket(s) publicly readable"
+description_short: "One or more cloud storage buckets are configured with public read access, exposing their contents to anyone on the internet."
+description_long: "A publicly readable cloud storage bucket requires no authentication — any person with the URL can enumerate, read, and download every object it contains. Misconfigured S3 buckets, Google Cloud Storage buckets, and Azure Blob containers have been the root cause of some of the largest publicly disclosed data exposures in the past decade, involving healthcare records, financial data, source code, and customer PII. The CIS AWS Foundations Benchmark (CIS AWS 2.1.5) requires that S3 Block Public Access is enabled at the account level. NIST 800-53 AC-3 mandates access enforcement on all storage resources; PCI DSS Req 1.3 forbids direct public access to any system component in the cardholder data environment. Even a bucket containing non-sensitive data creates an attack surface: an adversary can overwrite objects used in build pipelines, host malicious payloads from a trusted domain, or use the bucket as a staging area for lateral movement."
+frameworks:
+  - id: "CIS AWS Foundations Benchmark 2.1.5"
+    text: "Ensure S3 Bucket Policy is set to deny HTTP requests — enable S3 Block Public Access settings"
+  - id: "NIST 800-53 AC-3"
+    text: "Access Enforcement — enforce approved access control policies on all storage objects"
+  - id: "NIST 800-53 SC-28"
+    text: "Protection of Information at Rest — ensure storage contents are protected from unauthorised access"
+  - id: "PCI DSS Req 1.3"
+    text: "Prohibit direct public inbound or outbound traffic to/from storage resources in the CDE"
+  - id: "ISO 27001:2022 A.8.3"
+    text: "Information access restriction — prevent unauthorised access to cloud-hosted data stores"
+  - id: "SOC 2 CC6.1"
+    text: "Logical and physical access controls — restrict access to data stores to authorised users only"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.6
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.5
+  retail:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  it_services:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Immediately restrict all cloud storage buckets so they are not publicly accessible. Enable account-level Block Public Access (AWS), set Uniform Bucket-Level Access (GCS), or use Azure Policy to deny public blob access. Review the contents of every exposed bucket for sensitive data before closing access."
+remediation_technical: "AWS: enable S3 Block Public Access at the account level via 'aws s3control put-public-access-block --account-id <id> --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true'. Review individual bucket ACLs and bucket policies for 'Principal: *'. GCS: enable Uniform Bucket-Level Access and remove allUsers/allAuthenticatedUsers IAM bindings. Azure: set publicAccess=None on all Blob containers; use Azure Policy 'Audit public network access' to enforce going forward. Deploy a CSPM tool (AWS Config, Microsoft Defender for Cloud, GCP Security Command Center) with a real-time alert rule for any public bucket creation event in CloudTrail/Activity Log."

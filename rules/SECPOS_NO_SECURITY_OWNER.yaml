@@ -1,0 +1,40 @@
+id: SECPOS_NO_SECURITY_OWNER
+domain: security_posture
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-SECPOS-051 == no_dedicated_security
+    - Q-SECPOS-051 == it_generalist_with_security_hat
+    - Q-SECPOS-DD-046 == no_ciso
+title: "No dedicated security function or owner"
+description_short: "Security is handled by IT generalists with no dedicated security role or accountability."
+description_long: "The absence of a dedicated security owner is the meta-risk that enables all other gaps to persist. When security is an afterthought in an IT generalist's workload, it consistently loses priority to operational tasks. No single person owns the roadmap, monitors the control posture, tracks vulnerabilities, or drives the programme forward. Regulatory frameworks including HIPAA (security official designation requirement), PCI DSS (information security policy owner), and ISO 27001 (ISMS ownership) require a named security owner. Organisations without dedicated security ownership have on average 2.5x higher breach costs and 3x longer MTTD according to industry benchmark studies."
+frameworks:
+  - id: "NIST CSF GV.RR-02"
+    text: "Roles, responsibilities, and authorities for cybersecurity are established and communicated"
+  - id: "CIS Control 17.1"
+    text: "Designate personnel to manage incident handling — security role definition"
+  - id: "ISO 27001:2022 A.5.2"
+    text: "Information security roles and responsibilities"
+  - id: "SOC 2 CC1.3"
+    text: "The entity demonstrates a commitment to attract, develop, and retain competent individuals"
+  - id: "FedRAMP PL-2"
+    text: "System security and privacy plans — identified security officer"
+  - id: "CISA Zero Trust Pillar: Governance"
+    text: "Dedicated security ownership as foundational governance requirement"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  energy:
+    weight_multiplier: 1.4
+  manufacturing:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Assign a named individual as the security owner, even if it is a part-time role initially. This person is accountable for the security programme, owns the risk register, and reports to leadership. As the organisation grows, this role should become full-time."
+remediation_technical: "Define and hire or designate a CISO, VP Security, or Security Manager depending on organisation size. For small organisations: a senior engineer with 50% dedicated security allocation and executive sponsorship is an acceptable start. Define written responsibilities: risk management, programme roadmap, vendor security assessments, incident response leadership, compliance oversight, and board reporting. Create a quarterly security briefing cadence to executive leadership. Establish a Security Committee or Steering Group for larger organisations. Budget for the role proportionally: security spend at 10–15% of IT budget is a common benchmark for compliant organisations."

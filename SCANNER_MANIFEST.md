@@ -26,6 +26,7 @@ The declarations here are the single source of truth that drives:
 **Network exceptions (require explicit user action):**
 - `lumen scan --hybrid` — uploads a signed findings summary to `lumen-api`. Requires prior consent. Shows a preview before any upload.
 - `lumen update` — fetches a signed rule + NVD bundle update (content delta) from `lumen.micelium.com`. Requires prior consent. Available from LU-5 / v0.1.x.
+- `lumen scan --include-cloud` — makes read-only API calls to cloud provider endpoints (AWS by default). Requires `--include-cloud` flag AND prior consent to the `cloud` domain via `lumen consent`. See [Cloud Probes section](#domain-cloud-opt-in) below.
 
 **Proxy transparency:** both `lumen scan --hybrid` and `lumen update` use the Go default HTTP transport, which honours the standard `HTTPS_PROXY` / `HTTP_PROXY` / `NO_PROXY` environment variables if set. The scanner itself never reads or sets these variables; they are resolved by the OS/runtime at HTTP client creation time. In fully air-gapped environments where proxy env vars are absent, no proxy is used.
 
@@ -353,6 +354,82 @@ Two CI mechanisms enforce the zero-network promise:
 2. **Linux namespace gate** (`ci.yml`): runs the netcheck test under `unshare --net`, which creates a network namespace with no interfaces. Any raw `net.Dial` / `net.LookupHost` syscall fails with `ENETUNREACH`, causing a probe to error and the test to fail at the `r.err != nil` check.
 
 Together these two layers form a complete zero-network gate covering both HTTP-library and raw-syscall network access.
+
+---
+
+---
+
+## Domain: `cloud` (opt-in — ENT-118)
+
+**Status:** Opt-in only. Disabled by default. Enable with `lumen scan --include-cloud`.
+
+**NETWORKED.** This domain makes outbound HTTPS calls to cloud provider API endpoints. It is the ONLY domain that does so during a scan (in addition to `--hybrid` and `lumen update`).
+
+**Credential model:** the scanner uses your EXISTING LOCAL cloud credentials — it NEVER asks for credentials, prompts for them, or stores them. Credentials are loaded by the cloud provider's own SDK from their standard locations:
+- AWS: `AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY` env vars → `~/.aws/credentials` profile (selected by `AWS_PROFILE`) → IAM instance role / EC2 IMDS
+- Azure: Azure CLI token (`az login`) / MSI / DefaultAzureCredential *(v2, not implemented in v1)*
+- GCP: `GOOGLE_APPLICATION_CREDENTIALS` / `gcloud auth application-default` ADC *(v2, not implemented in v1)*
+
+**If no credentials are found** for a requested provider, the probe skips that provider gracefully with a printed note (`"skipping — no credentials found in default credential chain"`) and zero findings. No error is returned. The scan continues.
+
+**All cloud API calls are READ-ONLY.** Only Describe/List/Get operations are used. Zero resource mutations.
+
+**Data collected:** counts and booleans ONLY. No account IDs, no resource ARNs, no IP addresses, no PII.
+
+**Consent required:** run `lumen consent` and accept the `cloud` domain before using `--include-cloud`.
+
+### AWS (v1 deliverable)
+
+| API Operation | Purpose | Manifest recorded |
+|---|---|---|
+| `s3:ListBuckets` | Enumerate S3 buckets | Yes (`network_calls`) |
+| `s3:GetBucketPolicyStatus` | Check if bucket policy is public-readable | Yes (`network_calls`) |
+| `s3:GetBucketAcl` | Detect buckets made public via a legacy ACL grant (`AllUsers` / `AuthenticatedUsers`) when no public *policy* exists | Yes (`network_calls`) |
+| `iam:GetAccountSummary` | Read `AccountMFAEnabled` flag (root account MFA) | Yes (`network_calls`) |
+| `iam:GetAccountPasswordPolicy` | Check IAM password policy strength (length + upper/lower/number/symbol per CIS AWS 1.9–1.12) | Yes (`network_calls`) |
+| `ec2:DescribeSecurityGroups` | Enumerate security groups for 0.0.0.0/0 or ::/0 ingress rules (paginated) | Yes (`network_calls`) |
+| `ec2:DescribeVolumes` | Count unencrypted EBS volumes (filter: `encrypted=false`, paginated) | Yes (`network_calls`) |
+| `rds:DescribeDBInstances` | Count unencrypted RDS instances (all instances fetched + paginated; counted client-side where `StorageEncrypted=false`) | Yes (`network_calls`) |
+| `cloudtrail:DescribeTrails` | Check if CloudTrail trails exist (includes Organizations shadow trails) | Yes (`network_calls`) |
+| `cloudtrail:GetTrailStatus` | Check if a trail is actively logging | Yes (`network_calls`) |
+
+**Region scope (v1 limitation):** S3, IAM, and the CloudTrail `DescribeTrails`/`GetTrailStatus` checks are global or org-aware, but the **EC2 (security groups, EBS volumes) and RDS (DB instances) checks cover ONLY the default configured region** — the region resolved from the AWS credential/region chain (`AWS_REGION` / `AWS_DEFAULT_REGION` / profile `region` / IMDS). Resources in other regions are **not** enumerated in v1. Multi-region enumeration (iterating `ec2:DescribeRegions`) is a deliberate **v2** item, deferred because it multiplies API latency and cost by the number of active regions. Treat `unencrypted_volumes_count` and `public_ingress_count` as a default-region floor, not an account-wide total.
+
+**Network endpoints:**
+- `https://*.amazonaws.com` — regional AWS API endpoints (all operations listed above)
+- `http://169.254.169.254` — EC2 Instance Metadata Service (IAM role credential retrieval; credential-chain fallback, only contacted when the scanner runs on an EC2 instance with an attached IAM role)
+
+### Azure (v2 — not implemented in v1)
+
+Azure cloud-config probes are deferred to the paid CSPM-tier cloud pack. No Azure SDK is included in v1. No Azure API calls are made in v1 — the collector returns a `not_implemented` metadata note and zero findings.
+
+**Planned v2 coverage:** Azure Security Center, Storage account public access, Defender for Cloud, Activity Log audit logging.
+
+### GCP (v2 — not implemented in v1)
+
+GCP cloud-config probes are deferred to the paid CSPM-tier cloud pack. No GCP SDK is included in v1. No GCP API calls are made in v1 — the collector returns a `not_implemented` metadata note and zero findings.
+
+**Planned v2 coverage:** Cloud Storage public access, VPC firewall rules, Cloud KMS encryption, Cloud Audit Logs, IAM policy analysis.
+
+### Cloud Findings (scoring contract — Option B, ENT-118)
+
+Cloud findings map into the **existing** `security_posture` and `compliance` scoring domains — no new sixth domain is added. The `CloudFindings` sub-struct in `ScannerFindings` carries these fields:
+
+| Field | Type | Scoring domain | Maps to |
+|---|---|---|---|
+| `public_storage_count` | int | `security_posture` | Public-readable S3 buckets |
+| `public_ingress_count` | int | `security_posture` | Security groups open to 0.0.0.0/0 |
+| `unencrypted_volumes_count` | int | `compliance` | Unencrypted EBS + RDS volumes |
+| `root_mfa_enabled` | bool | `compliance` | Root account MFA |
+| `iam_password_policy_weak` | bool | `compliance` | Weak / absent IAM password policy |
+| `audit_logging_enabled` | bool | `compliance` | CloudTrail active |
+| `providers_scanned` | []string | — | Metadata only (e.g. `["aws"]`) |
+
+Rules reference these fields via the `cloud.<field>` condition prefix (e.g. `cloud.public_storage_count > 0`). The reflection-based condition resolver in lumen-scoring automatically handles the `cloud` sub-struct prefix.
+
+### Zero-network guarantee
+
+The cloud probe is **not** in the default probe registry (`probes` slice in `scan.go`) and is **not** in the netcheck test's `runs` slice. It is reached only inside a guarded `if includeCloud { ... }` block, exactly mirroring the `--hybrid` networked path. `TestNoDefaultNetworkCalls`, `TestCloudProbeNotInDefaultRegistry`, and `TestDefaultScanZeroNetworkWithCloudImported` all verify this invariant.
 
 ---
 

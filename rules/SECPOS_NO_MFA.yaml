@@ -1,0 +1,43 @@
+id: SECPOS_NO_MFA
+domain: security_posture
+severity: critical
+default_weight: 1.0
+detect:
+  questionnaire:
+    - Q-SECPOS-005 == no_mfa
+    - Q-SECPOS-005 == optional_only
+title: "MFA not enforced for employee accounts"
+description_short: "Multi-factor authentication is not enforced for employee access to corporate systems."
+description_long: "Organisations without enforced MFA are exposed to credential-stuffing, phishing, and password-spray attacks that bypass single-factor authentication at scale. Microsoft telemetry reports that MFA blocks over 99.9% of account-compromise attempts. CISA has listed MFA as a top-priority baseline control. Regulatory frameworks including HIPAA, PCI DSS, and SOC 2 all mandate MFA or equivalent authentication assurance. The absence of MFA is among the most reliable predictors of a successful breach in actuarial breach datasets."
+frameworks:
+  - id: "NIST CSF PR.AA-02"
+    text: "Identities are proofed and bound to credentials based on the context of interactions"
+  - id: "CIS Control 6.3"
+    text: "Require MFA for externally-exposed applications"
+  - id: "CIS Control 6.5"
+    text: "Require MFA for administrative access"
+  - id: "ISO 27001:2022 A.8.5"
+    text: "Secure authentication — MFA requirement for privileged and remote access"
+  - id: "SOC 2 CC6.1"
+    text: "Logical access security — authentication controls"
+  - id: "FedRAMP IA-2(1)"
+    text: "Multi-factor authentication for privileged accounts"
+  - id: "CISA Zero Trust Pillar: Identity"
+    text: "Strong MFA as foundational identity control"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  energy:
+    weight_multiplier: 1.4
+  retail:
+    weight_multiplier: 1.3
+  manufacturing:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Enforce MFA for all employee accounts immediately. Use an authenticator app or hardware key — avoid SMS-based MFA where possible. Start with admin accounts, then roll out to all users."
+remediation_technical: "Configure MFA enforcement via your IdP (Okta, Entra ID, Google Workspace). Implement Conditional Access policies that block authentication without a satisfied MFA claim. Target FIDO2/WebAuthn for phishing-resistant assurance (NIST AAL2+). Disable legacy authentication protocols (IMAP, SMTP AUTH, Basic Auth) that bypass MFA. Monitor authentication logs for MFA-bypass or downgrade attempts."

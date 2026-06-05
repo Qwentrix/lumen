@@ -1,0 +1,34 @@
+id: COMP_MULTI_JURISDICTION_TRANSFER
+domain: compliance
+severity: high
+default_weight: 0.75
+detect:
+  questionnaire:
+    - Q-COMP-018 == yes_eu_and_other
+title: "Data transfers span multiple jurisdictions with cross-border transfer restrictions"
+description_short: "The organisation transfers personal data across the EU and other jurisdictions with cross-border transfer restrictions, requiring multiple simultaneous transfer compliance regimes."
+description_long: "Operating under multiple cross-border transfer regimes simultaneously — GDPR Chapter V plus other jurisdiction-specific rules such as China's PIPL cross-border restrictions, Brazil's LGPD international transfer provisions, India's DPDP cross-border rules, or California's CCPA — creates a compliance matrix that is significantly more complex than any single framework. Each jurisdiction may require different contractual instruments, adequacy determinations, or registration processes. Failure to comply with any one jurisdiction's requirements is a separate violation. Multi-jurisdictional transfers also create data residency conflicts where different customers or regulators demand conflicting storage locations. Organisations in this position need a data transfer governance programme, not just individual SCC agreements."
+frameworks:
+  - id: "GDPR Art. 44–46"
+    text: "GDPR cross-border transfer requirements — SCCs, adequacy, BCRs"
+  - id: "China PIPL Art. 38–43"
+    text: "Cross-border data transfer — security assessment, SCC, or certification required"
+  - id: "Brazil LGPD Art. 33"
+    text: "International data transfers — specific legal basis required for each transfer"
+  - id: "ISO 27001 A.18.1.1"
+    text: "Identification of applicable legislation and regulatory requirements"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.5
+  technology:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.4
+  it_services:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Map every data transfer by originating jurisdiction and apply the specific transfer requirements for each. Multi-jurisdiction compliance requires a dedicated programme — not ad hoc per-transfer decisions."
+remediation_technical: "Build a transfer compliance matrix: rows = originating jurisdiction, columns = destination country, cells = required mechanism. Engage local DPA counsel for each jurisdiction. For GDPR: implement 2021 EC SCCs and DPF where applicable. For PIPL: conduct security assessment filing with CAC for large-scale or sensitive data transfers. For LGPD: execute Brazilian SCCs or rely on specific Art. 33 bases. Maintain the matrix as a living document. Trigger a matrix review whenever entering a new market or changing processing infrastructure."

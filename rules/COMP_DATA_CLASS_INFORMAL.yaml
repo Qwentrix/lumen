@@ -1,0 +1,30 @@
+id: COMP_DATA_CLASS_INFORMAL
+domain: compliance
+severity: medium
+default_weight: 0.45
+detect:
+  questionnaire:
+    - Q-COMP-016 == informal
+title: "Data classification is informal with no defined scheme"
+description_short: "Sensitive data is labelled informally with no documented classification scheme or consistent application."
+description_long: "An informal classification approach — where employees apply labels based on individual judgement with no documented scheme — produces inconsistent treatment of sensitive data. This creates gaps in protection: data that one employee considers routine may contain PHI, cardholder data, or CUI that another employee would have protected differently. Frameworks including ISO 27001 A.8.2, HIPAA's minimum-necessary standard, and PCI DSS's cardholder data environment scoping all depend on a reliable classification foundation. Without one, organisations cannot demonstrate they know where their sensitive data is or that they are applying appropriate controls to it. Regulatory examiners consistently treat informal labelling as equivalent to no classification for enforcement purposes."
+frameworks:
+  - id: "ISO 27001 A.8.2.1"
+    text: "Classification of information — consistent classification scheme"
+  - id: "HIPAA 164.514(b)"
+    text: "Minimum necessary standard — requires knowing which data constitutes PHI"
+  - id: "NIST SP 800-60 Vol. 1"
+    text: "Guide for mapping types of information to security categories"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.3
+  legal:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Define a formal data classification scheme with at least three tiers — for example, Public, Confidential, and Restricted — with written criteria for each. Document which data types belong to which tier and train all staff."
+remediation_technical: "Publish a data classification policy defining tiers, criteria, and handling requirements for each level. Map existing data types (PII, PHI, PCI CHD, CUI, IP) to tiers. Implement labelling tooling (Microsoft Purview, Varonis, BigID) to automate classification at creation and ingestion. Wire classification metadata to DLP policies and IRM controls. Review and recertify the scheme annually."

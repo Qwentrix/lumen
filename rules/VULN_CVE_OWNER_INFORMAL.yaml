@@ -1,0 +1,32 @@
+id: VULN_CVE_OWNER_INFORMAL
+domain: vulnerabilities
+severity: medium
+default_weight: 0.40
+detect:
+  questionnaire:
+    - Q-VULN-015 == whoever_notices
+title: "CVE triage ownership is informal — whoever notices raises it"
+description_short: "No defined owner or team is responsible for CVE triage; ownership depends on whoever happens to notice a new vulnerability."
+description_long: "Informal CVE ownership creates unpredictable coverage gaps. When responsibility rests with whoever notices a new CVE, critical vulnerabilities may be overlooked entirely if no one checks the right feeds on a given day. There is no accountability, no SLA, and no assurance that the full universe of CVEs relevant to the organisation's technology stack is reviewed. NIST SP 800-53 RA-3 and RA-5 both require assigned roles and responsibilities for vulnerability management. ISO 27001 A.12.6.1 expects a formal process for obtaining and managing information about technical vulnerabilities. The informal model works until it fails — typically when a known, exploitable CVE is missed."
+frameworks:
+  - id: "NIST SP 800-53 RA-3"
+    text: "Risk Assessment — assign roles and responsibilities for identifying and managing vulnerabilities"
+  - id: "NIST SP 800-53 RA-5"
+    text: "Vulnerability Monitoring and Scanning — define personnel responsible for vulnerability triage"
+  - id: "ISO 27001 A.12.6.1"
+    text: "Management of technical vulnerabilities — define process ownership and escalation paths"
+industry_overlays:
+  financial:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.3
+  technology:
+    weight_multiplier: 1.2
+  it_services:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Assign a named person or team the formal responsibility of CVE triage. Define what feeds they monitor, how often they check, and what the escalation path is for critical findings. Informal ownership means things get missed."
+remediation_technical: "Establish a dedicated vulnerability management function or assign triage rotation with a documented schedule. Subscribe to relevant CVE feeds (NIST NVD, vendor advisories, CISA KEV) and route alerts to a monitored queue. Integrate scanner outputs with a ticketing system so triage items are assigned with owners and due dates. Define RACI for CVE triage, prioritization, assignment, and escalation."

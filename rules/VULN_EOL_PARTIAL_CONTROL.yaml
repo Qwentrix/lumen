@@ -1,0 +1,34 @@
+id: VULN_EOL_PARTIAL_CONTROL
+domain: vulnerabilities
+severity: medium
+default_weight: 0.50
+detect:
+  questionnaire:
+    - Q-VULN-DD-012 == monitoring_only
+title: "End-of-life systems have monitoring only — not network-isolated"
+description_short: "EOL systems are monitored but not network-isolated, leaving them reachable from adjacent network segments."
+description_long: "Monitoring EOL systems without network isolation provides detection capability but no containment. If an EOL system is exploited, the absence of network isolation allows an attacker to pivot freely to adjacent systems on the same network segment. Monitoring alone does not prevent lateral movement — it only provides awareness after the fact. Effective compensating controls for EOL systems require both isolation (to limit the attack surface) and monitoring (to detect exploitation attempts). NIST SP 800-53 SA-22 and PCI DSS expect both controls in combination when EOL components cannot be immediately decommissioned. Network isolation is the higher-priority control because it prevents the spread of a compromise."
+frameworks:
+  - id: "NIST SP 800-53 SA-22"
+    text: "Unsupported System Components — implement compensating controls; network isolation is a required component"
+  - id: "NIST SP 800-53 SC-7"
+    text: "Boundary Protection — implement controls to limit the blast radius of a compromise"
+  - id: "PCI DSS Req 6.3.3"
+    text: "Protect all system components against known vulnerabilities — network isolation is a required compensating control for EOL systems"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  manufacturing:
+    weight_multiplier: 1.4
+  energy:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.3
+  education:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Monitoring your EOL systems is good — but without network isolation, a successful exploit on one EOL system lets an attacker reach everything else on that network segment. Add network isolation to your monitoring as the higher-priority compensating control."
+remediation_technical: "Immediately segment EOL systems into dedicated VLANs with restrictive ingress and egress firewall rules. Permit only the minimum traffic required for the system's function — remove all broad network-level access. Layer monitoring on top of the isolation: IDS/IPS on the segment, detailed connection logging, and alert on any outbound connections to unexpected destinations. Document the combined control set in your risk register as the formal compensating control for audit purposes."

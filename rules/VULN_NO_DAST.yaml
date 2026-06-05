@@ -1,0 +1,36 @@
+id: VULN_NO_DAST
+domain: vulnerabilities
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-VULN-025 == no_dast
+title: "No dynamic application security testing"
+description_short: "Web applications and public APIs are not tested with DAST or automated web vulnerability scanning."
+description_long: "Dynamic Application Security Testing (DAST) exercises running applications to find injection flaws, authentication bypasses, and logic errors that static analysis misses. Without DAST, web-facing applications remain vulnerable to OWASP Top 10 issues including SQL injection, XSS, and broken access control. PCI DSS requires automated scanning or application-layer firewalls for publicly accessible web applications. An annual penetration test alone is insufficient to catch vulnerabilities introduced between test cycles by ongoing development."
+frameworks:
+  - id: "OWASP ASVS"
+    text: "Application Security Verification Standard — dynamic testing requirements"
+  - id: "PCI DSS Req 6.6"
+    text: "Web-facing application security testing or WAF deployment"
+  - id: "NIST SP 800-115"
+    text: "Technical Guide to Information Security Testing — application layer testing"
+  - id: "CIS Control 16"
+    text: "Application Software Security"
+industry_overlays:
+  technology:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  retail:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.3
+  it_services:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Integrate automated DAST scanning into your development pipeline to continuously test web applications and APIs for exploitable vulnerabilities before they reach production."
+remediation_technical: "Integrate DAST tooling (OWASP ZAP, Burp Suite Enterprise, or Invicti) into your CI/CD pipeline. Set critical and high findings as build blockers. Run full authenticated scans against staging before every major release. Complement with periodic manual testing for logic-layer issues. For PCI DSS compliance, confirm either DAST coverage or WAF deployment for all cardholder-data-scope web applications."

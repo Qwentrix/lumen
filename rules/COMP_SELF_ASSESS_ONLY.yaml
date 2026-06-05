@@ -1,0 +1,32 @@
+id: COMP_SELF_ASSESS_ONLY
+domain: compliance
+severity: medium
+default_weight: 0.45
+detect:
+  questionnaire:
+    - Q-COMP-DD-004 == self_assessed_only
+title: "Compliance programme relies entirely on self-assessment with no external validation"
+description_short: "All compliance assessments are self-assessed — no external auditor has validated control effectiveness."
+description_long: "Self-assessments provide no independent verification that controls are actually operating as claimed. Without external validation, an organisation cannot credibly represent its compliance posture to enterprise customers, board members, cyber insurers, or regulators — because all of those stakeholders understand that self-assessment is subject to optimism bias, skill gaps, and lack of objectivity. Enterprise procurement processes increasingly filter out self-assessment-only vendors from critical supply chain positions. Cyber insurers use the absence of third-party validation as a rating factor. This finding is a softer signal than COMP_NO_THIRD_PARTY_AUDIT (which applies when no assessment at all has been completed) but still represents meaningful competitive and risk exposure for organisations targeting enterprise or regulated markets."
+frameworks:
+  - id: "SOC 2 (AICPA)"
+    text: "Third-party attestation by a licensed CPA firm — self-assessment is not a substitute"
+  - id: "ISO 27001"
+    text: "Third-party certification by an accredited certification body — self-assessment does not meet the standard"
+  - id: "PCI DSS SAQ vs ROC"
+    text: "Self-Assessment Questionnaire (SAQ) is permitted for lower-volume merchants but is not equivalent to a QSA-validated ROC"
+industry_overlays:
+  technology:
+    weight_multiplier: 1.5
+  it_services:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Plan a path to third-party validation for your primary framework. Even a one-time readiness assessment by an independent auditor gives you much stronger credibility than a self-assessment — and will reveal gaps your internal team may have missed."
+remediation_technical: "Identify the appropriate external validation pathway for your primary framework: SOC 2 Type I/II via a licensed CPA firm; ISO 27001 certification via an accredited CB; HIPAA assessment via a qualified HIPAA assessor; PCI DSS ROC or QSA-validated SAQ. Engage a readiness consultant to identify gaps before the formal audit. Build a 12-18 month certification roadmap. Use your self-assessment findings as a starting point but assume 30-40% additional gaps will be identified by an external assessor. Prioritise investment in automation platforms (Vanta, Drata) that generate audit-ready evidence packages to reduce the cost of the external engagement."

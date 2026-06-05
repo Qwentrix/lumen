@@ -1,0 +1,34 @@
+id: COMP_GDPR_NO_FLOW_MAP
+domain: compliance
+severity: high
+default_weight: 0.75
+detect:
+  questionnaire:
+    - Q-COMP-DD-005 == not_mapped
+title: "GDPR data flows not mapped despite EU personal data in scope"
+description_short: "The organisation processes EU personal data but has not mapped data flows to confirm GDPR territorial scope and applicability."
+description_long: "Processing EU personal data without mapping data flows is a GDPR Art. 30 violation in itself — every controller and processor must maintain a Record of Processing Activities (ROPA). Beyond ROPA, an unmapped data flow means the organisation cannot: identify which data leaves the EU and requires a transfer mechanism (Art. 46), determine retention periods per purpose (Art. 5), honour data subject access and erasure requests that span systems (Arts. 15–17), or demonstrate lawfulness of processing to the supervisory authority. GDPR fines of up to 4% of global annual turnover apply to Art. 5 and Art. 6 violations. Supervisory authorities consistently cite absent ROPAs and unmapped flows as evidence of systemic non-compliance in enforcement decisions."
+frameworks:
+  - id: "GDPR Art. 30"
+    text: "Records of processing activities — mandatory ROPA for controllers and processors"
+  - id: "GDPR Art. 5"
+    text: "Principles relating to processing — purpose limitation and storage limitation require mapped flows"
+  - id: "GDPR Art. 46"
+    text: "Transfers subject to appropriate safeguards — requires knowing which data flows cross borders"
+  - id: "GDPR Art. 35"
+    text: "Data protection impact assessment — DPIA required for high-risk processing"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.4
+  it_services:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Map all data flows involving EU personal data across your systems, vendors, and cross-border transfers. This is a legal requirement under GDPR Art. 30, not optional."
+remediation_technical: "Conduct a GDPR data mapping exercise: (1) Inventory all processing activities involving EU personal data. (2) For each activity, document: data categories, purposes, legal basis, recipients, retention periods, and cross-border transfers. (3) Build the ROPA in GDPR Art. 30 format. (4) Identify cross-border transfers and ensure appropriate safeguards (SCCs, adequacy decision, DPF). (5) Identify high-risk activities requiring DPIA under Art. 35. Maintain the ROPA as a living document updated when processing changes."

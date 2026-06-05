@@ -1,0 +1,45 @@
+id: SECPOS_NO_BACKUP_IMMUTABLE
+domain: security_posture
+severity: critical
+default_weight: 0.95
+detect:
+  questionnaire:
+    - Q-SECPOS-029 == no_backups
+    - Q-SECPOS-030 == no_backups
+    - Q-SECPOS-030 == same_network_only
+    - Q-SECPOS-033 == no_backups
+title: "No immutable backups — data unrecoverable from ransomware"
+description_short: "Backups are absent, or stored on the same network and reachable by ransomware."
+description_long: "Ransomware actors routinely target and encrypt or delete backups before deploying their payload to maximise the victim's recovery cost and likelihood of paying. Without immutable or air-gapped backups, an organisation has no technical recovery option and faces full data loss or ransom payment. NIST SP 800-34, CISA, and every major cyber insurer require offline or immutable backups as a baseline ransomware resilience control. The 3-2-1 backup rule (3 copies, 2 media types, 1 offsite) with at least one immutable or air-gapped copy is the minimum standard."
+frameworks:
+  - id: "NIST CSF RC.RP-01"
+    text: "Recovery plan is executed during or after an incident"
+  - id: "CIS Control 11.1"
+    text: "Establish and maintain a data recovery practice"
+  - id: "CIS Control 11.3"
+    text: "Protect recovery data — separate identity and access management"
+  - id: "ISO 27001:2022 A.8.13"
+    text: "Information backup"
+  - id: "SOC 2 A1.3"
+    text: "Recovery procedures include addressing environmental threats"
+  - id: "FedRAMP CP-9"
+    text: "System backup — frequency, offsite storage, and integrity testing"
+  - id: "CISA Zero Trust Pillar: Data"
+    text: "Data resilience through immutable backup as ransomware defence"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  energy:
+    weight_multiplier: 1.5
+  manufacturing:
+    weight_multiplier: 1.4
+  retail:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Implement the 3-2-1 backup rule immediately: keep 3 copies of critical data, on 2 different media types, with 1 copy stored offsite or in immutable cloud storage that cannot be deleted from production credentials. Test restores quarterly."
+remediation_technical: "Implement immutable backup using WORM storage (AWS S3 Object Lock, Azure Immutable Blob Storage, Veeam immutable backups). Configure backup jobs for all critical systems: RPO targets define frequency (continuous replication for Tier 1, daily for Tier 2). Store backup credentials in a separate vault inaccessible from production systems. Run weekly restore tests against a subset of critical systems and document results. Isolate backup management infrastructure from production with separate credentials and MFA. Store one copy offline or air-gapped for ransomware recovery of last resort."

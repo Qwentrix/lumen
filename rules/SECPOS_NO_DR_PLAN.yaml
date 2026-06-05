@@ -1,0 +1,40 @@
+id: SECPOS_NO_DR_PLAN
+domain: security_posture
+severity: high
+default_weight: 0.75
+detect:
+  questionnaire:
+    - Q-SECPOS-031 == no_dr_plan
+    - Q-SECPOS-031 == informal_recovery_procedure
+    - Q-SECPOS-DD-026 == no_dr_plan
+title: "No disaster recovery plan with defined RTO/RPO targets"
+description_short: "No documented DR plan exists, or recovery targets (RTO/RPO) are not defined for critical systems."
+description_long: "Without a disaster recovery plan, organisations make recovery decisions under maximum pressure with no framework, no assigned roles, and no tested procedures. This reliably produces extended downtime and data loss beyond what the technical recovery capability would suggest. NIST SP 800-34 defines the BCP/DR lifecycle; RTO (how long you can be offline) and RPO (how much data you can lose) must be defined per system criticality tier to ensure technical recovery investments match business requirements. Cyber insurance claims adjusters increasingly require a documented and tested DR plan for ransomware claims."
+frameworks:
+  - id: "NIST SP 800-34 Rev 1"
+    text: "Contingency planning guide — BCP, DR, and COOP"
+  - id: "CIS Control 11.4"
+    text: "Establish and test an incident response plan covering business continuity"
+  - id: "ISO 27001:2022 A.5.29"
+    text: "Information security during disruption — business continuity planning"
+  - id: "SOC 2 A1.3"
+    text: "Procedures include addressing environmental threats"
+  - id: "FedRAMP CP-2"
+    text: "Contingency plan — documented, reviewed, and tested"
+  - id: "CISA Zero Trust Pillar: Data"
+    text: "Resilience and recovery planning as data protection requirement"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  energy:
+    weight_multiplier: 1.5
+  manufacturing:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Document a disaster recovery plan that defines which systems are critical, how long they can be offline (RTO), how much data you can afford to lose (RPO), and the step-by-step procedure to restore them. Test the plan at least annually."
+remediation_technical: "Adopt the NIST SP 800-34 methodology: BIA (business impact analysis) to define system tiers and RTO/RPO, recovery strategy selection, plan documentation, and testing programme. Document per-system recovery runbooks including: recovery steps, responsible parties, vendor contacts, and dependency order. Define recovery tiers: Tier 1 (RTO<4h, RPO<1h), Tier 2 (RTO<24h, RPO<4h), Tier 3 (RTO<72h). Test with tabletop exercise annually and a partial failover test every two years. Include ransomware-specific recovery scenario with clean restore-point validation. Store DR plan offline and in a separate location from the systems it covers."

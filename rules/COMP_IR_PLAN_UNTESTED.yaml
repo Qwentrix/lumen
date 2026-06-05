@@ -1,0 +1,32 @@
+id: COMP_IR_PLAN_UNTESTED
+domain: compliance
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-COMP-020 == documented_not_tested
+title: "Incident response plan not tested in the past 12 months"
+description_short: "An incident response plan exists but has not been tested through a tabletop exercise or simulated incident recently."
+description_long: "An untested IRP is often worse than it appears: teams discover that contact lists are stale, escalation paths are unclear, and playbooks contain gaps only when responding to a real incident under pressure. PCI DSS 12.10.6 requires testing the IRP at least annually. SOC 2 CC7.3 and HIPAA guidance expect demonstrable testing evidence. An untested plan also provides false confidence — leadership may assume the organisation is prepared when it is not. Tabletop exercises are a low-cost mechanism to surface gaps before they are exploited."
+frameworks:
+  - id: "PCI DSS Req 12.10.6"
+    text: "Incident response plan tested at least once per year"
+  - id: "SOC 2 CC7.3"
+    text: "Security events evaluated and incident response procedures tested"
+  - id: "HIPAA 164.308(a)(6)"
+    text: "Testing and revision procedures for incident response"
+  - id: "NIST SP 800-61r2"
+    text: "Testing, training, and exercises for incident response capability"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.4
+  retail:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Run an annual tabletop exercise to test your incident response plan. Even a two-hour scenario walk-through will surface gaps that are far less costly to discover in a meeting room than during a real incident."
+remediation_technical: "Schedule an annual tabletop exercise using a realistic scenario (ransomware, data exfiltration, third-party breach). Include legal, communications, and senior leadership — not just IT. Document lessons learned and update the IRP within 30 days of the exercise. Retain exercise records as audit evidence. For higher maturity, conduct functional drills (simulated alert to full response playbook execution) in addition to tabletop sessions."

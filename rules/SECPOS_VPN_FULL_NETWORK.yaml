@@ -1,0 +1,36 @@
+id: SECPOS_VPN_FULL_NETWORK
+domain: security_posture
+severity: medium
+default_weight: 0.40
+detect:
+  questionnaire:
+    - Q-SECPOS-020 == full_tunnel_vpn
+title: "Full-network VPN grants broad corporate network access on connect"
+description_short: "Remote-access VPN provides full network access rather than application-scoped access."
+description_long: "A full-network VPN places remote users inside the corporate network perimeter with broad access to all network resources. This violates the Zero Trust principle of least-privilege network access. A compromised VPN client, a phished employee, or a VPN vulnerability (VPN CVEs are consistently in CISA's most-exploited list) can provide an attacker with the same unrestricted network access as a physically on-site user. ZTNA solutions replace the VPN with application-scoped, identity-verified access that never exposes the broader network to the client."
+frameworks:
+  - id: "NIST SP 800-207"
+    text: "Zero Trust Architecture — access granted per resource, not per network"
+  - id: "CIS Control 12.7"
+    text: "Manage remote access to enterprise assets"
+  - id: "ISO 27001:2022 A.8.20"
+    text: "Network security"
+  - id: "SOC 2 CC6.6"
+    text: "Security measures restrict access to information assets from outside the boundary"
+  - id: "FedRAMP AC-17(3)"
+    text: "Remote access — managed access control points"
+  - id: "CISA Zero Trust Pillar: Networks"
+    text: "Replace VPN with application-scoped ZTNA to eliminate implicit trust"
+industry_overlays:
+  government:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.3
+  technology:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Migrate from full-network VPN to a Zero Trust Network Access (ZTNA) solution that grants access only to specific applications rather than the whole network. If full VPN replacement is not possible immediately, tighten firewall rules so VPN users can only reach the resources they need."
+remediation_technical: "Evaluate ZTNA platforms (Cloudflare Access, Zscaler Private Access, Microsoft Entra Private Access, Palo Alto Prisma Access). Define per-application access policies based on user identity, device compliance, and contextual risk. Migrate high-sensitivity applications to ZTNA first. For remaining VPN usage, implement split-tunnel and firewall ACLs limiting VPN users to named target subnets. Rotate VPN credentials and disable always-on VPN for users who only need periodic access."

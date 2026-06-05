@@ -1,0 +1,33 @@
+id: VULN_NO_SCANNER
+domain: vulnerabilities
+severity: critical
+default_weight: 1.0
+detect:
+  questionnaire:
+    - Q-VULN-021 == no_scanner
+    - Q-VULN-021 == no_ad_hoc_tools_only
+title: "No dedicated vulnerability scanner"
+description_short: "No dedicated vulnerability scanner is used to identify security weaknesses."
+description_long: "Without a vulnerability scanner, security weaknesses in operating systems, applications, and network devices go undetected until they are exploited. Ad hoc or point-in-time tools do not provide the continuous or scheduled visibility required to manage a dynamic environment. NIST SP 800-53 RA-5 mandates scheduled vulnerability scanning as a baseline control. Organisations without a scanner have no reliable mechanism to prioritize patching efforts or demonstrate due care to auditors."
+frameworks:
+  - id: "NIST SP 800-53 RA-5"
+    text: "Vulnerability Monitoring and Scanning"
+  - id: "CIS Control 7"
+    text: "Continuous Vulnerability Management"
+  - id: "PCI DSS Req 11.3"
+    text: "Internal and external vulnerability scanning"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.3
+  financial:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.4
+  energy:
+    weight_multiplier: 1.4
+  manufacturing:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Deploy a dedicated vulnerability scanner such as Nessus, Qualys, Tenable.io, or Wiz and run it on a scheduled basis against all production systems."
+remediation_technical: "Stand up an authenticated scan schedule (CVSS-filtered) across all asset classes. Integrate scan results with your ticketing system to create remediation tasks. For cloud environments, use agentless CSPM scanning in addition to network-based scans. Establish a recurring cadence: at minimum monthly for internal assets, weekly for internet-facing assets."

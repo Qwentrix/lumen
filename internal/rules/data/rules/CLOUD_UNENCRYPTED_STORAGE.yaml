@@ -1,0 +1,47 @@
+id: CLOUD_UNENCRYPTED_STORAGE
+domain: compliance
+severity: high
+default_weight: 0.80
+detect:
+  scanner:
+    - cloud.unencrypted_volumes_count > 0
+title: "Cloud storage volumes not encrypted at rest"
+description_short: "One or more cloud block storage or database volumes (EBS, RDS, or equivalent) are not encrypted at rest, violating compliance baselines and data protection requirements."
+description_long: "Unencrypted EBS volumes, RDS instances, or equivalent cloud block/relational storage mean that snapshots, disk images, or raw storage media can be read without access to an encryption key. An adversary with AWS account access can share an unencrypted EBS snapshot to an account they control, create a new volume, and read all data offline with no further credentials. RDS unencrypted instances have the same exposure via snapshot export. CIS AWS Foundations Benchmark 2.2.1 requires that EBS volume encryption is enabled by default; 2.3.1 requires that RDS instances are encrypted at rest. NIST 800-53 SC-28 mandates protection of information at rest for all systems. HIPAA §164.312(a)(2)(iv) requires encryption of ePHI at rest as an addressable safeguard — but given the straightforward availability of native cloud encryption, regulators treat non-adoption as a compliance failure. Encryption-at-rest for cloud volumes is generally a one-checkbox operation with zero performance overhead; its absence is difficult to justify."
+frameworks:
+  - id: "CIS AWS Foundations Benchmark 2.2.1"
+    text: "Ensure EBS volume encryption is enabled by default in all regions"
+  - id: "CIS AWS Foundations Benchmark 2.3.1"
+    text: "Ensure that encryption is enabled for RDS instances"
+  - id: "NIST 800-53 SC-28"
+    text: "Protection of Information at Rest — cryptographically protect data stored on cloud volumes"
+  - id: "HIPAA 164.312(a)(2)(iv)"
+    text: "Encryption and decryption of ePHI at rest — addressable safeguard for stored health information"
+  - id: "PCI DSS Req 3.5"
+    text: "Protection of stored account data — encryption of primary account data and sensitive authentication data"
+  - id: "ISO 27001:2022 A.8.24"
+    text: "Use of cryptography — apply encryption to data at rest on cloud storage volumes"
+  - id: "SOC 2 CC6.7"
+    text: "Encryption controls protecting logical and physical assets containing sensitive data"
+micelium_product:
+  - product: Sypher
+    role: Enforces encryption-at-rest policy across cloud volumes with centralised key management and rotation
+  - product: Proof
+    role: Generates compliance evidence that all data stores are encrypted, supporting HIPAA/PCI/FedRAMP audits
+  - product: Sovera
+    role: Continuous cloud posture monitoring detects any unencrypted volume or snapshot created in the environment
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.4
+  retail:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Enable encryption for all cloud storage volumes (EBS, RDS, managed disks). For new volumes, set account-level defaults to encrypt everything automatically. For existing unencrypted volumes, create an encrypted snapshot, restore it as a new encrypted volume, and update the associated resources to use the new volume."
+remediation_technical: "AWS: enable EBS default encryption per-region via 'aws ec2 enable-ebs-encryption-by-default --region <region>'. For existing unencrypted EBS volumes: create a snapshot, copy with '--encrypted' flag specifying a KMS CMK, then restore to a new encrypted volume. For unencrypted RDS instances: take a snapshot, restore it to a new instance with 'StorageEncrypted: true'. Use AWS Config rule 'encrypted-volumes' and 'rds-storage-encrypted' to detect non-compliant resources continuously. Azure: use Azure Disk Encryption (ADE) or server-side encryption with a CMK in Azure Key Vault for all managed disks. GCP: enable Customer-Managed Encryption Keys (CMEK) for all Persistent Disks and Cloud SQL instances; account-level CMEK defaults are available in organisation policies. Rotate KMS keys on a schedule (annual minimum; quarterly for regulated data)."

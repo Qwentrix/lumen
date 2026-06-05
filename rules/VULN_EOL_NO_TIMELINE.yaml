@@ -1,0 +1,34 @@
+id: VULN_EOL_NO_TIMELINE
+domain: vulnerabilities
+severity: medium
+default_weight: 0.45
+detect:
+  questionnaire:
+    - Q-VULN-013 == ad_hoc
+title: "EOL system migration is handled ad hoc — no formal plan or committed timeline"
+description_short: "End-of-life system migrations are handled case-by-case with no formal plan, creating indefinite exposure with no accountability."
+description_long: "Handling EOL migrations ad hoc means there is no committed timeline, no milestones, and no accountability for completing the migration before risk accumulates further. Ad hoc migration projects are frequently deprioritized in favour of operational demands and can remain 'in progress' indefinitely. Regulators and auditors consider the absence of a formal migration plan with committed dates as evidence that the organisation is not actively managing the risk. NIST SP 800-53 SA-22 and PCI DSS Req 6.3.3 both require documented plans for managing unsupported components. An ad hoc approach also makes it impossible to report accurate migration status to leadership or compliance stakeholders."
+frameworks:
+  - id: "NIST SP 800-53 SA-22"
+    text: "Unsupported System Components — document plans and timelines for transitioning to supported alternatives"
+  - id: "PCI DSS Req 6.3.3"
+    text: "All system components protected against known vulnerabilities — requires documented migration plan for EOL components"
+  - id: "ISO 27001 A.12.6.1"
+    text: "Management of technical vulnerabilities — formal process required for managing exposure from unsupported software"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  manufacturing:
+    weight_multiplier: 1.3
+  energy:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.3
+  education:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Convert your ad hoc EOL migration approach into a formal plan with milestone dates and assigned owners. Without a timeline, EOL systems stay in production indefinitely while the risk they represent continues to grow."
+remediation_technical: "Create a formal EOL migration register for each production EOL system, documenting: current EOL status, compensating controls in place, migration target, assigned owner, and milestone dates with executive sign-off. Integrate the migration register into your risk register. Report EOL migration status in quarterly security reviews. Establish a gate: no new major projects approved until EOL migration plans are funded and resourced."

@@ -1,0 +1,34 @@
+id: SECPOS_NO_CSPM
+domain: security_posture
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-SECPOS-DD-002 == no
+title: "No cloud security posture management (CSPM)"
+description_short: "Cloud infrastructure is not continuously scanned for misconfigurations."
+description_long: "Cloud misconfiguration is the leading cause of cloud-based data breaches, responsible for billions of exposed records annually. Publicly accessible S3 buckets, over-permissive IAM roles, and unencrypted databases are frequently discovered years after misconfiguration due to lack of CSPM. Most cloud breaches are attributable to misconfigurations, not 0-days."
+frameworks:
+  - id: "CIS Cloud Benchmarks"
+    text: "Secure configuration guidelines for major cloud providers"
+  - id: "NIST CSF PR.PS-2"
+    text: "Software is maintained to reduce risk"
+  - id: "SOC 2 CC6.6"
+    text: "Logical and physical access controls — system misconfigurations prevent unauthorised access"
+industry_overlays:
+  technology:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.4
+  it_services:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.4
+  energy:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Enable a Cloud Security Posture Management tool to continuously scan your cloud accounts for misconfigurations and alert on policy violations."
+remediation_technical: "Deploy a CSPM solution (AWS Security Hub + Config, Microsoft Defender for Cloud, or Wiz/Lacework/Orca). Enable CIS benchmark rule sets. Configure drift-alert policies for critical misconfigurations (public S3, open security groups, root account usage). Set remediation SLAs by severity. Feed findings into your SIEM for correlation."

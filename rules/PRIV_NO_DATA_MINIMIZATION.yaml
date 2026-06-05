@@ -1,0 +1,41 @@
+id: PRIV_NO_DATA_MINIMIZATION
+domain: privacy
+severity: medium
+default_weight: 0.50
+detect:
+  questionnaire:
+    - Q-PRIV-026 == no_consideration
+    - Q-PRIV-026 == collects_more_than_needed
+    - Q-PRIV-029 == no
+    - Q-PRIV-052 == no
+title: "Data minimization is not practiced — more personal data collected than necessary for the stated purpose"
+description_short: "The organization collects personal data beyond what is necessary for its stated processing purposes, and does not apply privacy-by-design principles to new features or products."
+description_long: "GDPR Art. 5(1)(c) requires personal data to be 'adequate, relevant and limited to what is necessary in relation to the purposes for which they are processed' — the data minimization principle. Collecting data speculatively ('it might be useful later') directly violates this principle. Beyond regulatory exposure, excessive data collection increases breach impact, DSAR complexity, and retention management burden. Where privacy-by-design is not applied to new features (Q-PRIV-029 == no) or products (Q-PRIV-052 == no), each new development cycle risks introducing fresh minimization violations. CCPA §1798.100(e) and the CPRA similarly limit use of personal data to disclosed and necessary purposes. HIPAA's minimum necessary standard (45 CFR §164.502(b)) requires covered entities to make reasonable efforts to limit PHI use to the minimum necessary."
+frameworks:
+  - id: "GDPR Art. 5(1)(c)"
+    text: "Data minimization principle — collection limited to what is adequate, relevant, and necessary for the purpose"
+  - id: "GDPR Art. 25"
+    text: "Data protection by design and default — data minimization must be built into systems and processes"
+  - id: "CCPA §1798.100(e)"
+    text: "Personal information not to be used for purposes materially different from disclosed purpose"
+  - id: "HIPAA 45 CFR §164.502(b)"
+    text: "Minimum necessary standard — covered entities must limit PHI use to the minimum necessary"
+  - id: "ISO 27018 §5.1"
+    text: "Processing of personal data limited to that which is necessary for the specified purpose"
+  - id: "NIST Privacy Framework CT.DM-1"
+    text: "Data is managed consistent with the organization's risk strategy and privacy obligations — minimization is a core data management principle"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.3
+  technology:
+    weight_multiplier: 1.3
+  legal:
+    weight_multiplier: 1.3
+  retail:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Review what personal data you collect for each processing purpose and ask whether each field is genuinely necessary. If you can achieve the purpose without collecting a data element, do not collect it. Make data minimization a formal checkpoint in product and feature design."
+remediation_technical: "1. Conduct a data field necessity audit: for each processing activity, list all personal data fields collected and document the specific necessity justification for each. Remove or stop collecting fields that lack a necessity justification. 2. Implement a privacy-by-design checklist as a gate in the product development lifecycle — data field collection decisions must be reviewed before development begins. 3. Implement data minimization at the API and form layer: do not transmit or store fields that are not needed for the immediate processing purpose. 4. Apply attribute-based access control so analytics, marketing, and processing systems receive only the fields they need — not a full user record. 5. Review data minimization compliance as part of the annual ROPA review and DPIA process."

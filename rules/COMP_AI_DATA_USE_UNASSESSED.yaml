@@ -1,0 +1,34 @@
+id: COMP_AI_DATA_USE_UNASSESSED
+domain: compliance
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-COMP-DD-026 == no_assessment
+title: "AI or ML data use in sensitive processing not assessed"
+description_short: "AI or machine learning systems process sensitive data without a formal assessment of how that data is used in training or inference."
+description_long: "When AI and ML systems consume personal or sensitive data without a formal assessment, organisations face compounding risks: unintended data exposure through model outputs, unlawful secondary uses of personal data under GDPR Art. 5 purpose-limitation, unreviewed use of PHI in model training under HIPAA, and uncontrolled data retention within model weights. The EU AI Act Art. 10 imposes data governance obligations on high-risk AI systems, and GDPR Art. 22 restricts automated decision-making using personal data. An unassessed AI pipeline means the organisation cannot demonstrate lawful processing, cannot honour data subject rights requests that touch model-ingested data, and is exposed to significant regulatory penalty as AI-specific enforcement matures."
+frameworks:
+  - id: "GDPR Art. 5(1)(b)"
+    text: "Purpose limitation — data collected for specified purposes and not processed incompatibly"
+  - id: "GDPR Art. 22"
+    text: "Automated individual decision-making, including profiling"
+  - id: "EU AI Act Art. 10"
+    text: "Data and data governance requirements for high-risk AI systems"
+  - id: "HIPAA 164.502(a)"
+    text: "Uses and disclosures of PHI — permissible uses limited to defined purposes"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  it_services:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "For every AI or ML system that touches personal or sensitive data, complete a formal data-use assessment documenting what data is ingested, for what purpose, how long it is retained in the model, and what rights data subjects have."
+remediation_technical: "Conduct a Data Protection Impact Assessment (DPIA) under GDPR Art. 35 for high-risk AI processing. Document data lineage from ingestion through model training and inference. Implement data minimisation in training pipelines (pseudonymisation, differential privacy). Map AI systems to NIST AI RMF MAP function. Retain assessment records. Review annually or on model re-training."

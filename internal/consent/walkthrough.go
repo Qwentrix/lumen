@@ -26,6 +26,7 @@ import (
 
 	"github.com/Qwentrix/lumen/internal/keys"
 	"github.com/Qwentrix/lumen/internal/probes/ai_governance"
+	cloudprobe "github.com/Qwentrix/lumen/internal/probes/cloud"
 	"github.com/Qwentrix/lumen/internal/probes/common"
 	"github.com/Qwentrix/lumen/internal/probes/compliance"
 	"github.com/Qwentrix/lumen/internal/probes/privacy"
@@ -40,6 +41,11 @@ var scannerVersion = "v0.1.0"
 // domainManifests collects the manifest entry from each probe domain.
 // The order is deterministic (same as AllDomains) so the consent walkthrough
 // always presents domains in the same order.
+//
+// NOTE: the cloud probe manifest (ENT-118) is appended AFTER the five default
+// probes. The cloud domain is opt-in (--include-cloud) and NETWORKED.
+// It is listed here so `lumen consent` can display its disclosure and record
+// per-domain consent, but it is NEVER added to the default probe loop in scan.go.
 func domainManifests() []common.ManifestEntry {
 	return []common.ManifestEntry{
 		vulnerabilities.Manifest(),
@@ -47,7 +53,27 @@ func domainManifests() []common.ManifestEntry {
 		ai_governance.Manifest(),
 		security_posture.Manifest(),
 		privacy.Manifest(),
+		cloudDomainManifest(), // opt-in, NETWORKED — separate guarded path
 	}
+}
+
+// cloudDomainManifest returns the consent manifest entry for the cloud probe.
+// This is the static disclosure shown during `lumen consent` — it enumerates
+// every API operation, the read-only guarantee, and the outbound network endpoints.
+func cloudDomainManifest() common.ManifestEntry {
+	entry := cloudprobe.Manifest()
+	// Augment the OSAPIs field with a human-readable disclosure note, since cloud
+	// probes have no OS commands but do have an important credential model note.
+	entry.OSAPIs = []string{
+		"READ-ONLY: all cloud API calls are Describe/List/Get — no resource mutations",
+		"Credential model: uses your existing local cloud credentials — credentials are NEVER stored by lumen",
+		"  AWS: env vars (AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY) → ~/.aws/credentials profile → IAM role / EC2 IMDS",
+		"  Azure: Azure CLI token (az login) / MSI / DefaultAzureCredential (v2 — not implemented in v1)",
+		"  GCP: GOOGLE_APPLICATION_CREDENTIALS / gcloud ADC (v2 — not implemented in v1)",
+		"OUTBOUND NETWORK: this probe makes HTTP calls to cloud provider APIs (see Network Calls below)",
+		"This domain is OPT-IN and DISABLED by default. Enable with: lumen scan --include-cloud",
+	}
+	return entry
 }
 
 // manifestHash produces a stable sha256 hash of a manifest entry's declared
@@ -160,7 +186,14 @@ func Run(reset bool, acceptAll bool) error {
 				fmt.Printf("      • %s\n", p)
 			}
 		}
-		fmt.Println("    Network: none (default mode)")
+		if len(entry.NetworkCalls) > 0 {
+			fmt.Println("    Network calls (OUTBOUND — this domain makes network calls):")
+			for _, nc := range entry.NetworkCalls {
+				fmt.Printf("      • %s\n", nc)
+			}
+		} else {
+			fmt.Println("    Network: none (default mode)")
+		}
 
 		accepted := acceptAll
 		if !acceptAll {

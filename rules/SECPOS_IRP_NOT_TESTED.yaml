@@ -1,0 +1,39 @@
+id: SECPOS_IRP_NOT_TESTED
+domain: security_posture
+severity: high
+default_weight: 0.60
+detect:
+  questionnaire:
+    - Q-SECPOS-047 == over_two_years_or_never
+    - Q-SECPOS-DD-043 == never_exercised
+    - Q-SECPOS-DD-043 == generic_exercise_no_ransomware
+    - Q-SECPOS-DD-044 == no_post_incident_review
+title: "Incident response plan not tested — no tabletop exercise or post-incident review"
+description_short: "The incident response plan has never been tested, or not tested in over two years."
+description_long: "An untested incident response plan is not a reliable operational asset. During an actual incident, untested plans reveal gaps in role clarity, missing escalation contacts, inaccessible runbooks, and unvalidated technical recovery steps that waste critical time. IBM CODB 2024 found that organisations with regularly tested IR plans resolve incidents 37% faster and at significantly lower cost. Tabletop exercises expose plan gaps at near-zero operational cost. Ransomware-specific scenarios are especially important given that ransomware actors exploit the confusion of first response to maximise encryption spread and ransom leverage."
+frameworks:
+  - id: "NIST SP 800-61 Rev 2"
+    text: "Computer security incident handling — testing and exercises requirement"
+  - id: "CIS Control 17.6"
+    text: "Conduct security awareness and skills training including incident response exercises"
+  - id: "ISO 27001:2022 A.5.26"
+    text: "Response to information security incidents — plan testing"
+  - id: "SOC 2 CC7.5"
+    text: "Identified incidents are contained, eradicated, and recovered from — preparedness testing"
+  - id: "FedRAMP IR-3"
+    text: "Incident response testing — exercises at defined frequency"
+  - id: "CISA Zero Trust Pillar: Visibility and Analytics"
+    text: "Incident response effectiveness validated through exercises"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  energy:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Run a tabletop exercise with your IR team and key stakeholders at least annually. Use a realistic scenario — a ransomware event is the most valuable to test. Document lessons learned and update the IR plan with any gaps found. Run a ransomware-specific exercise this quarter."
+remediation_technical: "Schedule annual tabletop exercises using realistic scenarios: ransomware (most impactful), data breach with regulatory notification trigger, and cloud account compromise. Engage a third-party IR firm or use a facilitator guide (CISA provides free tabletop exercise packages). Include: IR lead, communications owner, legal/compliance, IT, and executive sponsor. Document the exercise timeline, decisions made, gaps identified, and action items. Assign owners and due dates to all gaps. Track action items to closure. Run a post-incident review after every real security event, however minor, using a structured blameless format."

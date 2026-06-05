@@ -1,0 +1,36 @@
+id: VULN_NO_CLOUD_POSTURE_MGMT
+domain: vulnerabilities
+severity: high
+default_weight: 0.80
+detect:
+  questionnaire:
+    - Q-VULN-017 == no_monitoring
+title: "No cloud security posture management — no automated misconfiguration monitoring"
+description_short: "No automated tool monitors the cloud environment for misconfigurations, leaving policy drift and exposure events undetected."
+description_long: "Without cloud security posture management (CSPM), cloud environment misconfigurations accumulate undetected. Cloud infrastructure misconfigurations — publicly accessible storage buckets, unrestricted security groups, disabled encryption, over-privileged service accounts, and disabled MFA — are responsible for the majority of cloud data breaches. The dynamic nature of cloud environments, where resources are provisioned and modified continuously, makes manual monitoring ineffective. NIST SP 800-53 CA-7 requires continuous monitoring of cloud security controls. CIS Cloud Foundations Benchmarks presuppose automated tooling to assess posture against benchmark controls. Without CSPM, there is no systematic way to detect when cloud resources drift from their secure baseline."
+frameworks:
+  - id: "NIST SP 800-53 CA-7"
+    text: "Continuous Monitoring — implement ongoing assessment of cloud security controls"
+  - id: "CIS Cloud Foundations Benchmark"
+    text: "Use automated tools to continuously assess cloud security posture and alert on benchmark violations"
+  - id: "CSA CCM v4 IVS-04"
+    text: "Implement and continuously monitor cloud infrastructure security controls"
+  - id: "PCI DSS Req 6.4"
+    text: "All system components are protected from known vulnerabilities — applies to cloud configuration"
+industry_overlays:
+  financial:
+    weight_multiplier: 1.5
+  healthcare:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  technology:
+    weight_multiplier: 1.4
+  it_services:
+    weight_multiplier: 1.4
+  retail:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Without automated cloud posture monitoring, any misconfiguration in your cloud environment may go undetected indefinitely. Deploy a CSPM tool as a foundational cloud security control — this is table-stakes for any cloud-hosted workload."
+remediation_technical: "Deploy a CSPM solution (Wiz, Orca Security, Prisma Cloud, AWS Security Hub with CIS Benchmarks, Azure Defender for Cloud, or equivalent). Enable real-time alerting for critical findings: public buckets, 0.0.0.0/0 inbound security group rules, unencrypted volumes, disabled CloudTrail logging, MFA not enabled on root/admin accounts. Integrate findings into your ticketing workflow. Establish a posture score baseline and track improvement over time. Run an initial full-environment assessment to identify and remediate the existing backlog."

@@ -1,0 +1,41 @@
+id: PRIV_NO_PROCUREMENT_REVIEW
+domain: privacy
+severity: medium
+default_weight: 0.55
+detect:
+  questionnaire:
+    - Q-PRIV-044 == no
+    - Q-PRIV-044 == ad_hoc
+    - Q-PRIV-DD-039 == no_questionnaire
+    - Q-PRIV-DD-042 == not_assessed
+title: "No privacy review in the SaaS and vendor procurement process"
+description_short: "New SaaS tools and vendors that process personal data are adopted without a mandatory privacy review, formal questionnaire, or assessment of the vendor's privacy certifications."
+description_long: "GDPR Art. 28(1) requires controllers to use only processors providing 'sufficient guarantees' of appropriate technical and organizational measures. Without a procurement privacy review, every new SaaS adoption is potentially engaging a processor without meeting this obligation. Shadow IT adoption — SaaS tools procured by individual teams without central review — is the leading cause of unknown processors appearing in breach investigations. A formal privacy review at procurement (vendor questionnaire, certification review, DPA execution) is significantly less costly than discovering unvetted processors in a breach. The NIST Privacy Framework (PR.AT-P) specifically calls out third-party assessment as a core organizational privacy practice. ISO 27018 requires customers to evaluate cloud providers' privacy practices before engagement."
+frameworks:
+  - id: "GDPR Art. 28(1)"
+    text: "Controller must use only processors providing sufficient guarantees — requires pre-procurement assessment"
+  - id: "GDPR Art. 28(3)"
+    text: "DPA must be executed before processing commences — procurement review enables this"
+  - id: "CCPA §1798.140(w)"
+    text: "Service provider agreements required — procurement review identifies which vendors require agreements"
+  - id: "HIPAA 45 CFR §164.504(e)"
+    text: "BAA must be executed before PHI access — procurement review triggers this"
+  - id: "ISO 27018 §6"
+    text: "Cloud customer should assess cloud provider privacy practices before engagement"
+  - id: "NIST Privacy Framework PR.AT-P"
+    text: "Third-party privacy practices are assessed before and during the relationship"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Before any vendor or SaaS tool gets access to personal data, run them through a privacy review: send them a questionnaire, check their certifications, confirm they have signed a DPA, and make sure you know what data they will process and where."
+remediation_technical: "1. Create a privacy procurement checklist: data categories to be processed, processing purposes, storage locations, sub-processors, security certifications (ISO 27001, SOC 2, ISO 27018), DPA execution, HIPAA BAA where applicable. 2. Implement the checklist as a mandatory gate in the procurement approval workflow — purchasing cannot be completed without a completed privacy review. 3. Develop a vendor privacy questionnaire (or adopt a standard like CAIQ/SIG) for vendors that do not have recognized certifications. 4. Maintain a list of pre-approved vendors with current DPAs — teams can adopt from this list without repeating the full review. 5. Block or flag vendors that fail the privacy review — implement a waiver process for business-critical needs with documented risk acceptance. 6. Review vendor certifications annually for expiry or material changes."

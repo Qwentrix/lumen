@@ -1,0 +1,32 @@
+id: COMP_NO_FRAMEWORK_OWNER
+domain: compliance
+severity: high
+default_weight: 0.60
+detect:
+  questionnaire:
+    - Q-COMP-DD-003 == no_owner
+title: "No named owner accountable for compliance framework maintenance"
+description_short: "No individual has been assigned accountability for maintaining compliance against any applicable framework."
+description_long: "Compliance programmes without a named owner drift — policies go stale, evidence collection lapses, control gaps go untracked, and renewal deadlines are missed. When an audit or incident occurs, the absence of a named owner means no one has been watching. Regulators and auditors consistently cite lack of accountability as an organisational failure, not just a process failure. ISO 27001 Clause 5.3, SOC 2, and FedRAMP all require that management assign responsibility for information security and compliance activities. Without ownership, even well-documented programmes decay."
+frameworks:
+  - id: "ISO 27001 Clause 5.3"
+    text: "Organisational roles, responsibilities and authorities — information security must have assigned ownership"
+  - id: "SOC 2 CC1.3"
+    text: "Management establishes structures, reporting lines, and appropriate authorities to pursue objectives"
+  - id: "HIPAA 164.308(a)(2)"
+    text: "Assigned security responsibility — identify the security official responsible for the programme"
+  - id: "FedRAMP ISSO Role"
+    text: "Information System Security Officer — designated responsible party requirement"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Assign a named person as the owner of each compliance framework your organisation is subject to. This person is responsible for tracking gaps, managing evidence, and ensuring the programme stays current."
+remediation_technical: "Formally designate a compliance officer or information security officer (ISO/CISO) responsible for each applicable framework. Document the assignment in your security policy and org chart. Define their responsibilities: annual gap assessment, evidence review cadence, audit coordination, and regulatory change monitoring. Where resources are limited, a qualified virtual CISO (vCISO) or compliance service provider can fill this role. Ensure the owner has executive sponsorship and appropriate access to controls and evidence systems."

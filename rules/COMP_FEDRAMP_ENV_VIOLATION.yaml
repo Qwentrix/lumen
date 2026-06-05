@@ -1,0 +1,30 @@
+id: COMP_FEDRAMP_ENV_VIOLATION
+domain: compliance
+severity: critical
+default_weight: 0.95
+detect:
+  questionnaire:
+    - Q-COMP-DD-029 == no_not_in_fedramp_env
+title: "Federal data processed outside FedRAMP or GovCloud authorised environments"
+description_short: "Data subject to FedRAMP or CMMC requirements is processed in environments that are not FedRAMP-authorised or GovCloud-compliant."
+description_long: "Processing federal or controlled unclassified information (CUI) outside an authorised FedRAMP boundary is a federal compliance violation that can result in immediate contract termination, loss of Authorization to Operate (ATO), and potential exclusion from future federal contracting. FedRAMP requires all cloud services handling federal data to maintain a continuous ATO from a federal agency or the Joint Authorization Board (JAB). CMMC Level 2 and 3 require CUI to remain within assessed and authorised system boundaries. The absence of an authorised environment is not a configuration gap — it is a fundamental programme-level violation. Organisations in this state are operating unlawfully under the terms of their federal contracts."
+frameworks:
+  - id: "FedRAMP Rev. 5 ATO Requirements"
+    text: "Authorization to Operate — all federal cloud services must maintain a current ATO"
+  - id: "CMMC Level 2 AC.L2-3.1.3"
+    text: "Control CUI flow in accordance with approved authorisations"
+  - id: "NIST SP 800-37 Rev. 2"
+    text: "Risk Management Framework — system categorisation and authorisation boundary"
+  - id: "FISMA 44 U.S.C. § 3554"
+    text: "Federal information security modernisation — agency and contractor requirements"
+industry_overlays:
+  government:
+    weight_multiplier: 1.6
+  it_services:
+    weight_multiplier: 1.5
+  technology:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Immediately assess whether your federal contract permits processing federal data in your current environment. If not, migrate to an authorised FedRAMP or GovCloud environment before continuing to process federal data."
+remediation_technical: "Conduct an emergency authorisation boundary review. Enumerate all data stores and processing workloads containing federal or CUI data. Map each to its current hosting environment. Identify and immediately halt processing in non-authorised environments where not permitted by contract. Begin ATO preparation: engage a FedRAMP Third Party Assessment Organisation (3PAO), select a hosting environment with an existing FedRAMP ATO (AWS GovCloud, Azure Government, Google Cloud for Government), and initiate the agency or JAB authorisation process. Address CMMC scoping in parallel if DoD contracts are in scope."

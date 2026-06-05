@@ -1,0 +1,34 @@
+id: SECPOS_NO_IR_SEVERITY_TIERS
+domain: security_posture
+severity: medium
+default_weight: 0.40
+detect:
+  questionnaire:
+    - Q-SECPOS-049 == no_severity_tiers
+title: "No incident severity classification — all incidents treated the same way"
+description_short: "No severity tiering for security incidents — all events receive the same response priority regardless of impact."
+description_long: "Without severity tiers, analyst time is allocated reactively and often inefficiently — high-noise low-severity alerts consume the same effort as critical business-impacting events. Severity classification (P1/P2/P3 or Critical/High/Medium/Low) with corresponding response SLAs is the foundation of effective incident management. It determines escalation paths, notification requirements (regulatory breach notification thresholds differ by severity), and resource allocation during simultaneous incidents. Without tiers, organisations systematically under-respond to critical events and over-respond to routine ones."
+frameworks:
+  - id: "NIST SP 800-61 Rev 2"
+    text: "Incident handling guide — severity classification and prioritisation"
+  - id: "CIS Control 17.4"
+    text: "Establish and maintain an incident response process"
+  - id: "ISO 27001:2022 A.5.25"
+    text: "Assessment and decision on information security events — classification"
+  - id: "SOC 2 CC7.4"
+    text: "Security events are identified — classification determines response speed"
+  - id: "FedRAMP IR-4(3)"
+    text: "Incident handling — continuity of operations for significant incidents"
+  - id: "CISA Zero Trust Pillar: Visibility and Analytics"
+    text: "Incident classification enabling prioritised response"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.3
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Define severity tiers for security incidents — for example, P1 (systems down or data actively exfiltrated), P2 (significant risk but contained), P3 (isolated/low impact). Assign different response SLAs and escalation paths to each tier. Document this in your incident response plan."
+remediation_technical: "Define a severity matrix in your IR plan: P1/Critical (active breach with business impact, ransomware deployment, regulated data confirmed exfiltrated) — response SLA: immediate, 24/7 escalation, executive notification within 1 hour. P2/High (confirmed compromise, contained, no confirmed exfiltration) — SLA: 1 hour to acknowledge, business hours escalation. P3/Medium (suspicious activity, unconfirmed, no impact) — SLA: 4 hours to acknowledge, next-business-day resolution. Configure your SIEM to auto-classify alerts and route to appropriate severity queues. Review severity criteria quarterly and update based on lessons-learned from real incidents."

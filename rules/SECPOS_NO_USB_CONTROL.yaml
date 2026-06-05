@@ -1,0 +1,40 @@
+id: SECPOS_NO_USB_CONTROL
+domain: security_posture
+severity: medium
+default_weight: 0.45
+detect:
+  questionnaire:
+    - Q-SECPOS-015 == no_controls
+title: "No USB or removable media controls"
+description_short: "USB ports and removable media are unrestricted — no controls prevent unauthorised data transfer."
+description_long: "Uncontrolled USB and removable media use enables two distinct threat vectors: data exfiltration by insiders or attackers with physical access, and malware introduction via infected drives. The 2010 Stuxnet attack and multiple insider-threat cases involving USB exfiltration demonstrate the risk. Healthcare and government organisations with data classification requirements must demonstrate that removable media use is controlled or blocked. CIS Control 10 recommends disabling or restricting removable media to only approved, encrypted devices."
+frameworks:
+  - id: "NIST CSF PR.DS-01"
+    text: "The confidentiality, integrity, and availability of data at rest are protected"
+  - id: "CIS Control 10.3"
+    text: "Disable Autorun and Autoplay for removable media"
+  - id: "CIS Control 10.4"
+    text: "Restrict use of removable media on sensitive systems"
+  - id: "ISO 27001:2022 A.7.10"
+    text: "Storage media — management of removable storage"
+  - id: "SOC 2 CC6.7"
+    text: "Transmission and disposal of sensitive data restrictions"
+  - id: "FedRAMP MP-7"
+    text: "Media use — restrictions on portable and removable storage"
+  - id: "CISA Zero Trust Pillar: Devices"
+    text: "Device security controls preventing unauthorised media access"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.5
+  energy:
+    weight_multiplier: 1.4
+  manufacturing:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Block USB ports via endpoint management policy and only allow pre-approved, encrypted devices with a business justification. Log all removable media access. Disable AutoRun/AutoPlay on all Windows endpoints."
+remediation_technical: "Use your MDM or EDR platform to enforce a USB device control policy: default-deny for storage class devices, allow-list for specific approved device hardware IDs. Require encrypted USB devices (IronKey or equivalent) for exceptions. Disable USB Autorun via Group Policy (HKL MU\\DisableAutoplay). Log all USB connection events via EDR or SIEM. For high-security environments, disable USB entirely at the hardware level via BIOS/UEFI policy and enforce via MDM compliance."

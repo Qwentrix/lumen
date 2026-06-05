@@ -1,0 +1,34 @@
+id: VULN_NO_PATCH_EXCEPTION_LOG
+domain: vulnerabilities
+severity: high
+default_weight: 0.60
+detect:
+  questionnaire:
+    - Q-VULN-DD-004 == no_tracking
+title: "No tracking of patch exceptions or deferrals"
+description_short: "Patch deferrals are not tracked — when patches cannot be applied on schedule, there is no log of exceptions, rationale, or compensating controls."
+description_long: "Untracked patch exceptions create invisible risk accumulation. When patches are deferred without documentation, the organisation loses visibility into which systems are operating outside policy and for how long. Regulatory frameworks universally require that exceptions to security controls be documented with risk rationale, approvals, compensating controls, and review dates. NIST SP 800-53 SI-2 requires documenting when patches cannot be applied within SLA. PCI DSS Req 6.3.3 requires formal compensating control documentation for any system component that cannot be patched as required. Without an exception log, compliance assessments cannot be completed, and risk management decisions are made without full information. Exception logs also provide the audit trail required to demonstrate due diligence."
+frameworks:
+  - id: "NIST SP 800-53 SI-2"
+    text: "Flaw Remediation — document and approve exceptions when patches cannot be applied within the defined window"
+  - id: "PCI DSS Req 6.3.3"
+    text: "All system components protected — requires documented compensating controls for any unpatchable component"
+  - id: "ISO 27001 A.12.6.1"
+    text: "Management of technical vulnerabilities — formally document and review exceptions to the patch management process"
+industry_overlays:
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.2
+  it_services:
+    weight_multiplier: 1.2
+  manufacturing:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Every time a patch is deferred past your SLA, document it: which system, which patch, why it cannot be applied now, what compensating controls are in place, who approved the exception, and when it will be reviewed. An untracked exception looks like wilful neglect to an auditor."
+remediation_technical: "Implement a patch exception register in your vulnerability management platform or GRC tool. Required fields per exception: vulnerability/patch ID, affected asset, deferral rationale (technical, operational, or risk-accepted), compensating controls applied, approving risk owner, deferral expiry date, and next review date. Require security team manager or VP sign-off for exceptions to critical or high severity patches. Include exception inventory in your monthly security review. Automatically escalate exceptions that exceed 90 days without review."

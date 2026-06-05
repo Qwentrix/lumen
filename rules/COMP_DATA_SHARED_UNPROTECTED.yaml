@@ -1,0 +1,34 @@
+id: COMP_DATA_SHARED_UNPROTECTED
+domain: compliance
+severity: critical
+default_weight: 0.90
+detect:
+  questionnaire:
+    - Q-COMP-DD-023 == unprotected_email
+title: "Sensitive data shared externally via unprotected email or file transfer"
+description_short: "Sensitive data is shared with external parties via unprotected email or unencrypted file transfer with no access controls."
+description_long: "Sending sensitive data — PHI, PII, cardholder data, confidential business information — via unprotected email or unencrypted file transfer is among the most common and most penalised compliance violations. Email is routinely intercepted, misdirected, or resident in insecure email archives at the recipient. HIPAA has issued substantial penalties for unencrypted ePHI transmitted by email. PCI DSS Req 4.2.1 prohibits sending cardholder data via unprotected messaging. GDPR Art. 32 requires appropriate technical measures for data in transit. Beyond regulatory exposure, unprotected external sharing means the organisation has no audit trail of what was shared with whom, and the data becomes uncontrolled the moment it leaves the sender's system."
+frameworks:
+  - id: "HIPAA 164.312(e)(2)(ii)"
+    text: "Encryption and decryption — encryption of ePHI in transit where reasonable"
+  - id: "PCI DSS Req 4.2.1"
+    text: "Prohibit sending unprotected PAN via end-user messaging technologies"
+  - id: "GDPR Art. 32(1)(a)"
+    text: "Security of processing — encryption as an appropriate technical measure"
+  - id: "SOC 2 CC6.7"
+    text: "Transmission of data — protection of information during transmission"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.4
+  retail:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Stop sending sensitive data via regular email or unprotected file transfer immediately. Use an encrypted, audited platform for all external data sharing involving PHI, PII, financial data, or confidential information."
+remediation_technical: "Deploy a secure messaging and file transfer platform (Virtru, Kiteworks, ProtonMail Business, or ShareFile) for all sensitive external data sharing. Configure DLP at the email gateway to block outbound sensitive data in plaintext (Proofpoint DLP, Mimecast DLP, Purview DLP). Enforce a policy requiring IRM controls on all externally shared confidential documents. Conduct staff training on prohibited sharing channels. Implement quarterly DLP rule testing to confirm enforcement is active."

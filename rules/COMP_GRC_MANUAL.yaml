@@ -1,0 +1,28 @@
+id: COMP_GRC_MANUAL
+domain: compliance
+severity: low
+default_weight: 0.30
+detect:
+  questionnaire:
+    - Q-COMP-DD-008 == spreadsheet_and_shared_drive
+title: "GRC and evidence management relies on spreadsheets and shared drives"
+description_short: "Compliance evidence and control mapping is managed in spreadsheets and shared drives rather than a dedicated GRC platform."
+description_long: "Spreadsheet-based GRC management is error-prone, difficult to audit, and does not scale. Evidence in shared drives has no access control granularity, no tamper detection, and no version control adequate for audit purposes. Control-to-evidence mappings in spreadsheets drift from the actual control state as systems change. Auditors increasingly expect structured evidence repositories with timestamped uploads, control linkage, and access logs. While not a regulatory violation in itself, spreadsheet-based GRC is a signal that the compliance programme lacks the infrastructure to reliably demonstrate control operation — which becomes a problem when it matters most."
+frameworks:
+  - id: "SOC 2 CC4.1"
+    text: "Monitoring activities — evidence management supports ongoing assessment"
+  - id: "ISO 27001 Clause 7.5"
+    text: "Documented information — creation, control, and availability of compliance records"
+industry_overlays:
+  financial:
+    weight_multiplier: 1.2
+  government:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.2
+  technology:
+    weight_multiplier: 1.1
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Move compliance evidence management from spreadsheets and shared drives to a structured platform that links evidence to controls, tracks ownership, and provides auditor-ready exports."
+remediation_technical: "Evaluate and deploy a GRC or compliance automation platform: Vanta, Drata, Secureframe, Tugboat Logic, OneTrust, or ServiceNow GRC depending on scale. Import your current control library and map existing evidence artefacts. Implement automated evidence collection integrations for cloud providers, IdP, ticketing, and MDM. Define evidence ownership per control. Migrate shared drive evidence into the platform with proper tagging and retention."

@@ -1,0 +1,43 @@
+id: PRIV_US_STATE_LAW_GAP
+domain: privacy
+severity: medium
+default_weight: 0.55
+detect:
+  questionnaire:
+    - Q-PRIV-034 == no_tracking
+    - Q-PRIV-034 == ccpa_only
+    - Q-PRIV-DD-033 == no_implementation
+    - Q-PRIV-DD-033 == policy_only
+title: "US state privacy law obligations beyond CCPA are not tracked or technically implemented"
+description_short: "The organization focuses solely on CCPA/CPRA but has not implemented technical compliance for Virginia VCDPA, Colorado CPA, Connecticut CTPA, Texas TDPSA, or other applicable US state privacy laws whose consumer rights differ from CCPA."
+description_long: "The US state privacy law landscape has expanded rapidly: as of 2025 more than 20 states have enacted comprehensive privacy laws, each with distinct rights, thresholds, and technical requirements. CCPA-only compliance is insufficient for organizations with consumers in Virginia (VCDPA includes right to appeal decisions), Colorado (CPA requires universal opt-out mechanism), Connecticut (CTPA requires data protection assessments), Texas (TDPSA broad scope). Policy-only commitments without technical implementation (Q-PRIV-DD-033 == policy_only) expose organizations to enforcement — Virginia and Colorado AGs have initiated investigations and enforcement actions. Technical implementation gaps are particularly significant because rights like opt-out of targeted advertising, right to correct, and data portability each require different technical workflows to fulfill."
+frameworks:
+  - id: "CCPA/CPRA §1798.100–1798.199"
+    text: "California consumer rights including opt-out of sale, right to know, delete, correct, and limit sensitive data use"
+  - id: "Virginia VCDPA §59.1-571–585"
+    text: "Virginia consumer rights including right to appeal — requires separate appeal mechanism not required by CCPA"
+  - id: "Colorado CPA §6-1-1301 et seq."
+    text: "Colorado Privacy Act — universal opt-out mechanism required; data protection assessments for high-risk processing"
+  - id: "Connecticut CTPA P.A. 22-15"
+    text: "Connecticut privacy rights including right to opt out of profiling for solely automated decisions"
+  - id: "NIST Privacy Framework GV.PO-2"
+    text: "Privacy obligations under applicable law are identified, tracked, and implemented"
+industry_overlays:
+  technology:
+    weight_multiplier: 1.5
+  retail:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.3
+  legal:
+    weight_multiplier: 1.4
+  it_services:
+    weight_multiplier: 1.3
+  education:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "If you have customers in Virginia, Colorado, Connecticut, Texas, or other states with privacy laws, each of those laws may require technical features that CCPA does not — including an appeal mechanism for opt-out denials, a universal opt-out signal, and data protection impact assessments. Implement rights fulfilment for each applicable state."
+remediation_technical: "1. Conduct a state law applicability analysis: determine which state privacy laws apply based on consumer locations, revenue thresholds, and data volume thresholds for each state. 2. For each applicable law, map the rights required and compare against current technical implementation: right to appeal (VCDPA), universal opt-out mechanism (Colorado CPA GPC), data protection assessments (CO/CT/VA), profiling opt-out (CT/CO), right to correct, right to delete, data portability. 3. Implement technical workflows for rights not already covered by CCPA implementation: appeals workflow, GPC opt-out signal processing, state-specific assessment documentation. 4. Implement a legislative monitoring programme: subscribe to state legislative updates and schedule quarterly reviews for new enactments and effective dates. 5. Update privacy notices to accurately reflect applicable state law rights for each relevant state."

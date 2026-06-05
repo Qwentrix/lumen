@@ -1,0 +1,32 @@
+id: COMP_RESIDENCY_REQUIREMENT_UNCONFIRMED
+domain: compliance
+severity: medium
+default_weight: 0.55
+detect:
+  questionnaire:
+    - Q-COMP-019 == yes_strict_residency_requirements
+title: "Strict data residency requirements identified but controls not confirmed"
+description_short: "Strict regulatory or contractual residency requirements exist but it is unconfirmed whether technical controls adequately enforce them."
+description_long: "Identifying that residency requirements exist is the first step — but without confirming that technical controls actually enforce those requirements, the organisation does not know whether it is compliant. Residency requirements in regulated sectors (government, defence, healthcare, financial services) carry significant contractual and regulatory consequences when violated. Data found outside the required boundary during a customer audit or regulatory inspection can result in contract termination, regulatory fines, or loss of certification. Strict residency requirements typically demand a combination of documented requirements, cloud region controls, encryption key boundary enforcement, and periodic verification — not just awareness that the requirement exists."
+frameworks:
+  - id: "GDPR Ch. V"
+    text: "Transfers of personal data to third countries — strict requirements for international transfers"
+  - id: "FedRAMP AC-20 / SC-28"
+    text: "Strict boundary controls required for CUI and government data — residency must be technically enforced"
+  - id: "ISO 27001 A.18.1.4"
+    text: "Privacy and protection of PII — comply with data residency obligations applicable to the organisation"
+industry_overlays:
+  government:
+    weight_multiplier: 1.8
+  financial:
+    weight_multiplier: 1.5
+  healthcare:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.4
+  manufacturing:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "If you have strict residency requirements, verify that your actual technical controls enforce them. Conduct an audit to confirm where your data is physically stored and whether any services replicate data outside the approved boundary."
+remediation_technical: "Conduct a residency verification audit: enumerate all data storage services (databases, object storage, backups, caches, CDN edge nodes) and confirm physical region for each. Cross-reference against the documented residency requirement. For any out-of-region storage identified, assess the risk and implement remediation. Implement continuous cloud configuration monitoring (AWS Config, Azure Policy Compliance, GCP Security Command Center) to detect new out-of-region storage as it is provisioned. Document the verification findings and provide them to customers and auditors as evidence of residency compliance."

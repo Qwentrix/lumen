@@ -1,0 +1,34 @@
+id: VULN_NO_IAC_SCAN
+domain: vulnerabilities
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-VULN-DD-019 == no_iac_scanning
+title: "Infrastructure-as-code is used but not scanned for security misconfigurations"
+description_short: "IaC templates (Terraform, CloudFormation, Bicep, etc.) are deployed without scanning for security misconfigurations."
+description_long: "Deploying Infrastructure-as-Code without security scanning codifies misconfigurations at scale. A single insecure Terraform module or CloudFormation template can provision hundreds of resources with the same misconfiguration — overly permissive security groups, unencrypted storage volumes, public subnets, or disabled access logging. Unlike manual provisioning, IaC misconfigurations are reproduced consistently every time the template is applied. Scanning IaC templates before deployment is the most efficient point to catch these issues: it is far less costly to fix a policy file than to remediate 50 deployed resources. NIST SP 800-218 (SSDF) and CIS Software Supply Chain Security Guide require security validation of configuration artefacts before deployment. NIST SP 800-53 CM-3 requires that configuration changes are reviewed for security implications."
+frameworks:
+  - id: "NIST SP 800-218 PS.2.1"
+    text: "SSDF — review and test IaC and configuration artefacts for security issues before deployment"
+  - id: "NIST SP 800-53 CM-3"
+    text: "Configuration Change Control — analyse configuration changes for security impact before implementation"
+  - id: "CIS Software Supply Chain Security Guide"
+    text: "Integrate IaC security scanning into CI/CD pipelines to prevent misconfiguration deployment"
+industry_overlays:
+  technology:
+    weight_multiplier: 1.4
+  it_services:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.3
+  retail:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Add IaC security scanning to your CI/CD pipeline. Catching a misconfigured security group in a Terraform file takes seconds to fix; fixing it in 100 deployed resources across multiple environments takes days."
+remediation_technical: "Integrate an IaC security scanner into your CI/CD pipeline (Checkov, tfsec, KICS, Terrascan, or equivalent). Configure the scanner to enforce your security baseline — CIS Cloud Foundations Benchmark rules are a good starting policy set. Block pipeline runs on high and critical severity findings. Add IaC scanning to your pull request checks so developers receive feedback before code reaches main. Run an initial scan of all existing IaC in your repositories to establish a remediation backlog."

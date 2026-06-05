@@ -1,0 +1,46 @@
+id: PRIV_ROPA_GAP
+domain: privacy
+severity: high
+default_weight: 0.75
+detect:
+  questionnaire:
+    - Q-PRIV-010 == no
+    - Q-PRIV-010 == ad_hoc
+    - Q-PRIV-DD-005 == no_ropa
+    - Q-PRIV-DD-005 == partial_ropa
+    - Q-PRIV-DD-007 == no_lineage_tracking
+    - Q-PRIV-DD-008 == no_process
+    - Q-PRIV-DD-031 == no_ropa
+title: "Records of Processing Activities (ROPA) absent, incomplete, or not maintained as a living document"
+description_short: "The organization has no ROPA, has a partial ROPA that does not cover all processing activities, or does not update the ROPA when new processing activities are introduced."
+description_long: "GDPR Art. 30 mandates that every controller and processor maintain a ROPA. For controllers, Art. 30(1) requires: name and contact details of controller, DPO, and any joint controllers; purposes of processing; categories of data subjects and personal data; categories of recipients; cross-border transfer details and mechanisms; and envisaged retention periods. A ROPA that covers only some processing activities fails Art. 30 for the uncovered activities. A ROPA that exists but is not updated when new activities commence (no pre-launch review gate, Q-PRIV-010 == no; new SaaS not captured, Q-PRIV-DD-008 == no_process) creates a drift between documented and actual processing that accumulates rapidly. Supervisory authorities request the ROPA as the first document in compliance investigations — an absent or obviously incomplete ROPA is strong evidence of systemic non-compliance."
+frameworks:
+  - id: "GDPR Art. 30"
+    text: "Records of processing activities — mandatory for controllers and processors; required elements specified"
+  - id: "GDPR Art. 30(4)"
+    text: "ROPA must be available to supervisory authority on request"
+  - id: "GDPR Art. 30(1)(a)–(f)"
+    text: "Mandatory ROPA elements: controller identity, purposes, data categories, recipients, transfers, retention"
+  - id: "CCPA §1798.130"
+    text: "Privacy notice must accurately describe data collection and use — requires underlying ROPA-equivalent documentation"
+  - id: "ISO 27018 §5.1"
+    text: "Accurate and current processing records are a foundational cloud privacy control"
+  - id: "NIST Privacy Framework PR.ID-1"
+    text: "Personal data inventory with processing purposes — equivalent to ROPA requirement"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  technology:
+    weight_multiplier: 1.3
+  education:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Build your ROPA to cover every processing activity — not just the obvious ones. Keep it updated whenever you add a new feature, adopt a new SaaS tool, or change how you use personal data. Regulators ask for this document first; it must be ready."
+remediation_technical: "1. Conduct a full processing activity inventory to identify every activity that needs a ROPA entry. 2. For each activity, document the mandatory Art. 30(1) elements: controller/DPO contact, purpose of processing, legal basis, data subject categories, data categories, recipient categories, cross-border transfers and mechanisms, retention periods. 3. Structure the ROPA so it can be updated modularly when individual activities change. 4. Implement a pre-launch gate: all new processing activities must have a ROPA entry created and approved before launch. 5. Integrate ROPA with data inventory: SaaS onboarding triggers a ROPA entry, not just a data map update. 6. Schedule annual ROPA reviews: full audit of all entries against actual processing, with documented reviewer sign-off. 7. Ensure the ROPA is producible to a supervisory authority within 24 hours of request."

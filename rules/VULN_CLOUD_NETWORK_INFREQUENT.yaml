@@ -1,0 +1,34 @@
+id: VULN_CLOUD_NETWORK_INFREQUENT
+domain: vulnerabilities
+severity: medium
+default_weight: 0.40
+detect:
+  questionnaire:
+    - Q-VULN-DD-021 == reviewed_ad_hoc
+title: "Cloud and on-premises network controls reviewed only ad hoc — no defined schedule"
+description_short: "Security groups, firewall rules, and network ACLs are reviewed ad hoc rather than on a recurring schedule, allowing rule sprawl and over-permissive access to accumulate."
+description_long: "Network control rules (security groups, NACLs, firewall rules, NSGs) without a defined review schedule accumulate over-permissive entries over time. Rules added for one-off access during incidents or testing are rarely revoked, and the cumulative effect is an increasingly permissive network perimeter. Without scheduled reviews, the team has no systematic mechanism to detect overly broad inbound rules, 0.0.0.0/0 ingress permissions, or rules that no longer correspond to a legitimate service. NIST SP 800-53 CA-7 (Continuous Monitoring) and CIS Control 12 (Network Infrastructure Management) both expect recurring review cadences for network access controls."
+frameworks:
+  - id: "NIST SP 800-53 CA-7"
+    text: "Continuous monitoring — ongoing assessment of security controls including network access rules"
+  - id: "CIS Control 12"
+    text: "Network Infrastructure Management — manage and review network access controls"
+  - id: "PCI DSS Req 1.3"
+    text: "Restrict inbound and outbound traffic to only what is required"
+industry_overlays:
+  financial:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.3
+  technology:
+    weight_multiplier: 1.2
+  it_services:
+    weight_multiplier: 1.2
+  retail:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Establish a quarterly schedule for reviewing firewall rules and security group configurations. Any rule that cannot be attributed to a current business need should be removed immediately."
+remediation_technical: "Implement a network rule review process tied to your change management cadence. Use cloud-native tools (AWS Network Access Analyzer, GCP VPC Flow Logs, Azure Network Watcher) to identify unused rules and over-permissive inbound policies. Establish a 'default deny' posture and require business justification with expiry dates for all permit rules. Consider Infrastructure-as-Code (IaC) to make rule changes auditable and reviewable in pull requests."

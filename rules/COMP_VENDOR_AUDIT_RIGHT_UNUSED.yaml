@@ -1,0 +1,30 @@
+id: COMP_VENDOR_AUDIT_RIGHT_UNUSED
+domain: compliance
+severity: low
+default_weight: 0.25
+detect:
+  questionnaire:
+    - Q-COMP-DD-022 == yes_right_not_exercised
+title: "Contractual vendor audit right exists but has never been exercised"
+description_short: "Vendor contracts include audit rights but those rights have not been exercised."
+description_long: "A contractual audit right that is never used provides only theoretical assurance. The organisation has the ability to verify vendor compliance but has not done so — meaning it has no independent verification that the vendor's current security posture matches their claims. Over time, vendors whose certifications are never requested or reviewed may allow their compliance posture to drift, knowing that no review is forthcoming. For regulated industries — particularly healthcare and financial services — regulators expect that audit rights are exercised as part of an active vendor risk management programme. Having the right but not using it can be seen as a failure of due diligence."
+frameworks:
+  - id: "PCI DSS Req 12.8.4"
+    text: "Monitor service provider compliance status — requires active monitoring, not just contractual rights"
+  - id: "ISO 27001 A.15.2.1"
+    text: "Monitoring and review of supplier services — regular reviews are required, not just the ability to review"
+  - id: "SOC 2 CC9.2"
+    text: "Vendor management — ongoing monitoring requires active use of oversight mechanisms"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Exercise your audit rights — at minimum, request each critical vendor's current SOC 2 or ISO 27001 report annually and review it for exceptions relevant to your data. Having the right on paper means nothing if you never use it."
+remediation_technical: "Incorporate annual exercise of vendor audit rights into the vendor review cycle: for Tier-1 vendors, request their most recent SOC 2 Type II report or ISO 27001 certificate annually; review the report for any exceptions, qualified opinions, or management observations relevant to your data handling; request clarification on any issues found. For vendors who cannot produce current certification, use the contractual audit right to require a direct assessment. Document each exercise of the audit right — the date, what was requested, the vendor's response, and the findings — as compliance evidence."

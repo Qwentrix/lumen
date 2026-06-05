@@ -1,0 +1,30 @@
+id: COMP_RETENTION_INFORMAL
+domain: compliance
+severity: medium
+default_weight: 0.45
+detect:
+  questionnaire:
+    - Q-COMP-010 == informal_only
+title: "Data retention based on informal shared understanding — not documented"
+description_short: "Data retention periods exist as informal shared understanding rather than a documented and enforceable policy."
+description_long: "An informal understanding of retention periods — 'we keep logs for about a year' or 'we delete old customer records when we remember to' — does not constitute a retention policy for regulatory purposes. GDPR Article 5(1)(e) requires organisations to demonstrate that personal data is not kept longer than necessary — which requires a documented and enforceable policy, not informal practice. Regulators consistently find that informal retention practices result in both over-retention (data kept indefinitely) and under-retention (records deleted before they are legally required). Informal practices also do not survive staff turnover — when the person who 'knew' the retention rules leaves, the practice often stops entirely."
+frameworks:
+  - id: "GDPR Art. 5(1)(e)"
+    text: "Storage limitation — must be documented and enforceable, not merely understood informally"
+  - id: "HIPAA 164.316(b)(2)"
+    text: "Documentation — retain required documentation for the specified periods; informal practice is insufficient"
+  - id: "PCI DSS Req 3.2.1"
+    text: "Data retention and disposal policy — must be formally documented"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Write down your data retention rules — formalise the informal understanding into a policy that specifies retention periods by data type, who is responsible for enforcement, and how compliance is verified."
+remediation_technical: "Formalise the informal retention understanding into a documented data retention policy: define minimum and maximum retention periods for each data category, identify the regulatory obligation underpinning each period, assign enforcement responsibility, and define the technical control that enforces each retention requirement. Version-control the policy and require annual review. Translate the policy into automated lifecycle rules in your storage systems (S3 lifecycle policies, database archival jobs, log rotation configuration). Retain the policy document as compliance evidence."

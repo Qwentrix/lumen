@@ -1,0 +1,32 @@
+id: VULN_NO_CVE_EXEC_REPORTING
+domain: vulnerabilities
+severity: medium
+default_weight: 0.40
+detect:
+  questionnaire:
+    - Q-VULN-DD-016 == not_reported
+title: "CVE remediation status is not reported to senior leadership"
+description_short: "Vulnerability remediation status and risk acceptance decisions are not communicated to senior leadership, creating accountability gaps."
+description_long: "When vulnerability remediation metrics are not reported to senior leadership, the organisation's risk posture becomes invisible to those accountable for it. Leadership cannot make informed resource allocation decisions, approve risk acceptance for unremediable findings, or demonstrate due diligence to regulators and boards without regular vulnerability reporting. NIST SP 800-53 PM-9 (Risk Management Strategy) and governance frameworks such as NIST CSF ID.GV-4 require that cybersecurity risk is reported to appropriate organisational levels. SEC cybersecurity disclosure rules (for public companies) and HIPAA require that significant security risk be communicated to the board or senior leadership. The absence of reporting also removes an incentive for the security team to improve metrics."
+frameworks:
+  - id: "NIST SP 800-53 PM-9"
+    text: "Risk Management Strategy — communicate security risk information to appropriate organizational levels"
+  - id: "NIST CSF ID.GV-4"
+    text: "Governance — cybersecurity risk is reported to appropriate organizational levels"
+  - id: "ISO 27001 A.6.1.1"
+    text: "Information security roles and responsibilities — senior leadership must be informed of material security risk"
+industry_overlays:
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.2
+  it_services:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Senior leadership needs to see your vulnerability posture — not every CVE, but the headline metrics: open critical count, mean time to remediate, risk acceptances outstanding. Without this, no one at the top of the organisation knows what the real risk exposure is."
+remediation_technical: "Establish a monthly or quarterly vulnerability posture report for senior leadership. Include: open critical and high vulnerability counts by age, mean time to remediate by severity tier, trend direction (improving/deteriorating), formal risk acceptance items outstanding, and top-risk systems. Automate report generation from your vulnerability management platform. Ensure the report is reviewed in a standing governance forum — not just distributed via email."

@@ -1,0 +1,36 @@
+id: SECPOS_OT_IT_UNSEGMENTED
+domain: security_posture
+severity: critical
+default_weight: 0.90
+detect:
+  questionnaire:
+    - Q-SECPOS-021 == ot_it_shared_network
+title: "OT and IT networks are not segmented — industrial systems exposed to IT threats"
+description_short: "Operational technology and IT networks share the same network, exposing industrial systems to cyber threats."
+description_long: "OT/ICS environments control physical processes — power grids, manufacturing lines, water treatment, pipelines. When OT and IT networks share connectivity, malware or ransomware that compromises an IT endpoint can propagate directly to SCADA, PLCs, and HMIs. The Colonial Pipeline incident, Triton/TRISIS attack, and Industroyer/Crashoverride malware all exploited insufficient OT/IT segmentation to cause physical impact. NIST SP 800-82 and IEC 62443 specifically require network demarcation between IT and OT with unidirectional or strictly controlled bi-directional data flows."
+frameworks:
+  - id: "NIST SP 800-82 Rev 3"
+    text: "Guide to OT Security — network segmentation between IT and OT zones"
+  - id: "CIS Control 12.2"
+    text: "Establish and maintain a secure network architecture"
+  - id: "ISO 27001:2022 A.8.20"
+    text: "Networks security"
+  - id: "IEC 62443-3-3 SR 5.1"
+    text: "Network segmentation — protection of OT/ICS control networks"
+  - id: "FedRAMP SC-7"
+    text: "Boundary protection"
+  - id: "CISA Zero Trust Pillar: Networks"
+    text: "Strict network segmentation for critical infrastructure OT environments"
+industry_overlays:
+  manufacturing:
+    weight_multiplier: 1.6
+  energy:
+    weight_multiplier: 1.8
+  government:
+    weight_multiplier: 1.5
+  healthcare:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Physically or logically separate your OT/ICS network from your corporate IT network using a firewall or data diode. Allow only the specific data flows required for operations — block everything else. Treat OT systems as if they are on a different network from IT."
+remediation_technical: "Implement a Purdue Model network architecture: separate OT zones (Level 0–2), a demilitarised OT/IT zone (Level 3.5 DMZ), and IT (Level 4–5). Deploy a unidirectional data diode (Waterfall Security, Owl Cyber Defense) for read-only historian data flows from OT to IT. Where bidirectional traffic is required (patch management, historian), use a jump server in the DMZ with application-layer proxying and deep-packet inspection for ICS protocols (Modbus, DNP3, EtherNet/IP). Monitor OT network traffic with an OT-aware IDS (Claroty, Dragos, Nozomi Networks). Never allow direct RDP or SMB from IT to OT."

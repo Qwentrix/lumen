@@ -238,7 +238,7 @@ func TestPerDomainConsentGate(t *testing.T) {
 
 	// runScan should proceed past the top-level gate (vulnerabilities is accepted)
 	// and NOT return a "lumen consent" error. The non-accepted probes are skipped.
-	err = runScan(context.Background(), "", false, "", false, outputPath, "", "smb", false, false)
+	err = runScan(context.Background(), "", false, "", false, outputPath, "", "smb", false, false, false, "aws")
 	// The error may be non-nil for other reasons (no scoring data etc.), but it
 	// must not be "run 'lumen consent'" — the consent gate must pass.
 	if err != nil && strings.Contains(err.Error(), "run 'lumen consent'") {
@@ -292,7 +292,7 @@ func TestConsentGate(t *testing.T) {
 		emptyHome := t.TempDir()
 		t.Setenv("HOME", emptyHome)
 
-		err := runScan(context.Background(), "", false, "", false, outputPath, "", "smb", false, false)
+		err := runScan(context.Background(), "", false, "", false, outputPath, "", "smb", false, false, false, "aws")
 		if err == nil {
 			t.Fatal("expected error when no consent exists, got nil")
 		}
@@ -307,7 +307,7 @@ func TestConsentGate(t *testing.T) {
 
 		// runScan will fail after the consent gate (no probes run in test env),
 		// but the gate itself must not return the "lumen consent" error.
-		err := runScan(context.Background(), "", false, "", false, outputPath, "", "smb", false, false)
+		err := runScan(context.Background(), "", false, "", false, outputPath, "", "smb", false, false, false, "aws")
 		if err != nil && strings.Contains(err.Error(), "lumen consent") {
 			t.Errorf("consent gate should pass but got: %v", err)
 		}
@@ -322,7 +322,7 @@ func TestConsentGate(t *testing.T) {
 
 		// runScan will fail after the consent gate for other reasons (no real
 		// probes/scoring in test), but must NOT return the "lumen consent" error.
-		err := runScan(context.Background(), "", false, "", false, outputPath, "", "smb", true, false)
+		err := runScan(context.Background(), "", false, "", false, outputPath, "", "smb", true, false, false, "aws")
 		if err != nil && strings.Contains(err.Error(), "lumen consent") {
 			t.Errorf("--skip-consent should bypass gate but got: %v", err)
 		}

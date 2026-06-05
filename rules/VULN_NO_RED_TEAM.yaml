@@ -1,0 +1,34 @@
+id: VULN_NO_RED_TEAM
+domain: vulnerabilities
+severity: medium
+default_weight: 0.40
+detect:
+  questionnaire:
+    - Q-VULN-DD-008 == neither
+title: "No red team exercises or adversarial simulation — neither internal nor third-party"
+description_short: "No red team exercises are conducted — neither internal adversarial simulation nor third-party red teaming."
+description_long: "Relying solely on penetration tests without any adversarial simulation (red teaming) leaves the organisation without validated detection and response capabilities. Penetration tests focus on vulnerability identification; red team exercises simulate realistic attack campaigns — including persistence, lateral movement, and data exfiltration — to test whether the organisation's detection and response would actually work. Without red team exercises, an organisation may have theoretical security controls that fail silently under realistic attack conditions. NIST SP 800-53 CA-8 recommends adversarial testing for high-value systems. Financial regulators (FCA, FFIEC), large government agencies, and critical infrastructure operators increasingly mandate or strongly expect red team exercises for organisations of mid-enterprise scale."
+frameworks:
+  - id: "NIST SP 800-53 CA-8"
+    text: "Penetration Testing — conduct adversarial testing including red team exercises for high-value systems"
+  - id: "NIST CSF PR.IP-10"
+    text: "Response and recovery plans are tested — red team exercises test detection and response capabilities"
+  - id: "TIBER-EU"
+    text: "Threat Intelligence Based Ethical Red Teaming — red team exercises required for EU financial sector entities"
+industry_overlays:
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.3
+  technology:
+    weight_multiplier: 1.3
+  energy:
+    weight_multiplier: 1.4
+  it_services:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Penetration tests find vulnerabilities; red team exercises test whether your security controls actually work when an attacker uses them. Both are needed for a mature security programme — consider introducing red team exercises on an annual or biennial basis."
+remediation_technical: "Introduce red team exercises into your security testing programme: start with a purple team exercise (collaborative red/blue team) to build familiarity before moving to adversarial red team engagements. Scope the first exercise around your highest-value systems (crown jewel data stores, identity infrastructure). Use MITRE ATT&CK TTPs as the exercise framework. Ensure findings from red team exercises feed directly into detection rule improvements and incident response playbook updates. For regulated organisations, align the programme to relevant frameworks (TIBER-EU, CBEST, iCAST)."

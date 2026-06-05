@@ -1,0 +1,28 @@
+id: PRIV_NO_PRIVACY_NOTICE
+domain: privacy
+severity: high
+default_weight: 0.7
+detect:
+  questionnaire:
+    - Q-PRIV-002 == no
+title: "No privacy notice published"
+description_short: "No Privacy Notice or Privacy Policy is published to data subjects."
+description_long: "Transparency is a foundational GDPR principle (Art. 5(1)(a)). Failing to provide a Privacy Notice that clearly explains what data is collected, why, how long it is kept, and subjects' rights is a direct regulatory breach. The UK ICO has issued fines specifically for missing or inadequate notices."
+frameworks:
+  - id: "GDPR Art. 13 / Art. 14"
+    text: "Information to be provided where personal data are collected from / not from the data subject"
+  - id: "CCPA §1798.100"
+    text: "Consumer right to know about personal information collected"
+  - id: "HIPAA 164.520"
+    text: "Notice of privacy practices"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.4
+  retail:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Publish a Privacy Notice on your website and at every data collection point, explaining what data you collect, why, and how individuals can exercise their rights."
+remediation_technical: "Draft a GDPR-compliant Privacy Notice covering lawful basis, data categories, retention periods, third-party sharing, and data subject rights. Present it prominently at sign-up/consent points. Version-control the document and record publication dates for audit."

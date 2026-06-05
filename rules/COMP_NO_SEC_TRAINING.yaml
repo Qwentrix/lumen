@@ -1,0 +1,24 @@
+id: COMP_NO_SEC_TRAINING
+domain: compliance
+severity: medium
+default_weight: 0.5
+detect:
+  questionnaire:
+    - Q-COMP-003 == no_training
+title: "No security awareness training programme"
+description_short: "No formal security awareness training is conducted for staff."
+description_long: "Human error and social engineering (phishing, pretexting) account for the majority of initial access in breaches. Security awareness training is a mandated control in HIPAA, PCI DSS, and ISO 27001, and measurably reduces click rates on phishing simulations."
+frameworks:
+  - id: "HIPAA 164.308(a)(5)"
+    text: "Security awareness and training"
+  - id: "PCI DSS Req 12.6"
+    text: "Security awareness education programme"
+  - id: "ISO 27001:2022 A.6.3"
+    text: "Information security awareness, education and training"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Launch an annual security awareness training programme with phishing simulations and completion tracking."
+remediation_technical: "Deploy a security awareness platform (KnowBe4, Proofpoint, or open-source GoPhish). Define role-based training tracks. Feed phishing-click metrics into your risk dashboard."

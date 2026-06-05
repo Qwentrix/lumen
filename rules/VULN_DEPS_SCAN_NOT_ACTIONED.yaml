@@ -1,0 +1,34 @@
+id: VULN_DEPS_SCAN_NOT_ACTIONED
+domain: vulnerabilities
+severity: medium
+default_weight: 0.45
+detect:
+  questionnaire:
+    - Q-VULN-008 == scanning_exists_not_reviewed
+title: "Dependency scan results exist but are rarely reviewed or acted upon"
+description_short: "Automated dependency scanning runs but findings are rarely reviewed, making the scanning investment ineffective."
+description_long: "Running dependency scanning without reviewing the results provides false assurance — the organisation believes it has dependency visibility, but the actual risk remains unaddressed. Over time, the backlog of unreviewed findings grows while known vulnerable dependencies remain in production. OWASP Top 10 A06:2021 (Vulnerable and Outdated Components) is consistently in the top ten precisely because organisations have scanning that does not translate into remediation action. CIS Control 7 requires not just scanning but acting on scan results. NIST SP 800-218 (SSDF) PO.4.2 requires that vulnerability response processes exist and are followed for software dependencies."
+frameworks:
+  - id: "OWASP Top 10 A06:2021"
+    text: "Vulnerable and Outdated Components — scanning without action is insufficient"
+  - id: "NIST SP 800-218 PO.4.2"
+    text: "SSDF — implement and follow a process for responding to identified software vulnerabilities"
+  - id: "CIS Control 7"
+    text: "Continuous Vulnerability Management — act on scan results, not just collect them"
+industry_overlays:
+  technology:
+    weight_multiplier: 1.4
+  it_services:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.3
+  retail:
+    weight_multiplier: 1.2
+  government:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Scanning without acting on the results gives you the cost of a security program without the protection. Assign someone to review findings weekly, block builds on critical or high severity results, and establish a backlog-clearing sprint for existing findings."
+remediation_technical: "Configure your dependency scanner (Dependabot, Snyk, OWASP Dependency-Check, or equivalent) to fail CI builds on critical and high severity findings. Triage the existing backlog: auto-close findings with no available fix or for EOL libraries, and create tickets for all actionable findings with assigned owners. Establish a weekly review cadence for medium findings. Use CVSS + EPSS scores to prioritize which findings require immediate remediation."

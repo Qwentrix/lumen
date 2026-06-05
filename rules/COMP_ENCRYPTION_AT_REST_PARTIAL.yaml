@@ -1,0 +1,35 @@
+id: COMP_ENCRYPTION_AT_REST_PARTIAL
+domain: compliance
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-COMP-021 == partial
+    - Q-COMP-021 == yes_primary_not_backups
+title: "Encryption at rest is incomplete — backups or some systems unencrypted"
+description_short: "Some systems are encrypted at rest but backups or certain environments remain unprotected."
+description_long: "Partial encryption creates predictable attack paths: adversaries familiar with common gaps — specifically unencrypted backups — prioritise stealing backup media or gaining access to backup storage to bypass primary encryption controls. Backup data is frequently the richest target in a storage estate. HIPAA, PCI DSS, and FedRAMP do not accept selective encryption — all sensitive data stores, including offline and cloud backups, must be encrypted. PCI DSS explicitly requires that backup cardholder data be encrypted to the same standard as primary stores."
+frameworks:
+  - id: "PCI DSS Req 3.5"
+    text: "Stored account data — including backups — must be protected by strong cryptography"
+  - id: "HIPAA 164.312(a)(2)(iv)"
+    text: "Encryption of ePHI at rest applies to all storage including backup"
+  - id: "FedRAMP SC-28"
+    text: "Protection of information at rest — all copies including backup"
+  - id: "SOC 2 CC6.7"
+    text: "Encryption protecting all copies of sensitive data at rest"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  retail:
+    weight_multiplier: 1.3
+  legal:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Extend encryption at rest to cover all data stores — especially backups, which are a common theft target. Unencrypted backups negate much of the protection provided by encrypting primary databases."
+remediation_technical: "Audit all backup destinations (cloud storage, tape, off-site) to confirm encryption is enabled. Enable backup encryption in your backup tooling (Veeam encryption, AWS Backup encryption with KMS, Azure Backup Server encryption). Verify that backup restore tests work end-to-end with encrypted backups. Include backup encryption status in your annual encryption inventory review."

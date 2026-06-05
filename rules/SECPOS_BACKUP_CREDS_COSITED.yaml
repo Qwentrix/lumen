@@ -1,0 +1,39 @@
+id: SECPOS_BACKUP_CREDS_COSITED
+domain: security_posture
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-SECPOS-032 == same_as_production
+    - Q-SECPOS-032 == separate_location_same_admin
+    - Q-SECPOS-DD-025 == not_encrypted
+    - Q-SECPOS-DD-025 == encrypted_local_keys
+title: "Backup credentials co-located with production — attackers can reach backups"
+description_short: "Backup credentials and encryption keys are accessible from the same accounts or systems used for production."
+description_long: "Co-located backup credentials are the primary reason ransomware actors successfully destroy backups before deploying the payload. If the same admin account used in production can also access or delete backups, a compromised admin credential neutralises the backup as a recovery option. Modern ransomware groups specifically enumerate backup software (Veeam, Commvault, Backup Exec) using production credentials and delete or encrypt backup repositories before triggering the main ransomware detonation. Backup credentials and encryption keys must be isolated in a separate vault with separate MFA and separate access controls."
+frameworks:
+  - id: "NIST CSF RC.RP-01"
+    text: "Recovery plan is executed during or after a cybersecurity incident"
+  - id: "CIS Control 11.3"
+    text: "Protect recovery data — separate identity and access controls for backups"
+  - id: "ISO 27001:2022 A.8.13"
+    text: "Information backup — protection of backup copies"
+  - id: "SOC 2 A1.3"
+    text: "Environmental threat recovery — segregation of backup control"
+  - id: "FedRAMP CP-9(3)"
+    text: "System backup — separate storage control"
+  - id: "CISA Zero Trust Pillar: Data"
+    text: "Backup system credentials isolated from production access"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  energy:
+    weight_multiplier: 1.5
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Store backup credentials and encryption keys in a separate vault that cannot be accessed using production admin accounts. Use different credentials with separate MFA for backup administration. This ensures attackers who compromise production cannot also destroy your backups."
+remediation_technical: "Create a dedicated backup-admin service account stored in a separate secrets vault (HashiCorp Vault, AWS Secrets Manager in a separate account, Azure Key Vault in a separate subscription). This account must require MFA to use and must not be accessible from the production AD domain. Store backup encryption keys in the same isolated vault. Configure backup software (Veeam, Commvault) with its own dedicated admin account not shared with any production role. Use WORM or object-lock storage to prevent even admin deletion of recent backup sets. Rotate backup credentials quarterly."

@@ -1,0 +1,45 @@
+id: CLOUD_PUBLIC_INGRESS
+domain: security_posture
+severity: high
+default_weight: 0.80
+detect:
+  scanner:
+    - cloud.public_ingress_count > 0
+title: "Cloud security group(s) permit ingress from 0.0.0.0/0"
+description_short: "One or more cloud network security groups allow unrestricted inbound traffic from the public internet, exposing workloads to direct attack."
+description_long: "A security group (AWS SG), VPC firewall rule (GCP), or network security group (Azure NSG) with source 0.0.0.0/0 means that every host on the internet can attempt a connection to the associated port. Common examples — SSH (22), RDP (3389), or database ports (3306, 5432) open to the world — are among the most frequent initial access vectors catalogued by CISA and seen in breach investigations. CIS AWS Foundations Benchmark control 5.2 specifically requires that no security group allows unrestricted ingress on port 22; 5.3 requires the same for port 3389. More broadly, the principle of least privilege applied to network access (NIST 800-53 SC-7, AC-4) demands that only explicitly required traffic reaches any workload. Open security groups are often an artefact of development convenience that persists undetected in production when cloud posture tooling is absent."
+frameworks:
+  - id: "CIS AWS Foundations Benchmark 5.2"
+    text: "Ensure no security groups allow unrestricted ingress access to port 22 (SSH)"
+  - id: "CIS AWS Foundations Benchmark 5.3"
+    text: "Ensure no security groups allow unrestricted ingress access to port 3389 (RDP)"
+  - id: "NIST 800-53 SC-7"
+    text: "Boundary Protection — monitor and control traffic at external network boundaries"
+  - id: "NIST 800-53 AC-4"
+    text: "Information Flow Enforcement — restrict network flows to authorised channels only"
+  - id: "ISO 27001:2022 A.8.20"
+    text: "Network security — secure and segment cloud networks; restrict public-facing ingress"
+  - id: "PCI DSS Req 1.3.1"
+    text: "Inbound traffic to the CDE is restricted to only that which is necessary"
+micelium_product:
+  - product: Sovera
+    role: Policy-as-code continuously audits security group rules and enforces least-privilege ingress baselines
+  - product: Sense
+    role: Network behavioural monitoring detects reconnaissance and exploitation attempts via overly permissive ingress paths
+industry_overlays:
+  financial:
+    weight_multiplier: 1.5
+  healthcare:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  energy:
+    weight_multiplier: 1.4
+  retail:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Remove all security group rules that allow inbound traffic from 0.0.0.0/0 on any port unless the workload is an intentionally public service (e.g. a load balancer on port 443). Replace broad allow rules with specific source IP ranges or security group references. Never expose administrative ports (SSH, RDP) to the public internet — use a bastion or VPN instead."
+remediation_technical: "AWS: use 'aws ec2 describe-security-groups' filtered by 'ip-ranges.cidr-ip=0.0.0.0/0' to enumerate offending rules. Remove each with 'aws ec2 revoke-security-group-ingress'. Enable AWS Config rule 'restricted-ssh' and 'restricted-common-ports'. Replace 0.0.0.0/0 ingress with specific CIDR allowlists or source security group references for internal service-to-service traffic. For admin access use AWS Systems Manager Session Manager (no open port required) or an EC2 Instance Connect Endpoint. GCP: audit VPC firewall rules with 'gcloud compute firewall-rules list --filter=sourceRanges:0.0.0.0/0'. Azure: review NSG rules via Azure Security Center / Microsoft Defender for Cloud. Enforce guardrails via AWS Service Control Policies or Azure Policy assignments that deny creation of 0.0.0.0/0 ingress rules on non-load-balancer tiers."

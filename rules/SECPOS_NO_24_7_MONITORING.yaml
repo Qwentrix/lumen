@@ -1,0 +1,40 @@
+id: SECPOS_NO_24_7_MONITORING
+domain: security_posture
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-SECPOS-024 == no_active_monitoring
+    - Q-SECPOS-024 == business_hours_only
+    - Q-SECPOS-026 == logged_not_alerted
+title: "No 24/7 security monitoring — after-hours alerts not covered"
+description_short: "Security alerts are only reviewed during business hours or not at all, leaving a monitoring gap."
+description_long: "Ransomware and advanced persistent threats are frequently deployed at 2–4am on weekends precisely because SOC coverage is lowest at these times. If an organisation only monitors during business hours, attackers have a 16-hour window per day and 64 hours over a weekend to move laterally, establish persistence, and deploy ransomware before anyone notices. IBM CODB 2024 data shows that organisations with 24/7 monitoring contain breaches 63% faster and incur significantly lower breach costs. Outsourced MDR provides 24/7 coverage for organisations that cannot afford an internal round-the-clock SOC."
+frameworks:
+  - id: "NIST CSF DE.CM-06"
+    text: "External service provider activities are monitored"
+  - id: "CIS Control 8.11"
+    text: "Conduct audit log reviews on a defined cadence with 24/7 alerting"
+  - id: "ISO 27001:2022 A.8.16"
+    text: "Monitoring activities — ongoing monitoring of information security events"
+  - id: "SOC 2 CC7.2"
+    text: "The entity monitors system components continuously"
+  - id: "FedRAMP IR-6"
+    text: "Incident reporting — timely detection and reporting requirements"
+  - id: "CISA Zero Trust Pillar: Visibility and Analytics"
+    text: "Continuous monitoring across all pillars"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  energy:
+    weight_multiplier: 1.5
+  manufacturing:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Implement 24/7 monitoring by either staffing an internal SOC with rotating shifts or engaging a managed detection and response (MDR) provider. Ensure that critical alerts trigger immediate notification and response at any hour, not just during business hours."
+remediation_technical: "For organisations without an internal 24/7 SOC: engage an MDR provider (CrowdStrike Falcon Complete, Secureworks, Arctic Wolf, Red Canary) with a defined escalation SLA for P1 alerts (< 15 minutes). For internal SOC: implement on-call rotations with pager-alert integration (PagerDuty, Opsgenie). Configure SIEM severity-based escalation: critical alerts page immediately, high alerts within 30 minutes. Automate tier-1 response actions (isolate host, disable account, block IP) via SOAR for common playbooks, reducing human response latency."

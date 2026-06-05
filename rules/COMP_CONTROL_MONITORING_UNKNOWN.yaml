@@ -1,0 +1,28 @@
+id: COMP_CONTROL_MONITORING_UNKNOWN
+domain: compliance
+severity: medium
+default_weight: 0.45
+detect:
+  questionnaire:
+    - Q-COMP-DD-007 == unknown
+title: "Control monitoring frequency is unknown"
+description_short: "The organisation cannot determine which compliance controls are monitored continuously versus tested only at audit intervals."
+description_long: "When an organisation cannot characterise how its own controls are monitored, it signals a fundamental gap in compliance programme maturity. Controls that are only tested at audit time may have failed months earlier without detection, creating both regulatory exposure and security risk. SOC 2 requires ongoing monitoring as part of the Trust Services Criteria (CC4.1). ISO 27001 Clause 9.1 requires evaluation of information security performance. Not knowing the monitoring posture means the organisation cannot make risk-based decisions about where to invest in continuous control testing, and auditors will treat unknown monitoring as equivalent to absent monitoring."
+frameworks:
+  - id: "SOC 2 CC4.1"
+    text: "Monitoring of controls — evaluating whether controls are operating effectively"
+  - id: "ISO 27001 Clause 9.1"
+    text: "Monitoring, measurement, analysis and evaluation of information security performance"
+  - id: "NIST SP 800-137"
+    text: "Information security continuous monitoring — programme requirements"
+industry_overlays:
+  financial:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Inventory all compliance controls, classify each as continuously monitored or periodically tested, and address any controls with no current monitoring."
+remediation_technical: "Build a control register mapping each control to its monitoring mechanism and frequency. Classify controls into: (1) continuously monitored via automated tooling, (2) periodic manual testing with defined cadence, (3) gap — no monitoring. Integrate automated testing into your CI/CD pipeline and compliance platform (Vanta, Drata, Secureframe). Report monitoring coverage percentage to leadership quarterly."

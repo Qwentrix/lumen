@@ -1,0 +1,43 @@
+id: SECPOS_FLAT_NETWORK
+domain: security_posture
+severity: high
+default_weight: 0.75
+detect:
+  questionnaire:
+    - Q-SECPOS-017 == flat_network
+    - Q-SECPOS-017 == unknown
+    - Q-SECPOS-DD-013 == ad_hoc_no_process
+    - Q-SECPOS-DD-016 == no_cloud_segmentation
+    - Q-SECPOS-DD-017 == no_process
+    - Q-SECPOS-DD-018 == unencrypted_internal
+title: "Flat network architecture — no segmentation design or documented zone model"
+description_short: "No network segmentation architecture exists — the environment lacks defined zones, documented traffic policies, or enforced boundaries between user, server, and data tiers."
+description_long: "A flat network is an architectural posture finding: the organisation has not designed or documented network zones, has no approved traffic flow model between tiers, and has not implemented the segmentation controls that would make any zone boundaries enforceable. This is distinct from having segmentation that is merely incomplete or drifting — it reflects the absence of segmentation as a design principle. Every major security framework (NIST CSF, CIS Controls, ISO 27001, SOC 2, FedRAMP) requires network architecture to be documented and segmentation controls to be defined and enforced. Without this architectural foundation, the organisation cannot scope compliance assessments, cannot define a cardholder data environment, and cannot implement Zero Trust principles. The absence of segmentation design also means any new system deployed defaults to being fully reachable from all other systems, creating compounding structural risk with each addition to the environment."
+frameworks:
+  - id: "NIST CSF PR.IR-01"
+    text: "Networks and environments are protected from unauthorised logical access and usage"
+  - id: "CIS Control 12.2"
+    text: "Establish and maintain a secure network architecture"
+  - id: "ISO 27001:2022 A.8.20"
+    text: "Networks security — segmentation and access control"
+  - id: "SOC 2 CC6.6"
+    text: "Security measures restrict access to information assets from outside boundary"
+  - id: "FedRAMP SC-7"
+    text: "Boundary protection — network segmentation and monitoring"
+  - id: "CISA Zero Trust Pillar: Networks"
+    text: "Micro-segmentation to limit lateral movement and blast radius"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  energy:
+    weight_multiplier: 1.6
+  manufacturing:
+    weight_multiplier: 1.5
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Design your network architecture before trying to implement controls. Define which zones you need (e.g. user workstations, server tier, database tier, management plane), what traffic should flow between them, and what should be blocked by default. Document it, get it approved, and then enforce it with VLANs and firewall rules."
+remediation_technical: "Start with architecture documentation: define a tiered zone model (DMZ, application tier, data tier, management tier) and produce an approved data-flow diagram showing allowed inter-zone communications. This document becomes the authoritative basis for firewall ruleset design. Implement the architecture using VLANs with stateful inter-VLAN firewall rules (default-deny posture, explicit allow per approved flow). For cloud environments, enforce segmentation via VPC/subnet boundaries with security groups scoped to service identity rather than IP ranges. Establish a change-management process for firewall rule additions that requires reference to the approved zone model. For regulated scope reduction (PCI CDE, FedRAMP CUI boundary), the zone model must be explicit enough to support scoping decisions. Review the zone model and firewall rules annually and after significant infrastructure changes."

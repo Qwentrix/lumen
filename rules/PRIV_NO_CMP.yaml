@@ -1,0 +1,37 @@
+id: PRIV_NO_CMP
+domain: privacy
+severity: medium
+default_weight: 0.50
+detect:
+  questionnaire:
+    - Q-PRIV-017 == no_mechanism
+    - Q-PRIV-017 == custom_code
+title: "No Consent Management Platform — consent handled through custom code or not at all"
+description_short: "The organization uses custom application code or has no mechanism at all for managing consent, increasing the risk of invalid, unauditable, or incorrectly implemented consent flows."
+description_long: "Custom consent implementations built without a dedicated Consent Management Platform (CMP) are more likely to contain implementation defects — pre-ticked boxes, bundled consent, inadequate notice versions, or missing audit trails — than purpose-built CMP solutions. GDPR Art. 7(1) requires the controller to be able to demonstrate that consent was given; custom code systems frequently lack the structured consent audit trails needed to meet this standard. Where no mechanism exists at all (Q-PRIV-017 == no_mechanism), the organization is collecting and processing personal data for consent-based purposes without any lawful basis documentation. The EU's Digital Markets Act and ePrivacy Directive (and its forthcoming Regulation) both impose additional technical requirements on cookie consent that custom implementations frequently fail to meet consistently across jurisdictions."
+frameworks:
+  - id: "GDPR Art. 7(1)"
+    text: "Controller must be able to demonstrate consent was given — requires structured consent audit trail"
+  - id: "GDPR Art. 7(3)"
+    text: "Withdrawal must be as easy as giving consent — requires systematic preference management"
+  - id: "CCPA §1798.120"
+    text: "Right to opt out — requires a clearly accessible and functional opt-out mechanism"
+  - id: "ISO 27018 §5.3"
+    text: "Use of personal data for marketing requires documented, retrievable consent"
+  - id: "NIST Privacy Framework CT.PO-1"
+    text: "Consent is obtained, managed, and revoked in a consistent, documented manner"
+industry_overlays:
+  technology:
+    weight_multiplier: 1.4
+  retail:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.3
+  education:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "If consent is a lawful basis for any of your processing activities, adopt a dedicated Consent Management Platform. CMPs provide auditable consent records, proper withdrawal mechanisms, and version-controlled notice presentation that custom code rarely achieves consistently."
+remediation_technical: "1. Evaluate and adopt a CMP that provides: per-purpose consent capture, timestamped audit logs per user, notice version tracking, withdrawal mechanism, IAB TCF 2.2 compliance (for ad-tech contexts), and API access to consent records for downstream systems. 2. Replace or augment any custom consent implementations with the CMP's SDKs. 3. Integrate the CMP with downstream processing systems (marketing, analytics, profiling) via consent API or event webhooks so consent state propagates automatically. 4. Test the CMP: verify consent records are created correctly, withdrawal stops downstream processing, and records are queryable by user ID for DSAR responses. 5. Ensure the CMP is configured for each jurisdiction where you operate, given different legal requirements for cookie consent, opt-in vs opt-out defaults, and required notice elements."

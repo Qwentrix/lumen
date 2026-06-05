@@ -1,0 +1,34 @@
+id: VULN_EOL_NO_COMPENSATING_CONTROL
+domain: vulnerabilities
+severity: high
+default_weight: 0.75
+detect:
+  questionnaire:
+    - Q-VULN-DD-012 == none
+title: "No compensating controls around end-of-life systems that cannot be immediately decommissioned"
+description_short: "End-of-life systems that cannot be immediately decommissioned have no network isolation or enhanced monitoring in place."
+description_long: "End-of-life systems that cannot be patched and lack compensating controls represent a fully open attack vector. Without network isolation, an attacker who exploits the EOL system gains unrestricted access to adjacent network segments. Without monitoring, the exploitation may go undetected indefinitely. Regulators and auditors treat the combination of EOL software and no compensating controls as a critical finding requiring immediate remediation. NIST SP 800-53 SA-22 explicitly requires compensating controls for unsupported system components. PCI DSS Req 6.3.3 requires documented risk acceptance and compensating controls when components cannot be patched. HIPAA enforcement actions have cited unmitigated EOL medical device software as evidence of wilful neglect."
+frameworks:
+  - id: "NIST SP 800-53 SA-22"
+    text: "Unsupported System Components — implement compensating controls when components cannot be patched"
+  - id: "PCI DSS Req 6.3.3"
+    text: "All system components protected against known vulnerabilities — document compensating controls for unpatchable EOL components"
+  - id: "HIPAA Security Rule 45 CFR 164.308(a)(1)"
+    text: "Risk Management — implement reasonable and appropriate safeguards including for EOL medical device software"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  manufacturing:
+    weight_multiplier: 1.4
+  energy:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  education:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "If you cannot decommission an EOL system immediately, you must implement compensating controls — network isolation and enhanced monitoring at minimum. Running an unpatched EOL system with no controls is equivalent to leaving an unlocked door in your network."
+remediation_technical: "Immediately implement compensating controls for all EOL systems: (1) network isolation — place systems in a dedicated VLAN with restrictive firewall rules allowing only the minimum necessary traffic; (2) enhanced monitoring — deploy IDS/IPS on the network segment and enable detailed logging of all connections; (3) formal risk acceptance — document the EOL exposure with executive sign-off and a time-bound migration commitment. Review whether Extended Security Updates (ESU) are available from the vendor as a bridging option. Submit the compensating control plan to your compliance team for review."

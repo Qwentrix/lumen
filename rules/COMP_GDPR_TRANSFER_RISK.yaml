@@ -1,0 +1,32 @@
+id: COMP_GDPR_TRANSFER_RISK
+domain: compliance
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-COMP-018 == yes_eu_only
+title: "Organisation processes EU personal data — GDPR cross-border transfer obligations apply"
+description_short: "The organisation processes EU or UK personal data, which triggers GDPR Chapter V obligations for any cross-border transfers."
+description_long: "Processing EU or UK personal data triggers GDPR Chapter V obligations governing cross-border transfers. Any transfer of EU personal data to a country without an adequacy decision — including the United States unless DPF-certified or SCC-covered — requires a lawful transfer mechanism. Many organisations correctly identify that they process EU data but have not fully assessed which of their systems (cloud services, vendors, data analytics platforms) constitute transfers to third countries. This gap creates latent non-compliance that is difficult to detect until a regulatory investigation. The UK's International Data Transfer Agreement (IDTA) applies for UK-to-third-country transfers post-Brexit. Organisations must conduct a transfer mapping exercise to confirm their transfer mechanisms cover all actual data flows."
+frameworks:
+  - id: "GDPR Art. 44–46"
+    text: "General principles and safeguards for cross-border transfers of personal data"
+  - id: "GDPR Art. 30"
+    text: "Records of processing activities — must document cross-border transfers and mechanisms"
+  - id: "UK GDPR Chapter V"
+    text: "UK international data transfer requirements post-Brexit — IDTA or UK adequacy regulations"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  legal:
+    weight_multiplier: 1.4
+  it_services:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Map every EU and UK personal data flow to confirm that wherever the data travels — including to cloud vendors and analytics tools — there is a lawful transfer mechanism in place."
+remediation_technical: "Enumerate all cloud services, analytics platforms, and vendors that receive EU/UK personal data. For each, determine the destination country. Apply the appropriate safeguard: (1) EC adequacy decision (check current list). (2) 2021 EC SCCs for controllers and processors. (3) EU-U.S. DPF certification for US recipients. (4) UK IDTA for UK-origin transfers. Document all transfer mechanisms in the ROPA under Art. 30(1)(e). Perform a Transfer Impact Assessment (TIA) for high-risk destinations per EDPB Guidelines 05/2021."

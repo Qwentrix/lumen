@@ -1,0 +1,39 @@
+id: PRIV_CONSENT_NOT_ENFORCED
+domain: privacy
+severity: high
+default_weight: 0.75
+detect:
+  questionnaire:
+    - Q-PRIV-DD-010 == not_enforced
+    - Q-PRIV-DD-010 == manual_process
+    - Q-PRIV-DD-014 == not_enforced
+    - Q-PRIV-DD-014 == policy_only
+title: "Consent withdrawal is recorded but not technically enforced downstream"
+description_short: "When users withdraw consent, the withdrawal is noted but processing in downstream systems is not automatically stopped — personal data continues to be processed without a lawful basis."
+description_long: "GDPR Art. 7(3) requires that withdrawal of consent be as easy as giving it and that, upon withdrawal, data processing must cease. Art. 6(1)(a) means that continuing to process data after consent is withdrawn has no lawful basis, making every subsequent processing operation a separate GDPR violation. Relying on a manual process means there is an inherent lag between withdrawal and actual cessation — during which processing is unlawful. CCPA §1798.120 similarly requires honoring opt-outs of sale promptly. Where consent gates downstream systems (marketing, profiling, analytics), technical enforcement — not manual workflows — is the expected standard."
+frameworks:
+  - id: "GDPR Art. 7(3)"
+    text: "Right to withdraw consent — withdrawal must be as easy as giving it; processing must cease"
+  - id: "GDPR Art. 6(1)(a)"
+    text: "Lawfulness of processing — consent-based processing becomes unlawful after withdrawal"
+  - id: "CCPA §1798.120"
+    text: "Right to opt out of sale — must be honored promptly and technically"
+  - id: "ISO 27018 §5.3"
+    text: "Consent to use personal data for marketing or related purposes"
+  - id: "NIST Privacy Framework CT.PO-1"
+    text: "Policies and procedures that govern consent and data use are maintained"
+industry_overlays:
+  technology:
+    weight_multiplier: 1.4
+  retail:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.3
+  legal:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "When a user withdraws consent, that withdrawal must automatically stop all processing linked to that consent purpose — not be placed in a manual queue. Connect your consent management system to your data pipelines and processing systems so that withdrawal immediately and verifiably stops data use."
+remediation_technical: "1. Map every downstream processing system gated by consent (marketing platforms, analytics, profiling engines, data-sharing pipelines). 2. Implement event-driven consent status propagation: withdrawal events must reach all downstream systems within a defined SLA (target: real-time or within minutes). 3. Use DRM or API access controls to technically prevent data access when consent is absent rather than relying on contractual or policy obligations. 4. Test withdrawal flows: verify that, within the SLA window, all downstream systems reject or cease processing for the affected user. 5. Log every withdrawal with a timestamp and confirmation of technical enforcement for GDPR Art. 7 demonstrability."

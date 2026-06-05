@@ -1,0 +1,40 @@
+id: SECPOS_IAC_NOT_SCANNED
+domain: security_posture
+severity: medium
+default_weight: 0.45
+detect:
+  questionnaire:
+    - Q-SECPOS-043 == no_iac_scanning
+    - Q-SECPOS-DD-035 == no_iac_scanning
+    - Q-SECPOS-DD-035 == advisory_only
+title: "Infrastructure-as-Code not scanned for security misconfigurations"
+description_short: "IaC templates are deployed to production without security scanning — misconfigurations reach production undetected."
+description_long: "Infrastructure-as-code templates (Terraform, CloudFormation, Bicep, Pulumi) encode the security posture of cloud environments. Without scanning, misconfigurations — open S3 buckets, permissive security groups, disabled encryption, public-facing databases — are deployed directly to production. IaC scanning is the most cost-effective point to catch these issues: fixing a misconfiguration in code before deployment costs near-zero versus responding to a breach caused by the same misconfiguration in production. Checkov, Terraform Sentinel, and equivalent tools provide comprehensive policy-as-code coverage and integrate natively into every major CI/CD platform."
+frameworks:
+  - id: "NIST CSF PR.PS-04"
+    text: "Log records are generated to enable monitoring — extends to IaC security events"
+  - id: "CIS Control 4.6"
+    text: "Securely manage enterprise assets and software — IaC security validation"
+  - id: "ISO 27001:2022 A.8.25"
+    text: "Secure development lifecycle — security in the deployment pipeline"
+  - id: "SOC 2 CC8.1"
+    text: "Change management process with security controls"
+  - id: "FedRAMP SA-15"
+    text: "Development process, standards, and tools — security requirements in pipeline"
+  - id: "CISA Zero Trust Pillar: Applications"
+    text: "Security validation in the software delivery pipeline"
+industry_overlays:
+  technology:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  it_services:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Add IaC security scanning to your CI/CD pipeline. Tools like Checkov, tfsec, or Terrascan are free and take under an hour to add to a GitHub Actions or GitLab CI pipeline. Configure them to block deployments that contain critical findings."
+remediation_technical: "Integrate IaC scanning into CI/CD: add Checkov (Terraform, CloudFormation, Bicep, Kubernetes), tfsec, or Snyk IaC as a pipeline step. Configure severity-gating: critical and high findings block deployment; medium findings are advisory with a defined remediation window. Apply custom policies covering your environment's specific compliance requirements. For Terraform: also implement Sentinel policies in Terraform Cloud/Enterprise for plan-time enforcement. For cloud-native IaC, use cloud provider policy tools (AWS Config Rules, Azure Policy, GCP Organization Constraints) as a defence-in-depth layer. Track IaC finding trends over time to measure programme maturity."

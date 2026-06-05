@@ -1,0 +1,32 @@
+id: COMP_AUDIT_TRAIL_NOT_IMMUTABLE
+domain: compliance
+severity: medium
+default_weight: 0.50
+detect:
+  questionnaire:
+    - Q-COMP-009 == yes_but_not_immutable
+title: "Audit trail exists but is not tamper-evident"
+description_short: "Compliance records and audit logs are collected but not stored in immutable or tamper-evident storage."
+description_long: "An audit trail that can be modified, deleted, or overwritten by an attacker — or by an insider covering their tracks — provides false assurance of compliance and cannot be relied upon in a regulatory investigation or litigation. SOC 2 CC7.2 and NIST SP 800-92 require that audit logs be protected from unauthorised modification. PCI DSS Req 10.3.3 requires audit logs to be protected against destruction and modification. FedRAMP AU-9 mandates protection of audit information. Mutable audit logs are particularly dangerous because they may appear complete in day-to-day use but become worthless precisely when they matter most — during a breach investigation or audit."
+frameworks:
+  - id: "PCI DSS Req 10.3.3"
+    text: "Audit logs protected from destruction and unauthorised modifications"
+  - id: "SOC 2 CC7.2"
+    text: "System monitoring — audit logs protected and retained"
+  - id: "FedRAMP AU-9"
+    text: "Protection of audit information from unauthorised access and modification"
+  - id: "NIST SP 800-92"
+    text: "Guide to computer security log management — log integrity protection"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Move audit logs and compliance evidence to storage that prevents modification after write — such as write-once cloud storage, a dedicated SIEM with log integrity features, or a time-stamped evidence vault."
+remediation_technical: "Implement WORM (Write Once Read Many) storage for audit logs: AWS S3 Object Lock (Compliance mode), Azure Immutable Blob Storage, or GCS Bucket Lock. Forward logs to a SIEM (Splunk, Sumo Logic, Datadog) with tamper-detection. Apply cryptographic log chaining (HMAC chain or blockchain anchoring) for forensic integrity. Ensure log backup copies are also immutable. Test integrity verification annually."

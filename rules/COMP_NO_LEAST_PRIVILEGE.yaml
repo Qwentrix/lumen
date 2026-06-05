@@ -1,0 +1,36 @@
+id: COMP_NO_LEAST_PRIVILEGE
+domain: compliance
+severity: high
+default_weight: 0.75
+detect:
+  questionnaire:
+    - Q-COMP-011 == not_applied
+title: "Least-privilege access model not applied"
+description_short: "User permissions are not scoped to role requirements — least privilege is not enforced."
+description_long: "When users hold permissions beyond what their role requires, the blast radius of any account compromise expands dramatically. An attacker who gains access to an over-privileged user can exfiltrate more data, move laterally more easily, and cause greater damage before detection. Least privilege is a foundational control mandated by HIPAA 164.312(a)(1), PCI DSS Req 7.1, ISO 27001 A.9.2.3, SOC 2 CC6.3, and FedRAMP AC-6. Its absence is one of the most commonly cited findings in breach post-mortems and regulatory enforcement actions. Organisations without least privilege applied have effectively given every user more access than their job requires — a standing invitation to insider threat and credential-based attack."
+frameworks:
+  - id: "HIPAA 164.312(a)(1)"
+    text: "Access control — limit access to ePHI to users with a legitimate need"
+  - id: "PCI DSS Req 7.1"
+    text: "Limit access to system components and cardholder data to only those individuals whose job requires such access"
+  - id: "ISO 27001 A.9.2.3"
+    text: "Management of privileged access rights — restrict and control allocation"
+  - id: "SOC 2 CC6.3"
+    text: "Access to information assets is authorised and access is removed when no longer needed"
+  - id: "FedRAMP AC-6"
+    text: "Least privilege — employ the principle of least privilege"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.6
+  legal:
+    weight_multiplier: 1.4
+  retail:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Audit every user account and remove access that is not required for their current role. Adopt role-based access control so that permission sets are defined by job function, not granted individually."
+remediation_technical: "Implement RBAC across all systems: define role templates aligned to job functions, remove excess permissions during an access recertification campaign, and enforce least-privilege defaults for new account provisioning. Enable IdP conditional access policies (Okta, Entra ID) to enforce role-based access. Eliminate broad permissions such as wildcard IAM policies or shared admin accounts. Implement just-in-time (JIT) privileged access for elevated roles using PAM solutions (CyberArk, BeyondTrust, HashiCorp Boundary). Schedule quarterly access reviews for privileged accounts."

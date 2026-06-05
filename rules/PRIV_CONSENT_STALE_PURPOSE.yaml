@@ -1,0 +1,40 @@
+id: PRIV_CONSENT_STALE_PURPOSE
+domain: privacy
+severity: medium
+default_weight: 0.55
+detect:
+  questionnaire:
+    - Q-PRIV-016 == no
+    - Q-PRIV-016 == ad_hoc
+    - Q-PRIV-DD-011 == single_global_template
+    - Q-PRIV-DD-013 == no_process
+    - Q-PRIV-DD-013 == updated_notice_only
+title: "Existing consent applied to new processing purposes without re-consent"
+description_short: "When processing purposes change or expand, existing consent is treated as covering new uses rather than seeking fresh, purpose-specific consent from users."
+description_long: "GDPR Art. 5(1)(b) (purpose limitation) and Art. 6(1)(a) together require that processing only occurs for the purpose for which consent was obtained. Using previously collected consent to justify new or materially different processing purposes is a purpose limitation violation. Simply updating a privacy notice without obtaining active re-consent does not create valid consent for the new purpose — consent must be an active, affirmative act. The WP29/EDPB guidance consistently states that silent acceptance of updated terms does not constitute valid GDPR consent. Organizations that expand data use without re-consent face enforcement risk under GDPR Art. 5 (up to 4% global annual turnover) for each processing activity that lacks a valid lawful basis."
+frameworks:
+  - id: "GDPR Art. 5(1)(b)"
+    text: "Purpose limitation — personal data collected for one purpose may not be further processed incompatibly"
+  - id: "GDPR Art. 7"
+    text: "Conditions for consent — consent must be specific to the purpose; changed purpose requires fresh consent"
+  - id: "GDPR Art. 6(1)(a)"
+    text: "Lawfulness — consent-based processing requires valid, current consent for each purpose"
+  - id: "CCPA §1798.100(b)"
+    text: "Prohibition on use of personal information for undisclosed purposes"
+  - id: "ISO 27018 §5.3"
+    text: "Use of personal data limited to consented and disclosed purposes"
+  - id: "NIST Privacy Framework CT.PO-1"
+    text: "Consent policies reflect current processing purposes and are maintained current"
+industry_overlays:
+  technology:
+    weight_multiplier: 1.3
+  retail:
+    weight_multiplier: 1.3
+  financial:
+    weight_multiplier: 1.2
+  healthcare:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "When you introduce a new use for existing personal data that was not covered by the original consent, you must actively obtain fresh consent before that new use begins — updating the privacy notice alone is not sufficient."
+remediation_technical: "1. Implement a purpose registry that catalogs all consented processing purposes with associated consent versions. 2. Create a change-management gate: before any new processing activity is approved, verify whether it is within the scope of existing consent or requires re-consent. 3. If re-consent is required: design a re-consent flow that presents the new purpose, obtains affirmative action, and updates the consent record. 4. Log all re-consent events with purpose, timestamp, and notice version. 5. Where re-consent is not obtained, ensure the new processing activity does not commence and document the decision. 6. Implement jurisdiction-specific consent template review by counsel before deployment."

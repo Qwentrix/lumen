@@ -1,0 +1,38 @@
+id: SECPOS_PROD_DEV_UNSEGMENTED
+domain: security_posture
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-SECPOS-018 == shared_network
+title: "Production and development environments share a network — no isolation"
+description_short: "Production and development/staging environments are not network-isolated."
+description_long: "When production and non-production environments share a network, developers, CI/CD pipelines, and test systems have implicit connectivity to production data and services. This creates multiple risk vectors: accidental production impact from test jobs, developer workstations (often with relaxed security controls) as a pivot point into production, and CI/CD pipeline compromise reaching production infrastructure. PCI DSS explicitly requires separation of development and test environments from cardholder data environments. Regulatory frameworks treating production data as sensitive (HIPAA, GDPR, FedRAMP) implicitly require this segregation."
+frameworks:
+  - id: "NIST CSF PR.IR-01"
+    text: "Networks and environments are protected from unauthorised logical access"
+  - id: "CIS Control 12.2"
+    text: "Establish and maintain a secure network architecture with environment isolation"
+  - id: "ISO 27001:2022 A.8.31"
+    text: "Separation of development, test, and production environments"
+  - id: "SOC 2 CC6.6"
+    text: "Security measures restrict access to information assets"
+  - id: "FedRAMP SC-7(5)"
+    text: "Boundary protection — deny by default with explicit allow rules between environments"
+  - id: "CISA Zero Trust Pillar: Networks"
+    text: "Network segmentation preventing lateral movement between environment tiers"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  technology:
+    weight_multiplier: 1.3
+  it_services:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Move development and staging into separate network zones or cloud accounts with no direct connectivity to production. Use controlled deployment pipelines as the only bridge, and never use live production data in development without masking."
+remediation_technical: "Separate production and non-production into distinct network segments (separate VPCs, subscriptions, or VLANs with firewall isolation). Block all direct connectivity between environments at the network layer. Use a deployment pipeline (GitHub Actions, GitLab CI, Jenkins) as the only sanctioned path from dev to prod. Enforce data masking or synthetic data for dev/test environments to eliminate the need for production data access. In cloud environments, use separate AWS accounts/GCP projects/Azure subscriptions per environment and control cross-account access with explicit IAM policies."

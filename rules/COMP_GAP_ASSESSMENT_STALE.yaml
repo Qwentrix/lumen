@@ -1,0 +1,30 @@
+id: COMP_GAP_ASSESSMENT_STALE
+domain: compliance
+severity: medium
+default_weight: 0.45
+detect:
+  questionnaire:
+    - Q-COMP-006 == more_than_two_years
+title: "Compliance gap assessment is more than two years old"
+description_short: "The most recent gap assessment against the primary compliance framework was completed more than two years ago."
+description_long: "A gap assessment that is more than two years old does not reflect the current control environment, threat landscape, or framework requirements. Compliance frameworks are updated regularly — PCI DSS moved from v3.2.1 to v4.0, ISO 27001 was substantially revised in 2022, HIPAA guidance is periodically updated by HHS. An organisation's technology stack, vendor relationships, and data flows change continuously. A stale gap assessment means the organisation is making security decisions based on outdated information, may have missed new control requirements introduced in framework updates, and cannot demonstrate current compliance posture to auditors or customers. Annual gap assessments are the accepted minimum frequency for organisations subject to active frameworks."
+frameworks:
+  - id: "ISO 27001 Clause 9.3"
+    text: "Management review — review of information security performance including gap status"
+  - id: "HIPAA 164.308(a)(1)(ii)(A)"
+    text: "Risk analysis — conduct accurate and thorough assessment of risks on an ongoing basis"
+  - id: "PCI DSS Req 12.3.1"
+    text: "Targeted risk analysis — evaluate risks for each control at least annually"
+  - id: "SOC 2 CC3.2"
+    text: "Risk assessment process — identify and assess changes that could affect the system"
+industry_overlays:
+  financial:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Conduct a fresh gap assessment against your current compliance framework requirements. Don't rely on an assessment done more than a year ago — frameworks and your environment have both changed."
+remediation_technical: "Schedule and execute an updated gap assessment against the current version of each applicable framework (PCI DSS v4.0, ISO 27001:2022, HIPAA Security Rule). Use the framework's official control checklist or a qualified assessor. Compare results to the prior assessment to identify new gaps and confirm closure of previously identified gaps. Document findings in a remediation roadmap with owners and target dates. Set a recurring annual calendar reminder for re-assessment."

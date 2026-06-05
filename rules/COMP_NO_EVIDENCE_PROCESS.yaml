@@ -1,0 +1,36 @@
+id: COMP_NO_EVIDENCE_PROCESS
+domain: compliance
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-COMP-007 == no_process
+title: "No compliance evidence collection process in place"
+description_short: "There is no defined process for collecting, organising, or storing compliance evidence."
+description_long: "When no evidence collection process exists, an organisation cannot demonstrate to auditors, regulators, or customers that its controls are operating effectively — because it has no records proving they ran. During an audit, evidence must be produced on demand. Without a repeatable process, teams scramble, evidence is incomplete, audit timelines extend, and findings are more likely. SOC 2, ISO 27001, and FedRAMP all require that evidence of controls be systematically retained. Regulators reviewing a breach also scrutinise whether controls were evidenced — organisations that cannot show evidence are treated as if the controls did not exist."
+frameworks:
+  - id: "SOC 2 CC2.2"
+    text: "Communication and information — communicating control activities to those responsible"
+  - id: "ISO 27001 A.18.2.2"
+    text: "Compliance with security policies and standards — evidence of internal review"
+  - id: "FedRAMP SA-9 / CA-7"
+    text: "Continuous monitoring — evidence of control testing and ongoing assessment"
+  - id: "HIPAA 164.316(b)"
+    text: "Documentation requirements — policies, procedures and evidence of implementation"
+industry_overlays:
+  technology:
+    weight_multiplier: 1.4
+  it_services:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.5
+  healthcare:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Define a process for collecting and storing compliance evidence — even a simple shared folder with a naming convention is better than nothing. The goal is to be able to show an auditor specific records proving each control ran."
+remediation_technical: "Implement a compliance evidence management workflow: define which controls require evidence, what artefact satisfies each, who is responsible, and how frequently evidence is collected. Automate collection where possible (CloudTrail, SIEM exports, access review exports). Store evidence in a structured evidence repository (Vanta, Drata, Secureframe, or a version-controlled shared drive). Map evidence artefacts to specific framework control references so they can be retrieved quickly during an audit."

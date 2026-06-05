@@ -1,0 +1,32 @@
+id: COMP_NO_DATA_CONTROL_ENFORCEMENT
+domain: compliance
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-COMP-DD-018 == no
+title: "No classification-based data controls are enforced"
+description_short: "No technical controls enforce data protection requirements based on data classification — sensitive data has no classification-driven protection."
+description_long: "The complete absence of classification-based technical controls means sensitive data has no systematic protection at the data level — only perimeter controls at best. This gap is particularly severe because perimeter controls fail routinely: phishing bypasses email security, credentials are stolen, misconfigured cloud storage is exposed. Without data-level controls tied to classification, every perimeter failure results in immediate access to sensitive data. ISO 27001 A.8.2.3 requires that handling procedures align with classification. HIPAA requires addressable safeguards be implemented where reasonable. PCI DSS requires cardholder data to be protected with specific controls tied to its sensitivity. The absence of any classification-based enforcement is difficult to defend to regulators and is a leading indicator of uncontrolled data exposure risk."
+frameworks:
+  - id: "ISO 27001 A.8.2.3"
+    text: "Handling of assets — protection aligned to information classification"
+  - id: "HIPAA 164.312(a)(2)(iv)"
+    text: "Encryption as an addressable safeguard — implement where reasonable"
+  - id: "PCI DSS Req 3.5"
+    text: "Protect stored account data with encryption or other strong cryptography"
+  - id: "SOC 2 CC6.1"
+    text: "Logical access — controls to restrict access based on authorised users and roles"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Define and implement at least one technical control per classification tier — for example, mandatory encryption for Confidential data and IRM restrictions for Restricted data. Technical enforcement must back up policy."
+remediation_technical: "For each classification tier, define and deploy a concrete enforcement stack: (1) Restricted: mandatory IRM/DRM (Microsoft Purview sensitivity labels with RMS, or Micelium Share), AES-256 encryption at rest with BYOK, DLP block on external sharing, MFA step-up for access. (2) Confidential: encryption at rest, DLP alert on external sharing, access restricted to approved groups. (3) Internal: standard controls. Wire enforcement to your data labelling system. Test enforcement by attempting policy violations in a sandbox environment. Audit enforcement effectiveness quarterly."

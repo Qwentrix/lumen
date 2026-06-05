@@ -1,0 +1,32 @@
+id: COMP_NO_DISPOSAL_PROCESS
+domain: compliance
+severity: high
+default_weight: 0.75
+detect:
+  questionnaire:
+    - Q-COMP-DD-011 == no_defined_process
+title: "No defined process for secure data or hardware disposal"
+description_short: "No defined process exists for the secure disposal of sensitive data or hardware containing sensitive data."
+description_long: "Without a disposal process, sensitive data survives on decommissioned hardware, returned lease equipment, recycled storage media, and in cloud storage abandoned after project completion. HIPAA 164.310(d) requires policies and procedures for the final disposition of ePHI and the hardware containing it. PCI DSS Req 9.4.6 requires hardcopy and electronic media with cardholder data to be destroyed following documented procedures. ISO 27001 A.8.3.2 requires disposal of media containing sensitive information. The risk is concrete and well-documented: drives from decommissioned servers have been purchased second-hand and found to contain recoverable sensitive data in numerous published investigations. The absence of a disposal process is a direct and entirely preventable path to data exposure."
+frameworks:
+  - id: "HIPAA 164.310(d)(1)"
+    text: "Device and media controls — policies for final disposition of ePHI and hardware reuse"
+  - id: "PCI DSS Req 9.4.6"
+    text: "Hardcopy and electronic media destroyed as per documented procedures"
+  - id: "ISO 27001 A.8.3.2"
+    text: "Disposal of media — secure disposal preventing recovery of sensitive information"
+  - id: "NIST SP 800-88r1"
+    text: "Guidelines for media sanitisation — documented procedures by media and data type"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Define a disposal process immediately — one that covers both digital data deletion and physical hardware sanitisation. Document it, assign ownership, and train the team that handles decommissioning."
+remediation_technical: "Develop a media sanitisation policy aligned to NIST SP 800-88r1 covering all media types: (1) HDD/SSD — overwrite (DoD 5220.22-M) or cryptographic erasure where self-encrypting drives are used. (2) Tape — physical degaussing plus shredding. (3) Mobile devices — factory reset plus MDM wipe. (4) Cloud storage — deletion API plus confirmation of removal from provider storage (including backups per AWS/Azure/GCP SLA). (5) Physical destruction for drives that cannot be sanitised. Maintain a disposal log for every item. For hardware leaving the organisation, require a Certificate of Destruction from a NAID AAA-certified vendor."

@@ -1,0 +1,39 @@
+id: PRIV_NO_CRYPTOGRAPHIC_ERASURE
+domain: privacy
+severity: medium
+default_weight: 0.50
+detect:
+  questionnaire:
+    - Q-PRIV-DD-015 == no_structured_approach
+    - Q-PRIV-DD-022 == physical_deletion_only
+title: "Cryptographic erasure not used for encrypted data stores — deletion completeness unverifiable"
+description_short: "Personal data in encrypted data stores is deleted only by physical removal without key destruction, or there is no structured deletion approach — leaving residual risk of irrecoverable data remaining in backups, snapshots, or archival storage."
+description_long: "Physical deletion of records from a database does not guarantee erasure from backups, snapshots, write-ahead logs, or archival storage. For encrypted data stores, cryptographic erasure (destroying the encryption key, rendering ciphertext permanently irrecoverable) is the only deletion method that verifiably covers all copies simultaneously — including backups and snapshots that physical deletion cannot reach. GDPR Art. 17 right to erasure requires that personal data be 'erased without undue delay' — data that remains irrecoverably encrypted in backups can satisfy this obligation, whereas data that may persist in plaintext in unreachable backups cannot. GDPR Recital 26 indicates that data rendered 'no longer attributable to an identified or identifiable natural person' falls outside the scope of personal data — properly implemented cryptographic erasure achieves this for all copies simultaneously."
+frameworks:
+  - id: "GDPR Art. 17"
+    text: "Right to erasure — must cover all copies including backups; cryptographic erasure satisfies this for encrypted stores"
+  - id: "GDPR Recital 26"
+    text: "Data rendered irrecoverable is no longer personal data — cryptographic erasure achieves this"
+  - id: "CCPA §1798.105"
+    text: "Right to deletion — must apply to all copies; cryptographic erasure is an accepted technical implementation"
+  - id: "HIPAA 45 CFR §164.312(a)(2)(iv)"
+    text: "Encryption/decryption of ePHI — key management practices affect deletion completeness"
+  - id: "ISO 27018 §7"
+    text: "Return and deletion of assets — cloud providers must support verifiable deletion of all copies"
+  - id: "NIST Privacy Framework CT.DM-1"
+    text: "Data lifecycle management — deletion mechanisms must be verifiably complete"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "For data stored encrypted, the most reliable way to ensure it is truly gone — including from backups — is to destroy the encryption key. Implement per-user or per-record encryption keys so that deleting a key renders all copies of that person's data permanently irrecoverable."
+remediation_technical: "1. Design a per-user or per-data-subject key hierarchy using a KMS (AWS KMS, Azure Key Vault, HashiCorp Vault, or Micelium Sypher). 2. Encrypt personal data under user-specific Data Encryption Keys (DEKs) wrapped by the KMS. 3. When a deletion/erasure request is received: delete or revoke the user's DEK in the KMS rather than attempting physical deletion of all copies. 4. Document the cryptographic erasure as the deletion mechanism in the DSAR response — the data is permanently irrecoverable. 5. Ensure backup encryption uses the same key hierarchy so backups are also covered by key destruction. 6. Implement key deletion confirmation logging for Art. 17 accountability records."

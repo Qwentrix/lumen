@@ -1,0 +1,38 @@
+id: VULN_NO_CVE_OWNER
+domain: vulnerabilities
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-VULN-015 == no_defined_owner
+title: "No defined owner for CVE triage and remediation assignment"
+description_short: "No individual or team has defined responsibility for triaging new CVEs and assigning remediation ownership."
+description_long: "Without a defined owner for CVE triage, newly published vulnerabilities have no guaranteed path to remediation. Critical CVEs may go unassigned, untracked, and unexploited for months — becoming the exact entry point an attacker needs. Ownership gaps are among the most common root causes of breach investigations: 'nobody knew they were supposed to act on it.' NIST SP 800-53 RA-3 and RA-5 both require assigned roles and responsibilities for vulnerability identification and management. ISO 27001 A.12.6.1 requires a formal vulnerability management process with clear ownership. The absence of a defined owner also makes it impossible to hold anyone accountable for SLA compliance or escalation decisions."
+frameworks:
+  - id: "NIST SP 800-53 RA-3"
+    text: "Risk Assessment — assign roles and responsibilities for identifying, reporting, and managing risk"
+  - id: "NIST SP 800-53 RA-5"
+    text: "Vulnerability Monitoring and Scanning — define organizational roles for vulnerability triage and remediation"
+  - id: "ISO 27001 A.12.6.1"
+    text: "Management of technical vulnerabilities — assign ownership and define the vulnerability management process"
+  - id: "NIST CSF RS.AN-1"
+    text: "Notifications from detection systems are investigated — requires assigned ownership for investigation"
+industry_overlays:
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  it_services:
+    weight_multiplier: 1.3
+  energy:
+    weight_multiplier: 1.3
+  manufacturing:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Assign a named person or team the responsibility to triage and route new CVEs. Without a defined owner, critical vulnerabilities fall through the cracks — and that is how breaches start."
+remediation_technical: "Define a vulnerability management RACI: assign a named security role or team responsible for daily CVE feed triage, prioritization against asset inventory, and assignment to remediation owners. Establish an escalation path for critical CVEs (CVSS 9+) requiring same-day acknowledgement. Integrate with ticketing system so that triage outputs auto-create assigned tickets with due dates. Document the RACI in your vulnerability management policy. Review ownership effectiveness quarterly using MTTR and SLA compliance metrics."

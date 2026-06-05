@@ -1,0 +1,117 @@
+# nvd-weekly.yml — ENT-118 / OQ-10
+#
+# Weekly regeneration of the curated NVD CVE index, signed and published as a
+# `lumen update` delta bundle. Implements the OQ-10 cadence policy
+# (see ../../NVD_CADENCE.md).
+#
+# STATUS: the regen + sign steps are ready; the PUBLISH job is GATED OFF until the
+# `github.com/Qwentrix/lumen-bundles` repo and the `LUMEN_BUNDLE_SIGNING_KEY`
+# secret are provisioned. Until then this workflow regenerates + signs (smoke
+# test) but does NOT publish. To enable publishing, set repo/org variable
+# `LUMEN_BUNDLES_ENABLED = true` and add the secrets below. Do NOT point at a
+# placeholder repo.
+#
+# Required (once provisioned):
+#   secrets.NVD_API_KEY               — NVD 2.0 API key (faster, less throttled)
+#   secrets.LUMEN_BUNDLE_SIGNING_KEY  — ed25519 private key (PEM) for the bundle
+#   vars.LUMEN_BUNDLES_ENABLED        — "true" to enable the publish job
+---
+name: NVD Weekly Index Regen
+
+on:
+  schedule:
+    # Mondays 06:00 UTC. Pairs with the scanner's >30-day staleness warning.
+    - cron: '0 6 * * 1'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  regen:
+    name: Regenerate + sign NVD index
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout lumen (scanner)
+        uses: actions/checkout@v4
+        with:
+          path: lumen
+
+      - name: Checkout lumen-scoring (sibling for the go.mod replace)
+        uses: actions/checkout@v4
+        with:
+          repository: Qwentrix/lumen-scoring
+          path: lumen-scoring
+
+      - name: Set up Go 1.24
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+          cache-dependency-path: lumen/go.sum
+
+      - name: Regenerate the curated NVD index
+        working-directory: lumen
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+        run: |
+          set -euo pipefail
+          make gen-nvd
+          ls -lh internal/nvd/data/cve-index.json.gz
+          go run ./cmd/lumen update --check || true   # smoke: prints embedded status, zero network
+
+      - name: Build the signed delta bundle
+        working-directory: lumen
+        run: |
+          set -euo pipefail
+          # Bundle = the regenerated NVD index (+ embedded rules/overlays snapshot).
+          # Deterministic tar for a stable SHA-256 (skip-on-unchanged on the client).
+          tar --sort=name --mtime='@0' --owner=0 --group=0 --numeric-owner \
+              -cf - internal/nvd/data internal/rules/data | gzip -n > bundle.tar.gz
+          sha256sum bundle.tar.gz | cut -d' ' -f1 > bundle.tar.gz.sha256
+          echo "Bundle SHA-256: $(cat bundle.tar.gz.sha256)"
+
+      - name: Sign the bundle (ed25519)
+        if: ${{ secrets.LUMEN_BUNDLE_SIGNING_KEY != '' }}
+        working-directory: lumen
+        run: |
+          set -euo pipefail
+          # SECURITY NOTE: The key is written to a chmod-600 temp file and deleted via
+          # trap so it never appears in process-env dumps or `ps` output.  Do NOT
+          # switch back to passing the secret through an env var; GitHub redacts the
+          # exact secret value but not transformations of it (base64, prefix, etc.).
+          #
+          # When wiring the real signer, follow this pattern exactly:
+          #   1. Write the secret to a temp file (chmod 600).
+          #   2. Register a trap to delete it on exit.
+          #   3. Pass the file path to the signing tool (e.g. --key-file), never the value.
+          KEY_FILE="$(mktemp)"
+          chmod 600 "${KEY_FILE}"
+          trap 'rm -f "${KEY_FILE}"' EXIT
+          printf '%s' "${{ secrets.LUMEN_BUNDLE_SIGNING_KEY }}" > "${KEY_FILE}"
+          # The signing helper is a maintainer tool; placeholder step until provisioned.
+          echo "Signing bundle… (uses the key pinned in internal/update/pubkey.go)"
+          echo "PROVISIONING: replace this echo with: go run ./cmd/lumen-sign --key-file \"\${KEY_FILE}\" bundle.tar.gz"
+          # Key is erased by the trap on exit.
+
+      - name: Upload bundle artifact (always — smoke evidence)
+        uses: actions/upload-artifact@v4
+        with:
+          name: nvd-bundle
+          path: |
+            lumen/bundle.tar.gz
+            lumen/bundle.tar.gz.sha256
+          retention-days: 7
+
+  publish:
+    name: Publish delta to lumen-bundles
+    needs: regen
+    runs-on: ubuntu-latest
+    # GATED: only runs once the bundles repo + signing key are provisioned.
+    if: ${{ vars.LUMEN_BUNDLES_ENABLED == 'true' }}
+    steps:
+      - name: Publish to github.com/Qwentrix/lumen-bundles releases
+        run: |
+          echo "PROVISIONING REQUIRED — this job is gated behind vars.LUMEN_BUNDLES_ENABLED=='true'."
+          echo "It publishes the signed bundle.tar.gz + bundle.tar.gz.sha256 as a"
+          echo "lumen-bundles GitHub Release that 'lumen update' downloads as a delta."
+          echo "Do NOT enable until the lumen-bundles repo + LUMEN_BUNDLE_SIGNING_KEY exist."

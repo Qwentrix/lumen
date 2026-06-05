@@ -1,0 +1,34 @@
+id: COMP_NO_SCREEN_LOCK
+domain: compliance
+severity: medium
+default_weight: 0.40
+detect:
+  scanner:
+    - compliance.screen_lock_enabled == false
+title: "Automatic screen lock not configured"
+description_short: "The device does not lock automatically after a period of inactivity, leaving an unattended session open to anyone with physical access."
+description_long: "An unlocked, unattended workstation is one of the simplest paths to a data breach: a momentarily abandoned laptop in an office, a clinic, a coffee shop, or a co-working space gives a bystander full access to whatever the logged-in user can reach — email, files, internal applications, and saved credentials. Automatic session locking after a short idle period is a foundational control required by CIS Controls v8 4.3, NIST 800-53 AC-11, and HIPAA's automatic-logoff requirement, and PCI DSS mandates re-authentication after fifteen minutes of inactivity. Because it depends only on a configuration setting, the absence of an enforced screen lock is treated by assessors as a sign of weak endpoint hardening hygiene overall."
+frameworks:
+  - id: "CIS Controls v8 4.3"
+    text: "Configure automatic session locking on enterprise assets after a defined period of inactivity"
+  - id: "NIST 800-53 AC-11"
+    text: "Session lock — prevent further access by initiating a device lock after inactivity"
+  - id: "HIPAA 164.312(a)(2)(iii)"
+    text: "Automatic logoff — terminate an electronic session after a predetermined time of inactivity"
+  - id: "PCI DSS Req 8.2.8"
+    text: "Re-authenticate a session that has been idle for more than 15 minutes"
+  - id: "ISO 27001:2022 A.7.7"
+    text: "Clear desk and clear screen — protect unattended information"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.3
+  legal:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Set every laptop and workstation to lock automatically after a few minutes of inactivity and require a password to unlock. Enforce this through device management so users cannot turn it off."
+remediation_technical: "Enforce automatic session lock via MDM/Group Policy with an idle timeout of no more than 5–10 minutes (300–600 seconds) and require credentials on resume. macOS: set 'askForPassword=1', 'askForPasswordDelay=0', and a screensaver 'idleTime' <= 600 via a configuration profile. Linux/GNOME: set 'org.gnome.desktop.screensaver lock-enabled true', 'lock-delay 0', and 'org.gnome.desktop.session idle-delay <= 600'. Windows: configure 'Interactive logon: Machine inactivity limit' and a password-protected screen saver timeout via Group Policy. Verify the setting cannot be overridden locally by end users."

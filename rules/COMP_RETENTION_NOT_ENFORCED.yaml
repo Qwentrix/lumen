@@ -1,0 +1,34 @@
+id: COMP_RETENTION_NOT_ENFORCED
+domain: compliance
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-COMP-DD-012 == not_enforced
+title: "Data retention policy exists but is not enforced by any control"
+description_short: "A retention policy exists on paper but no control — automated or manual — enforces it."
+description_long: "A retention policy that is not enforced by any control is effectively no policy at all from a regulatory standpoint. GDPR Article 5(1)(e) requires that organisations demonstrate personal data is kept only for the period specified — which requires active enforcement, not a document. When regulators investigate a complaint about excessive data retention, they look for evidence that the retention schedule was actually applied, not simply documented. Unenforced retention policies are often discovered during breach investigations when data that 'should have been deleted years ago' is found in a breach. This creates both a regulatory violation (failure to enforce the policy) and an aggravated breach impact (more data exposed than was legitimately held)."
+frameworks:
+  - id: "GDPR Art. 5(1)(e)"
+    text: "Storage limitation — personal data must not be kept beyond the retention period; must demonstrate enforcement"
+  - id: "HIPAA 164.310(d)(2)"
+    text: "Disposal — implement and apply procedures for final disposition of ePHI in accordance with documented policy"
+  - id: "PCI DSS Req 3.2.1"
+    text: "Data retention and disposal policy must be implemented and applied, not merely documented"
+  - id: "SOC 2 CC6.5"
+    text: "Logical access — assets are disposed of using formal, enforced processes"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.4
+  retail:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Your retention policy exists but nothing enforces it — add a technical control (or at minimum a manual process with evidence) that actually deletes or archives data according to your schedule. A policy without enforcement has no regulatory value."
+remediation_technical: "Perform a data inventory to understand what data exists, how old it is, and what should have been deleted under the existing policy. Execute an initial remediation deletion run for data that exceeds retention periods. Then implement automated enforcement for each data store: lifecycle policies for cloud storage, database archival jobs, backup expiry, and log rotation. Configure the enforcement controls to run on a recurring schedule matching the retention policy cadence. Enable logging of all enforcement actions and retain logs as compliance evidence. Test enforcement quarterly to confirm it is operating as designed."

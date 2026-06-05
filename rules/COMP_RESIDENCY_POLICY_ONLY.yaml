@@ -1,0 +1,32 @@
+id: COMP_RESIDENCY_POLICY_ONLY
+domain: compliance
+severity: medium
+default_weight: 0.50
+detect:
+  questionnaire:
+    - Q-COMP-DD-028 == yes_policy_only
+title: "Data residency enforced by policy only — no technical enforcement controls"
+description_short: "Data residency requirements are documented in policy but no technical controls prevent data from leaving the required region."
+description_long: "A policy that says data must remain in a specific region, with no technical enforcement, relies entirely on every system, service, and operator correctly following the policy at all times. Cloud services default to the region selected at provisioning; a misconfigured deployment, an inadvertently enabled replication feature, or a vendor that stores backups in a secondary region can all silently violate residency policy without any actor intending to breach it. Policy-only enforcement is consistently insufficient for regulators and sophisticated enterprise customers who perform technical audits. The distinction between policy commitment and technical enforcement is increasingly scrutinised in government, financial services, and healthcare procurement."
+frameworks:
+  - id: "GDPR Ch. V"
+    text: "Transfers of personal data to third countries — technical and organisational measures required"
+  - id: "FedRAMP SC-28"
+    text: "Protection of information at rest — technical controls must enforce data processing boundaries"
+  - id: "ISO 27001 A.13.2.1"
+    text: "Information transfer policies and procedures — technical controls supporting transfer restrictions"
+industry_overlays:
+  government:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.3
+  manufacturing:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Add technical controls to back up your residency policy — cloud region restrictions, encryption key boundaries, or network policies that enforce the policy automatically. Policies are only as strong as their enforcement mechanisms."
+remediation_technical: "Implement technical residency enforcement layered on top of the existing policy: apply cloud organisation policies (AWS SCP, Azure Policy, GCP Org Policy) to block storage creation outside approved regions; implement CMEK with KMS endpoints bound to the approved region; configure replication and backup services to restrict to in-region targets; enable cloud-provider residency assurance features where available. Perform a one-time audit of existing storage to identify out-of-region data and remediate. Run quarterly automated scans to detect new policy violations before they become sustained breaches."

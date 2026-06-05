@@ -1,0 +1,36 @@
+id: COMP_NO_FRAMEWORK_IDENTIFIED
+domain: compliance
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-COMP-004 == none_identified
+title: "No compliance framework identified as applicable"
+description_short: "The organisation has identified no regulatory or compliance framework as applicable to its operations."
+description_long: "Virtually every organisation that handles personal data, processes payments, or sells to regulated industries is subject to at least one compliance framework — whether GDPR for EU data subjects, PCI DSS for card payments, SOC 2 for technology buyers, or HIPAA for healthcare data. Claiming no framework applies typically indicates incomplete scoping rather than genuine exemption. This gap creates compounding risk: without a framework to comply with, there is no structured control programme, no gap assessment, and no audit readiness. Regulators do not accept 'we did not know we were in scope' as a defence. Enterprise buyers increasingly screen out vendors who cannot name their compliance obligations."
+frameworks:
+  - id: "GDPR Art. 3"
+    text: "Territorial scope — applicability to processing of EU data subjects regardless of establishment"
+  - id: "PCI DSS Req 1.1"
+    text: "All entities storing, processing, or transmitting cardholder data are in scope"
+  - id: "HIPAA 164.102"
+    text: "Covered entities and business associates — scope of applicability"
+  - id: "SOC 2 (AICPA)"
+    text: "Applicability to any service organisation that stores or processes customer data"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.5
+  technology:
+    weight_multiplier: 1.4
+  it_services:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.5
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Work with your legal counsel or a compliance consultant to identify which frameworks apply to your business — most organisations have at least one. Start with GDPR if you have EU customers, PCI DSS if you take card payments, and SOC 2 if you sell software or IT services."
+remediation_technical: "Conduct a formal regulatory scoping exercise: map data types handled (PII, PHI, cardholder data, CUI), identify customer geographies and industries, and review contractual obligations. Use a compliance framework decision tree (NIST, CISA, or vendor-provided) to identify obligations. Document the scoping rationale and review it annually or after material business changes. Assign a named compliance owner to each identified framework."

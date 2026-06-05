@@ -1,0 +1,32 @@
+id: COMP_DISPOSAL_INFORMAL
+domain: compliance
+severity: medium
+default_weight: 0.50
+detect:
+  questionnaire:
+    - Q-COMP-DD-011 == ad_hoc
+title: "Data and hardware disposal process is ad hoc with no documentation"
+description_short: "Sensitive data and hardware containing sensitive data are disposed of ad hoc without a documented process or records."
+description_long: "Ad hoc disposal of sensitive data or hardware creates uncontrolled risk: data may survive disposal in recoverable form on returned, donated, resold, or discarded media. Without documented procedures, staff decisions about disposal methods vary — some may delete files while others may assume IT handles it. HIPAA 164.310(d)(1) requires policies for final disposition of ePHI and hardware reuse. PCI DSS Req 9.4.6 requires hardcopy and electronic media to be destroyed following documented procedures. ISO 27001 A.8.3.2 requires a disposal procedure for media containing sensitive information. Ad hoc processes are also difficult to audit — there is no record to examine in a breach investigation to confirm that a decommissioned server was properly wiped."
+frameworks:
+  - id: "HIPAA 164.310(d)(1)"
+    text: "Device and media controls — implement policies for final disposal and hardware reuse"
+  - id: "PCI DSS Req 9.4.6"
+    text: "Hardcopy and electronic media with cardholder data destroyed — with documented destruction records"
+  - id: "ISO 27001 A.8.3.2"
+    text: "Disposal of media — secure disposal of media containing sensitive information"
+  - id: "NIST SP 800-88r1"
+    text: "Guidelines for media sanitisation — documented procedures per media type"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Create a documented disposal procedure specifying how data is deleted from electronic systems and how hardware is sanitised or destroyed before reuse or disposal. Log every disposal action."
+remediation_technical: "Develop a media sanitisation procedure aligned to NIST SP 800-88r1 covering: logical deletion (overwrite), cryptographic erasure, physical destruction, and certified third-party destruction. Create a disposal log capturing device ID, data classification, sanitisation method, date, and authorising personnel. For hardware leaving the organisation, require a Certificate of Destruction from a certified vendor (NAID AAA or equivalent). Test sanitisation effectiveness annually using data recovery tools on a sample of wiped media."

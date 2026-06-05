@@ -1,0 +1,37 @@
+id: VULN_NO_EOL_INVENTORY
+domain: vulnerabilities
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-VULN-011 == no_inventory
+    - Q-VULN-012 == unknown
+title: "No end-of-support inventory — EOL software exposure is unknown"
+description_short: "No inventory of end-of-life or approaching-EOL software is maintained, meaning EOL exposure is entirely unknown."
+description_long: "Without an EOL inventory, an organisation cannot know which of its production systems are running software past vendor support. EOL software receives no security patches, yet continues to accumulate CVE disclosures. An unknown EOL footprint means the organisation cannot calculate its true vulnerability exposure, cannot plan migrations, and cannot demonstrate due care to regulators. NIST SP 800-53 CM-8 requires a comprehensive system component inventory including lifecycle status. PCI DSS Req 12.3.4 mandates that hardware and software are reviewed at least annually to confirm they continue to receive security fixes. The 'unknown' state is particularly concerning because it means the organization may be running EOL systems without any awareness of the risk."
+frameworks:
+  - id: "NIST SP 800-53 CM-8"
+    text: "System Component Inventory — maintain a complete inventory including software lifecycle and support status"
+  - id: "PCI DSS Req 12.3.4"
+    text: "Hardware and software are reviewed at least annually to confirm continued vendor security patch availability"
+  - id: "CIS Control 2"
+    text: "Inventory and Control of Software Assets — track all software including EOL and support expiry dates"
+  - id: "NIST CSF ID.AM-2"
+    text: "Software platforms and applications within the organization are inventoried"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  manufacturing:
+    weight_multiplier: 1.4
+  energy:
+    weight_multiplier: 1.5
+  education:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Build an EOL inventory immediately — you need to know which of your systems are past vendor support before you can manage the risk. Start with your highest-criticality systems and work outward."
+remediation_technical: "Run an authenticated vulnerability scan across all production systems to enumerate installed software and OS versions. Cross-reference against vendor EOL lifecycle databases (endoflife.date, Microsoft Lifecycle, Red Hat ELP calendar). Build an EOL register in your CMDB with: product name, version, EOL date, migration target, and assigned owner. Update the register quarterly. Prioritize assessment of internet-facing systems and those handling sensitive data. Flag all components within 12 months of EOL for proactive migration planning."

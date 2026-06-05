@@ -1,0 +1,36 @@
+id: COMP_NO_PRIV_ACCOUNT_CONTROL
+domain: compliance
+severity: high
+default_weight: 0.75
+detect:
+  questionnaire:
+    - Q-COMP-DD-015 == no_additional_controls
+title: "Privileged accounts have no additional access controls"
+description_short: "Admin, root, and service accounts have no additional controls beyond standard user authentication."
+description_long: "Privileged accounts represent the highest-value targets in any environment — compromise of a single admin account typically grants an attacker full control over a system, domain, or cloud environment. Industry-wide incident data shows that privileged account compromise is involved in the majority of significant breaches, including ransomware deployment and data exfiltration events. Applying no additional controls — no separate credentials, no session recording, no JIT access — means a compromised privileged account can operate undetected for extended periods. HIPAA, PCI DSS Req 8.6, CIS Controls 5, and SOC 2 CC6.3 all require enhanced controls for privileged access. The absence of these controls is a high-priority finding in virtually every security audit."
+frameworks:
+  - id: "PCI DSS Req 8.6"
+    text: "Management of interactive use of application and system accounts — enhanced controls for privileged access"
+  - id: "CIS Controls 5"
+    text: "Account management — establish and maintain an inventory of all accounts, enforce privileged access management"
+  - id: "SOC 2 CC6.3"
+    text: "Logical access to system components — privileged access is restricted and monitored"
+  - id: "NIST SP 800-53 AC-2(7)"
+    text: "Privileged user accounts — establish roles with escalated privileges and monitor privileged account activity"
+  - id: "ISO 27001 A.9.4.4"
+    text: "Use of privileged utility programs — restrict and control use of utility programs able to override controls"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.6
+  government:
+    weight_multiplier: 1.6
+  technology:
+    weight_multiplier: 1.4
+  it_services:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Apply tighter controls to admin and root accounts — at minimum, use separate credentials, enable MFA, and keep a log of all privileged sessions. Admins should not use their privileged account for day-to-day work."
+remediation_technical: "Deploy a Privileged Access Management (PAM) solution (CyberArk, BeyondTrust, HashiCorp Boundary, or cloud-native equivalents). Implement just-in-time (JIT) privileged access so elevated rights are granted on-demand for defined periods with automatic expiry. Enable session recording for all privileged sessions. Enforce separate privileged accounts for admin tasks — no shared 'admin' accounts. Rotate privileged credentials on a fixed schedule and immediately after personnel changes. Integrate PAM logs with SIEM for privileged activity monitoring."

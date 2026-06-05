@@ -1,0 +1,39 @@
+id: PRIV_MULTISTATE_GAP
+domain: privacy
+severity: medium
+default_weight: 0.55
+detect:
+  questionnaire:
+    - Q-PRIV-049 == no_tracking
+    - Q-PRIV-049 == ccpa_only
+title: "US multi-state privacy law obligations are not systematically tracked"
+description_short: "The organization tracks CCPA but not the growing set of US state privacy laws — Virginia VCDPA, Colorado CPA, Connecticut CTPA, Texas TDPSA, and others — that impose separate obligations and consumer rights."
+description_long: "Since 2021, a wave of US state privacy laws has enacted obligations broadly similar to GDPR: consumer rights (access, deletion, correction, portability, opt-out of sale/sharing/profiling), privacy notices, data protection assessments for high-risk processing, and processor contracts. As of 2025, 20+ US states have enacted comprehensive privacy laws. Organizations tracking only CCPA/CPRA are exposed to: Virginia VCDPA (right to appeal), Colorado CPA (universal opt-out mechanism), Connecticut CTPA, Texas TDPSA, Montana, Iowa, and others. Enforcement has begun — Virginia's AG and Colorado's AG have both initiated investigations. The patchwork nature of these laws means obligations differ by state: some require opt-in for sensitive data, some require data protection impact assessments for certain processing, and all have different thresholds."
+frameworks:
+  - id: "CCPA/CPRA §1798.100–1798.199"
+    text: "California Consumer Privacy Act/Privacy Rights Act — foundational US state privacy rights framework"
+  - id: "Virginia VCDPA"
+    text: "Virginia Consumer Data Protection Act — includes right to appeal and data protection assessments"
+  - id: "Colorado CPA"
+    text: "Colorado Privacy Act — requires universal opt-out mechanism and data protection assessments"
+  - id: "NIST Privacy Framework GV.PO-2"
+    text: "Privacy obligations and applicable privacy requirements are identified, documented, and managed"
+  - id: "ISO 27018 §5.4"
+    text: "Ongoing monitoring of applicable legal requirements for personal data"
+industry_overlays:
+  technology:
+    weight_multiplier: 1.5
+  retail:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.3
+  legal:
+    weight_multiplier: 1.4
+  it_services:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "CCPA alone is no longer sufficient if you process data from residents of Virginia, Colorado, Connecticut, Texas, or any of the other states that have enacted privacy laws. Map where your users are located and implement compliance programs for every applicable state law."
+remediation_technical: "1. Conduct a state law applicability assessment: map user/customer locations against enacted state privacy laws and their thresholds (revenue, data volume, consumer count). 2. For each applicable state law, document: consumer rights required, notice requirements, data protection assessment triggers, and processor agreement requirements. 3. Implement a universal opt-out mechanism (required by Colorado CPA; anticipated by others) to streamline compliance. 4. Implement state-specific consumer rights workflows for rights that differ from CCPA (e.g., VCDPA right to appeal). 5. Schedule quarterly legislative monitoring to track new state law enactments and effective dates. 6. Conduct data protection assessments where required (Colorado CPA, Virginia VCDPA, Connecticut CTPA all have assessment requirements similar to DPIA)."

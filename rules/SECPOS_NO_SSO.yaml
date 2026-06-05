@@ -1,0 +1,36 @@
+id: SECPOS_NO_SSO
+domain: security_posture
+severity: high
+default_weight: 0.60
+detect:
+  questionnaire:
+    - Q-SECPOS-007 == no_sso
+title: "No SSO — credentials managed per application"
+description_short: "No single sign-on — employees manage separate credentials for each application."
+description_long: "Without SSO, credential hygiene degrades rapidly: users reuse passwords, store credentials insecurely, and IT cannot enforce a consistent authentication policy across the application estate. When an employee leaves, revocation requires manually hunting down every application rather than disabling a single identity. Shadow-IT proliferates because users bypass IT to adopt tools that don't require SSO integration. SOC 2 auditors consistently flag the absence of SSO as a gap in logical access control, and the operational cost of password resets and account recovery is typically 3–5x higher than SSO-based environments."
+frameworks:
+  - id: "NIST CSF PR.AA-02"
+    text: "Identities are proofed and bound to credentials based on context"
+  - id: "CIS Control 6.7"
+    text: "Centralise access control — use directory services or SSO"
+  - id: "ISO 27001:2022 A.8.5"
+    text: "Secure authentication"
+  - id: "SOC 2 CC6.1"
+    text: "Logical access security and authentication controls"
+  - id: "FedRAMP IA-8"
+    text: "Identification and authentication for non-organisational users"
+  - id: "CISA Zero Trust Pillar: Identity"
+    text: "Centralised identity platform as Zero Trust foundation"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.3
+  financial:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.3
+  technology:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Adopt a centralised identity provider such as Okta, Microsoft Entra ID, or Google Workspace. Connect all corporate applications via SAML or OIDC so employees use a single set of credentials with MFA enforced in one place."
+remediation_technical: "Select an IdP and define an application-onboarding standard: OIDC preferred, SAML as fallback, no Basic Auth. Prioritise high-risk applications (email, code repository, cloud console, HR) in the first 30 days. Implement SCIM provisioning for automated joiner-mover-leaver. Enforce session time-outs and re-authentication on sensitive actions. Block legacy authentication protocols at the network layer to prevent SSO bypass."

@@ -1,0 +1,39 @@
+id: PRIV_PII_DATA_SPRAWL
+domain: privacy
+severity: high
+default_weight: 0.70
+detect:
+  scanner:
+    - privacy.pii_match_count > 0
+    - privacy.files_scanned_count > 0
+title: "PII detected across endpoint files — uncontrolled personal data sprawl"
+description_short: "The endpoint scanner found personal data matches across local or accessible files, indicating PII is stored outside controlled systems without classification or access controls."
+description_long: "When PII is found scattered across endpoint files — in downloads folders, desktop files, shared drives, or developer workstations — it exists outside the organisation's controlled data stores where retention enforcement, access controls, and DLP policies apply. Personal data on unmanaged endpoints is exposed to the same threats as the endpoint itself: malware exfiltration, theft, unauthorized access, and accidental sharing. GDPR Art. 32 requires appropriate technical and organisational measures to protect personal data — this includes ensuring personal data is not stored in locations where those measures do not apply. HIPAA 45 CFR §164.312(a)(1) requires technical access controls that are meaningless if PHI is stored in uncontrolled file locations. Data sprawl directly amplifies breach impact scope and makes DSAR fulfilment and erasure requests structurally incomplete."
+frameworks:
+  - id: "GDPR Art. 5(1)(f)"
+    text: "Integrity and confidentiality — personal data must be processed with appropriate security; uncontrolled endpoint storage fails this principle"
+  - id: "GDPR Art. 32"
+    text: "Security of processing — appropriate technical measures required; personal data on unmanaged endpoints lacks the required controls"
+  - id: "HIPAA 45 CFR §164.312(a)(1)"
+    text: "Technical access controls — PHI in uncontrolled file locations cannot have appropriate access restrictions applied"
+  - id: "CCPA §1798.150"
+    text: "Reasonable security — uncontrolled PII on endpoints is a direct breach of the reasonable security obligation"
+  - id: "NIST Privacy Framework PR.DS-1"
+    text: "Data at rest is protected — personal data in uncontrolled locations is not effectively protected"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.4
+  retail:
+    weight_multiplier: 1.3
+  technology:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Search endpoint devices for personal data files stored outside approved systems. Move sensitive data to controlled repositories where access controls, encryption, and retention policies apply. Implement data loss prevention to prevent further PII from being downloaded to endpoints."
+remediation_technical: "1. Run a full endpoint data discovery scan using DSPM or DLP tooling to locate all personal data stored outside approved systems. 2. Classify discovered personal data by type and sensitivity and transfer to approved data stores with appropriate access controls. 3. Implement DLP endpoint agent policies to prevent personal data from being downloaded to or created on unmanaged locations — block copy-out of personal data to local desktop, downloads folder, or removable media. 4. Configure cloud storage access policies to prevent sync of personal data categories to unmanaged endpoint locations. 5. Include endpoint personal data discovery in quarterly data map reviews. 6. Train employees that storing personal data on local drives is prohibited and provide approved alternatives."

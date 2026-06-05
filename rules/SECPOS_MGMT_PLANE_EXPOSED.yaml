@@ -1,0 +1,41 @@
+id: SECPOS_MGMT_PLANE_EXPOSED
+domain: security_posture
+severity: critical
+default_weight: 0.90
+detect:
+  questionnaire:
+    - Q-SECPOS-044 == exposed_without_controls
+    - Q-SECPOS-044 == unknown
+title: "Management interfaces exposed to the internet without additional controls"
+description_short: "SSH, RDP, admin consoles, or cloud management APIs are directly accessible from the internet."
+description_long: "Internet-exposed management interfaces are consistently exploited by threat actors through brute-force, credential stuffing, and exploitation of unpatched vulnerabilities. SSH and RDP on standard ports are systematically scanned and attacked within minutes of exposure. CISA's Known Exploited Vulnerabilities catalogue is dominated by vulnerabilities in VPN appliances, RDP, and management consoles. The 2023 MOVEit and 2022 Log4Shell campaigns both exploited internet-facing management surfaces at scale. Management access must traverse an authenticated bastion or ZTNA gateway — direct internet exposure is an unacceptable baseline configuration."
+frameworks:
+  - id: "NIST CSF PR.IR-01"
+    text: "Networks and environments are protected from unauthorised logical access"
+  - id: "CIS Control 12.3"
+    text: "Securely manage network infrastructure — restrict management access"
+  - id: "ISO 27001:2022 A.8.21"
+    text: "Security of network services — access to management interfaces"
+  - id: "SOC 2 CC6.6"
+    text: "Security measures restrict access to information assets from outside boundary"
+  - id: "FedRAMP CM-7"
+    text: "Least functionality — disable and restrict non-essential services and ports"
+  - id: "CISA Zero Trust Pillar: Networks"
+    text: "No management interfaces directly accessible from untrusted networks"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.6
+  energy:
+    weight_multiplier: 1.6
+  manufacturing:
+    weight_multiplier: 1.5
+  technology:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Immediately remove management ports (SSH, RDP, admin UIs) from direct internet access. Require a VPN or jump server to reach them. Run a port scan of your public IP ranges today to find any exposed services you may not be aware of."
+remediation_technical: "Audit all internet-facing resources: run a port scan of all public IPs (Shodan, nmap, cloud provider security findings). Block SSH (22), RDP (3389), database ports (3306, 5432, 1433), and admin console ports at the perimeter firewall and cloud security groups immediately. Require management access to traverse either: a bastion host with MFA-authenticated SSH proxy, or a ZTNA solution providing application-scoped access. For cloud consoles, enforce IP-allowlist conditional access via IdP. Remove default SSH keys and require certificate-based SSH. Monitor for any management-interface port exposure as a critical SIEM alert."

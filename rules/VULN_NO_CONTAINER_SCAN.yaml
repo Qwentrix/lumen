@@ -1,0 +1,35 @@
+id: VULN_NO_CONTAINER_SCAN
+domain: vulnerabilities
+severity: high
+default_weight: 0.75
+detect:
+  questionnaire:
+    - Q-VULN-022 == no_container_scanning
+    - Q-VULN-022 == runtime_only
+title: "No container image vulnerability scanning"
+description_short: "Container images are not scanned for known vulnerabilities before deployment."
+description_long: "Container images frequently include base OS layers and third-party packages with known CVEs. Without pre-deployment image scanning, vulnerable containers enter production and are often long-lived. NIST SP 800-190 and the CIS Docker and Kubernetes benchmarks require image scanning as a baseline practice. Runtime-monitoring-only approaches miss vulnerabilities baked into images at build time and do not satisfy CI/CD security gate requirements expected by auditors for SOC 2 and PCI DSS."
+frameworks:
+  - id: "NIST SP 800-190"
+    text: "Application Container Security Guide"
+  - id: "CIS Docker Benchmark"
+    text: "Image scanning and hardened base images"
+  - id: "CIS Kubernetes Benchmark"
+    text: "Container image scanning before deployment"
+  - id: "OWASP Top 10 A06:2021"
+    text: "Vulnerable and Outdated Components"
+industry_overlays:
+  technology:
+    weight_multiplier: 1.5
+  it_services:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.2
+  retail:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Add container image scanning to your CI/CD pipeline. Block deployments that contain critical or high CVEs. Regularly rebuild base images to pick up upstream patches."
+remediation_technical: "Integrate Trivy, Snyk Container, or Grype into your CI pipeline as a build-blocking gate for CVSS >= 7 findings. Enable runtime vulnerability monitoring with Falco or Wiz for workloads already in production. Adopt minimal base images (distroless, scratch) to reduce attack surface. Set an image age policy to force periodic rebuilds."

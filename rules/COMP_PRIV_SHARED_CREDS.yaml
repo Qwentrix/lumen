@@ -1,0 +1,34 @@
+id: COMP_PRIV_SHARED_CREDS
+domain: compliance
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-COMP-DD-015 == elevated_but_shared
+title: "Privileged accounts use shared credentials"
+description_short: "Admin and elevated accounts use shared credentials — individual privileged actions cannot be attributed."
+description_long: "Shared privileged credentials — a single 'admin' password used by multiple individuals — eliminate accountability for privileged actions. When something goes wrong, the organisation cannot determine which individual took a specific privileged action, when, or from where. This breaks forensic investigations, makes insider threat detection impossible, and prevents organisations from proving to regulators that access was appropriately controlled. PCI DSS explicitly prohibits shared credentials under Req 8.2.1. HIPAA requires audit controls that can identify who accessed ePHI. SOC 2 requires individual accountability for access to systems in scope. Shared privileged credentials also mean that when a team member leaves, the shared credential must be rotated and shared again — a process often skipped in practice."
+frameworks:
+  - id: "PCI DSS Req 8.2.1"
+    text: "All user and administrator accounts must be unique — shared generic accounts are prohibited"
+  - id: "HIPAA 164.312(b)"
+    text: "Audit controls — implement hardware, software, and procedural mechanisms that record and examine activity in systems containing ePHI"
+  - id: "SOC 2 CC6.2"
+    text: "Logical access — register and authorise new internal and external users; shared accounts cannot provide individual accountability"
+  - id: "ISO 27001 A.9.2.1"
+    text: "User registration and de-registration — formal user identity management; no shared accounts"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.6
+  government:
+    weight_multiplier: 1.6
+  technology:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Replace all shared admin accounts with individual named accounts — every person who needs privileged access should have their own unique credential. Shared passwords for admin accounts are prohibited under PCI DSS and create serious accountability gaps."
+remediation_technical: "Audit all privileged accounts to identify shared credentials (generic names like 'admin', 'root', 'svc-admin' used by multiple individuals). Create individual privileged accounts for each person requiring elevated access. Disable or retire shared accounts. Where service accounts are shared for automated processes, enforce non-interactive authentication (certificates, managed identities, or secrets manager — not a shared password). Implement a PAM solution to broker individual access to shared infrastructure accounts without distributing the underlying credential. Enable privileged session recording for all administrative access to attribute actions to individuals."

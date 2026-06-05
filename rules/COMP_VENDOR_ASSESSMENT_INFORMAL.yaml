@@ -1,0 +1,30 @@
+id: COMP_VENDOR_ASSESSMENT_INFORMAL
+domain: compliance
+severity: medium
+default_weight: 0.40
+detect:
+  questionnaire:
+    - Q-COMP-014 == informal_review
+title: "Vendor security assessments are informal with no documented criteria"
+description_short: "Pre-onboarding vendor security reviews are informal — no documented assessment criteria or process."
+description_long: "An informal security review at vendor onboarding — typically a conversation or a quick check of the vendor's website for a security page — provides weak assurance compared to a structured assessment. Without documented criteria, it is impossible to demonstrate to regulators or auditors that due diligence was performed. Different reviewers may apply different standards, creating inconsistency. Informal reviews also tend to miss important risk areas: subprocessor chains, data breach history, regulatory actions, and specific security control gaps. Organisations that rely on informal vendor assessments typically have no defensible evidence of vendor due diligence when a vendor-related breach occurs."
+frameworks:
+  - id: "PCI DSS Req 12.8.1"
+    text: "Due diligence before service provider engagement — requires documented evidence of assessment"
+  - id: "ISO 27001 A.15.1.2"
+    text: "Addressing security within supplier agreements — formal assessment criteria required"
+  - id: "SOC 2 CC9.2"
+    text: "Vendor risk assessment — documented criteria and process required for due diligence"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Replace informal vendor security checks with a documented assessment process — define what you look for, use a standard questionnaire or checklist, and record the results. The documentation is as important as the review itself."
+remediation_technical: "Implement a tiered vendor security assessment process with documented criteria: define assessment tiers based on data sensitivity and access level; create assessment templates (SIG Lite, CAIQ, or custom) aligned to tier; define minimum acceptable outcomes (e.g., Tier-1 must have SOC 2 Type II or ISO 27001, or complete a full questionnaire with reviewed responses); document the assessment outcome and any accepted risks; require sign-off from a named approver before granting access. Store assessment records in your vendor register as compliance evidence for PCI DSS and ISO 27001."

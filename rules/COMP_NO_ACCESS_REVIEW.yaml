@@ -1,0 +1,32 @@
+id: COMP_NO_ACCESS_REVIEW
+domain: compliance
+severity: high
+default_weight: 0.75
+detect:
+  questionnaire:
+    - Q-COMP-012 == never
+title: "No user access review process exists"
+description_short: "User access rights have never been reviewed or recertified — permissions accumulate unchecked over time."
+description_long: "Without any access review process, permissions accumulate as roles change and employees move within or leave the organisation. Over time, the user access state diverges significantly from the intended least-privilege model, with former employees retaining access, moved employees accumulating privileges from previous roles, and users with over-broad permissions that were never right-sized. HIPAA 164.308(a)(4)(i) requires an information access management procedure. PCI DSS Req 7.2.3 requires periodic confirmation that user access is appropriate. ISO 27001 A.9.2.5 requires regular review. SOC 2 CC6.3 requires access to be removed when no longer authorised. An organisation that has never reviewed access has, by definition, never confirmed that it is appropriate — a position that cannot be defended in an audit or investigation."
+frameworks:
+  - id: "HIPAA 164.308(a)(4)(i)"
+    text: "Information access management — establish procedures for authorising access"
+  - id: "PCI DSS Req 7.2.3"
+    text: "All user accounts and related access privileges reviewed at least once every six months"
+  - id: "ISO 27001 A.9.2.5"
+    text: "Review of user access rights — review at regular intervals"
+  - id: "SOC 2 CC6.3"
+    text: "Prior to issuing system credentials, registered users are identified and authorised"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Immediately conduct an access rights review across all systems. Assign a recurring schedule — at minimum annually — and document results. Remove any access that cannot be justified by current job role."
+remediation_technical: "Perform an immediate access rights audit: pull all user accounts and permissions across all systems; cross-reference against current employee and role data from HR. Remove stale accounts (terminated employees, departed contractors). Remove excess permissions not aligned to current role. Establish a recurring certification programme in your IdP: at minimum annually for standard users, quarterly for privileged accounts. Document all access decisions. Retain certification records as compliance evidence."

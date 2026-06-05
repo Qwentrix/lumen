@@ -1,0 +1,40 @@
+id: PRIV_NO_CROSS_BORDER_VISIBILITY
+domain: privacy
+severity: high
+default_weight: 0.75
+detect:
+  questionnaire:
+    - Q-PRIV-009 == no
+    - Q-PRIV-009 == approximate
+    - Q-PRIV-030 == unknown
+title: "No visibility into which countries personal data is stored in or transferred to"
+description_short: "The organization does not know with certainty which countries personal data is stored in or transferred to, making it impossible to determine whether GDPR cross-border transfer obligations apply or which mechanism is needed."
+description_long: "GDPR Chapter V (Art. 44–49) requires a lawful transfer mechanism for every transfer of personal data to a third country. It is impossible to ensure this requirement is met without knowing where data flows. Cloud storage, SaaS tools, CDNs, and analytics services frequently transfer or store data in jurisdictions the customer did not explicitly authorize. An organization that answers 'approximately' or 'unknown' to where its data resides cannot assert with confidence that its cross-border transfers are lawful — which means they may not be. This is a foundational privacy control: data sovereignty and transfer compliance both start with knowing where data is. NIST Privacy Framework GV.PO-2 and ISO 27018 both treat data location awareness as a baseline requirement."
+frameworks:
+  - id: "GDPR Art. 44"
+    text: "General principle for transfers — transfers only permitted when transfer mechanism conditions are met; requires knowing transfer destinations"
+  - id: "GDPR Art. 46"
+    text: "Transfers subject to appropriate safeguards — must identify which transfers require SCCs/BCRs/adequacy"
+  - id: "GDPR Art. 30(1)(e)"
+    text: "ROPA must include information on transfers to third countries and the applicable safeguards"
+  - id: "ISO 27018 §5.4"
+    text: "Cloud customer right to know the countries in which their personal data may be stored or processed"
+  - id: "NIST Privacy Framework GV.PO-2"
+    text: "Privacy obligations require knowing where personal data is located and transferred"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.6
+  legal:
+    weight_multiplier: 1.5
+  technology:
+    weight_multiplier: 1.3
+  retail:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Map where your personal data is stored and transferred to — including cloud storage regions, SaaS tool data centers, CDN nodes, and third-party analytics platforms. You cannot comply with cross-border transfer rules without this map."
+remediation_technical: "1. Conduct a data residency audit: for each personal data store (database, object storage, backup, SaaS tool), identify the countries/regions where data is stored and processed. 2. Review cloud provider documentation for data residency commitments and sub-processor locations. 3. Map identified cross-border flows to applicable GDPR transfer mechanisms (adequacy decision, SCC, BCR, DPF). 4. Include cross-border transfer details in the Art. 30 ROPA per Art. 30(1)(e). 5. Configure cloud services to restrict data storage to approved regions where feasible. 6. Implement ongoing monitoring: new SaaS tool adoption should trigger a data residency check before onboarding."

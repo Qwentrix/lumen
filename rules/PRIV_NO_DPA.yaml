@@ -1,0 +1,42 @@
+id: PRIV_NO_DPA
+domain: privacy
+severity: critical
+default_weight: 0.85
+detect:
+  questionnaire:
+    - Q-PRIV-004 == no
+title: "No data processing agreements with third-party processors"
+description_short: "Data processing agreements are not in place with third-party vendors who process personal data."
+description_long: "GDPR Art. 28 mandates that any organisation passing personal data to a third-party processor must have a binding Data Processing Agreement in place before processing begins. Transferring personal data without a DPA is a direct infringement that regulators have fined, regardless of the processor's own compliance posture."
+frameworks:
+  - id: "GDPR Art. 28"
+    text: "Processor obligations — controller must only use processors providing sufficient guarantees"
+  - id: "HIPAA 164.308(b)"
+    text: "Business associate contracts"
+  - id: "CCPA §1798.100"
+    text: "Service provider contracts restricting personal information use"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.7
+  financial:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  technology:
+    weight_multiplier: 1.3
+  it_services:
+    weight_multiplier: 1.3
+  retail:
+    weight_multiplier: 1.2
+  education:
+    weight_multiplier: 1.2
+  manufacturing:
+    weight_multiplier: 1.1
+  energy:
+    weight_multiplier: 1.1
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Inventory all third-party vendors who access personal data and put a Data Processing Agreement in place with each before sharing any data."
+remediation_technical: "Audit vendor contracts for DPA coverage. Use GDPR-standard DPA clauses (EU SCCs for international transfers). Maintain a processor register in your GRC platform with DPA status, renewal date, and sub-processor list. Block new vendor onboarding until DPA is signed."

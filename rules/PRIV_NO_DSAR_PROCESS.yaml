@@ -1,0 +1,30 @@
+id: PRIV_NO_DSAR_PROCESS
+domain: privacy
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-PRIV-003 == no
+title: "No data subject access request process"
+description_short: "No process exists for individuals to request access to or deletion of their personal data."
+description_long: "GDPR gives individuals the right to access (Art. 15), rectify (Art. 16), erase (Art. 17), and restrict processing (Art. 18) of their personal data. Organisations must respond within one calendar month. Without a process, every DSAR becomes a compliance emergency and missed deadlines carry fines of up to 4% of global annual turnover."
+frameworks:
+  - id: "GDPR Art. 15–22"
+    text: "Data subject rights (access, rectification, erasure, portability, restriction, objection)"
+  - id: "CCPA §1798.110–120"
+    text: "Consumer rights to know, delete, and opt-out"
+  - id: "HIPAA 164.524"
+    text: "Access of individuals to protected health information"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.3
+  legal:
+    weight_multiplier: 1.4
+  retail:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Create a simple intake form for data subject requests and assign an owner to respond within one month."
+remediation_technical: "Build a DSAR intake workflow (email alias or web form) with a case-management system tracking receipt date, due date, and fulfilment status. Integrate with your data map to locate all copies of requested data. Implement cryptographic erasure (Micelium Sypher) for right-to-erasure. Document each response for audit."

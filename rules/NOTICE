@@ -1,0 +1,25 @@
+Lumen Finding Rules
+Copyright 2026 Qwentrix Inc.
+
+This finding-rule content is licensed under the Creative Commons Attribution 4.0
+International License (CC BY 4.0). See LICENSE-CC-BY-4.0 in this directory.
+
+ATTRIBUTION
+-----------
+When you share or adapt this content, please credit:
+
+    "Lumen finding rules © Qwentrix Inc., licensed under CC BY 4.0,
+     https://github.com/Qwentrix/lumen"
+
+and indicate whether you made changes.
+
+PROVENANCE
+----------
+These rules are a curated, vendor-neutral subset of the rules used by Micelium
+Lumen. Micelium-specific product-mapping metadata (the `micelium_product` field)
+has been removed from the public subset; the AI-governance (AIGOV) rule domain is
+not included in this public release.
+
+Framework citations within the rules (CIS, NIST, HIPAA, PCI DSS, OWASP, ISO/IEC
+27001, GDPR, EU AI Act, FedRAMP, SOC 2, etc.) are the property of their respective
+standards bodies and are referenced for interoperability and explainability.

@@ -1,0 +1,36 @@
+id: VULN_CLOUD_OPEN_NETWORK
+domain: vulnerabilities
+severity: high
+default_weight: 0.75
+detect:
+  questionnaire:
+    - Q-VULN-DD-021 == never_reviewed
+title: "Cloud and on-premises network controls have never been formally reviewed"
+description_short: "Security groups, firewall rules, and NACLs have never been formally reviewed, leaving over-permissive inbound access rules unchecked."
+description_long: "Network access controls that have never been formally reviewed almost certainly contain over-permissive rules accumulated from initial provisioning, emergency access grants, and development convenience. 0.0.0.0/0 inbound rules, unrestricted port ranges, and forgotten dev-environment rules are among the most common causes of cloud breaches. Without a single formal review having occurred, there is no established baseline and no mechanism to detect drift. NIST SP 800-53 SC-7 (Boundary Protection) and CIS Control 12 (Network Infrastructure Management) treat network rule reviews as foundational controls. PCI DSS Req 1.3 mandates that inbound and outbound traffic rules be justified and minimized."
+frameworks:
+  - id: "NIST SP 800-53 SC-7"
+    text: "Boundary Protection — implement and review access controls at network boundaries"
+  - id: "CIS Control 12"
+    text: "Network Infrastructure Management — no over-permissive rules permitted at network boundaries"
+  - id: "PCI DSS Req 1.3"
+    text: "Restrict inbound and outbound traffic to only that which is necessary for the cardholder data environment"
+industry_overlays:
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  it_services:
+    weight_multiplier: 1.3
+  retail:
+    weight_multiplier: 1.3
+  manufacturing:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Conduct an immediate review of all firewall rules, security groups, and network ACLs. Remove any rule that allows broad inbound access (0.0.0.0/0 on non-standard ports) and establish a quarterly review cadence going forward."
+remediation_technical: "Run an immediate audit of all security groups, NACLs, firewall rules, and NSGs across cloud and on-premises environments. Flag and remove any rules with overly broad source ranges or unnecessary open ports. Implement Infrastructure-as-Code for all network rules to make changes auditable. Use AWS Network Access Analyzer, GCP VPC Flow Logs, or Azure Network Watcher to identify unused or overly permissive rules. Establish quarterly formal review cadence with documented sign-off and change justifications."

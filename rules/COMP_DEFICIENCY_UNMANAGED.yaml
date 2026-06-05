@@ -1,0 +1,30 @@
+id: COMP_DEFICIENCY_UNMANAGED
+domain: compliance
+severity: medium
+default_weight: 0.50
+detect:
+  questionnaire:
+    - Q-COMP-DD-009 == noted_not_tracked
+title: "Control deficiencies are noted but not tracked to remediation"
+description_short: "Compliance control failures are identified but not tracked to remediation — no owner is assigned and no plan of action exists."
+description_long: "Noting a deficiency without assigning remediation ownership and tracking it to closure is functionally equivalent to not having a compliance programme — the gap is known but allowed to persist indefinitely. FedRAMP requires a Plan of Action and Milestones (POA&M) for every identified control deficiency. SOC 2 CC4.2 requires that deficiencies identified through monitoring activities are communicated and addressed. ISO 27001 Clause 10.1 requires correction and corrective action for nonconformities. Regulators and auditors treat unmanaged known deficiencies as evidence of systemic negligence — particularly damaging in a breach scenario where the unmanaged control was the exploited gap."
+frameworks:
+  - id: "FedRAMP POA&M Guidance"
+    text: "Plan of Action and Milestones — tracking identified control weaknesses to remediation"
+  - id: "SOC 2 CC4.2"
+    text: "Communicating deficiencies identified through compliance monitoring"
+  - id: "ISO 27001 Clause 10.1"
+    text: "Nonconformity and corrective action — tracking to resolution"
+  - id: "NIST SP 800-53 CA-5"
+    text: "Plan of action and milestones — systematic tracking of security deficiencies"
+industry_overlays:
+  government:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.3
+  healthcare:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "For every compliance deficiency identified — whether from an internal review, audit finding, or automated scan — assign a named owner, define a remediation deadline, and track it to confirmed closure."
+remediation_technical: "Establish a formal deficiency management process aligned to NIST POA&M guidance. Use your GRC platform or ticketing system (Jira, ServiceNow) to create a deficiency record for each identified gap including: control reference, risk severity, named owner, remediation steps, and target closure date. Require written evidence of closure for each item. Report open deficiencies and ageing items to leadership monthly. Integrate with your SIEM for control-failure-to-deficiency automation."

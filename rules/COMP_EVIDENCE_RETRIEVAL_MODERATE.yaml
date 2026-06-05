@@ -1,0 +1,26 @@
+id: COMP_EVIDENCE_RETRIEVAL_MODERATE
+domain: compliance
+severity: low
+default_weight: 0.25
+detect:
+  questionnaire:
+    - Q-COMP-008 == within_month
+title: "Audit evidence retrieval takes up to a month"
+description_short: "Producing specific control evidence for an auditor would take up to one month — indicating manual or fragmented evidence management."
+description_long: "A one-month evidence retrieval time suggests evidence is not centrally organised and requires manual searching across systems, shared drives, or email threads. While not an immediate regulatory violation, this latency is a maturity indicator that elevates audit cost, creates audit delays, and signals to examiners that the compliance programme lacks operational efficiency. In regulated industries such as healthcare and financial services, extended evidence retrieval times can complicate breach response timelines and slow regulatory examinations. It also means that if a control failure occurred, the organisation cannot quickly verify whether and when the failure happened."
+frameworks:
+  - id: "SOC 2 CC4.1"
+    text: "Monitoring activities — evidence supporting control operation should be readily available"
+  - id: "ISO 27001 Clause 7.5.3"
+    text: "Control of documented information — availability and retrieval"
+industry_overlays:
+  financial:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.2
+  healthcare:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Centralise compliance evidence storage so any piece of evidence can be found and produced within days, not weeks. Tag evidence by control, framework, and time period."
+remediation_technical: "Migrate evidence from shared drives and email to a structured GRC platform or evidence repository. Tag each artefact with: control reference, framework mapping, date, evidence type, and owner. Build a standard auditor evidence package template that can be assembled in under 24 hours. Conduct a dry-run audit evidence request annually to measure and improve retrieval time."

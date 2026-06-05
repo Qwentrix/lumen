@@ -1,0 +1,32 @@
+id: COMP_EVIDENCE_NOT_CONTINUOUS
+domain: compliance
+severity: medium
+default_weight: 0.50
+detect:
+  questionnaire:
+    - Q-COMP-007 == scramble_at_audit_time
+title: "Evidence collected only when an audit is approaching"
+description_short: "Compliance evidence — logs, access reviews, policy attestations — is gathered ad hoc when an audit is imminent rather than collected continuously."
+description_long: "Point-in-time, pre-audit evidence collection is a maturity red flag for any auditor. It means controls may only be operating during the audit window — or that evidence is being retrospectively reconstructed rather than captured contemporaneously. SOC 2 Type II specifically assesses whether controls operated continuously over the observation period; last-minute evidence gathering is a primary reason auditors issue qualified opinions. ISO 27001 Clause 9.1 requires monitoring of performance on an ongoing basis. Continuous collection also provides the organisation with early warning of control failures, whereas scramble-at-audit collection provides no operational benefit — it only creates compliance theatre. Regulators increasingly recognise scramble patterns as indicative of controls that don't genuinely operate."
+frameworks:
+  - id: "SOC 2 CC4.1"
+    text: "Monitoring activities — ongoing evaluation of whether controls are operating effectively"
+  - id: "ISO 27001 Clause 9.1"
+    text: "Monitoring, measurement, analysis and evaluation — ongoing performance monitoring"
+  - id: "FedRAMP CA-7"
+    text: "Continuous monitoring — ongoing assessment of security controls"
+  - id: "PCI DSS Req 10.7"
+    text: "Retain audit log history for at least 12 months — implies continuous collection"
+industry_overlays:
+  financial:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.3
+  technology:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Switch from gathering evidence before audits to collecting it automatically and continuously. Deploy tooling that captures evidence as controls operate — not retroactively."
+remediation_technical: "Implement a compliance automation platform (Vanta, Drata, Secureframe, Tugboat Logic) that integrates with your cloud infrastructure, IdP, and ticketing system to collect evidence continuously. For each control, define the evidence artefact, collection method, and retention period. Schedule automated recurrence for human-generated evidence (access reviews, policy attestations). Store evidence with timestamps in tamper-evident storage. Demonstrate continuous collection records to auditors at the start of each engagement."

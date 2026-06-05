@@ -1,0 +1,36 @@
+id: SECPOS_NO_IR_RETAINER
+domain: security_posture
+severity: medium
+default_weight: 0.45
+detect:
+  questionnaire:
+    - Q-SECPOS-050 == no_retainer
+title: "No external IR retainer — no surge capacity for major incidents"
+description_short: "No retainer agreement with an external IR firm — no guaranteed surge support available during a major incident."
+description_long: "Major incidents such as ransomware events or nation-state intrusions require forensics capability, legal coordination, regulatory communication, and technical containment expertise that most organisations do not maintain internally at the required scale. Without a pre-negotiated retainer, organisations spend critical hours during an active incident trying to source and contract a response firm at emergency rates — if they can be engaged at all during a peak demand period. Cyber insurers frequently require evidence of an IR retainer as part of policy qualification. Retainer agreements also allow organisations to onboard the firm's environment documentation in advance, reducing time-to-effective-response from days to hours."
+frameworks:
+  - id: "NIST SP 800-61 Rev 2"
+    text: "Incident response — external expertise and coordination"
+  - id: "CIS Control 17.5"
+    text: "Assign key roles and responsibilities — including external IR coordination"
+  - id: "ISO 27001:2022 A.5.26"
+    text: "Response to information security incidents — external support resources"
+  - id: "SOC 2 CC7.5"
+    text: "Incidents are contained — access to resources for recovery"
+  - id: "FedRAMP IR-7"
+    text: "Incident response assistance — external support capability"
+  - id: "CISA Zero Trust Pillar: Visibility and Analytics"
+    text: "Incident response capability including external expertise access"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.3
+  energy:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Establish a retainer agreement with an external incident response firm before you need it. Confirm your cyber insurance policy's preferred IR vendors and coordinate with them now. Pre-loading your environment details into the retainer saves hours during an active incident."
+remediation_technical: "Negotiate an IR retainer with a reputable firm (Mandiant/Google, CrowdStrike Services, Secureworks, Palo Alto Unit 42) that includes: defined response SLA (e.g., on-site within 8 hours or remote within 2 hours), pre-agreed scope covering ransomware, APT, and insider threat scenarios, and pre-loaded environment documentation (network diagram, asset inventory, critical system list, key contacts). Coordinate retainer selection with your cyber insurer's preferred-vendor list to avoid coverage conflicts. Store retainer contact information offline and ensure multiple stakeholders (not just the CISO) have access to it."

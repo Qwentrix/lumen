@@ -1,0 +1,35 @@
+id: SECPOS_SAAS_NOT_BACKED_UP
+domain: security_posture
+severity: medium
+default_weight: 0.50
+detect:
+  questionnaire:
+    - Q-SECPOS-DD-027 == saas_not_in_scope
+    - Q-SECPOS-DD-027 == relying_on_vendor_retention
+title: "SaaS application data not backed up independently"
+description_short: "SaaS data (Microsoft 365, Google Workspace, Salesforce, etc.) is not backed up outside the vendor's own retention."
+description_long: "SaaS vendors provide recycle bins and version history, not backups. Native retention policies are designed to prevent accidental deletion, not to recover from ransomware syncing corrupted files, malicious bulk deletion by an insider, or account compromise with data destruction. Microsoft 365's native retention window is 93 days for deleted items; after that, data is permanently gone. Gartner has long recommended that organisations treat SaaS data as a shared-responsibility model where the customer is responsible for data protection beyond what the vendor provides. CRM, email, collaboration, and HR data in SaaS platforms represent critical business assets requiring independent backup."
+frameworks:
+  - id: "NIST CSF PR.DS-11"
+    text: "Backups of data are created, protected, maintained, and tested"
+  - id: "CIS Control 11.1"
+    text: "Establish and maintain a data recovery practice — including SaaS data"
+  - id: "ISO 27001:2022 A.8.13"
+    text: "Information backup — cloud and SaaS data included in scope"
+  - id: "SOC 2 A1.3"
+    text: "Recovery procedures cover all systems including SaaS"
+  - id: "FedRAMP CP-9"
+    text: "System backup — covers all authorised information system components"
+  - id: "CISA Zero Trust Pillar: Data"
+    text: "Data protection including SaaS environments"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.3
+  financial:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Back up your Microsoft 365, Google Workspace, and other SaaS application data using a dedicated third-party SaaS backup tool. Vendor-native recycle bins are not a substitute for a real backup that you control."
+remediation_technical: "Deploy a dedicated SaaS backup solution (Veeam for M365, Backupify, Spanning, AvePoint) covering: Exchange Online/Gmail, OneDrive/Google Drive, SharePoint/Sites, Teams, and other in-scope SaaS platforms (Salesforce, Jira, Slack). Configure daily backup with 1-year retention minimum. Store backup copies in cloud storage you control, separate from the SaaS vendor's infrastructure. Test restore quarterly for at least one user and one shared workspace per platform. Inventory all SaaS applications handling material business data and include in backup scope."

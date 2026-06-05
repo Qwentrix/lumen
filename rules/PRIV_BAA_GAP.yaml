@@ -1,0 +1,31 @@
+id: PRIV_BAA_GAP
+domain: privacy
+severity: high
+default_weight: 0.85
+detect:
+  questionnaire:
+    - Q-PRIV-046 == no
+    - Q-PRIV-046 == partial
+    - Q-PRIV-DD-045 == never_reviewed
+    - Q-PRIV-DD-045 == reviewed_at_renewal_only
+title: "HIPAA Business Associate Agreements incomplete or not maintained"
+description_short: "One or more business associates that access, create, or transmit Protected Health Information (PHI) do not have current, reviewed HIPAA Business Associate Agreements in place."
+description_long: "HIPAA §164.504(e) requires covered entities and business associates to have written Business Associate Agreements (BAAs) with every business associate that creates, receives, maintains, or transmits PHI on their behalf. A BAA that was never executed, is outdated, or does not reflect the current scope of PHI access constitutes a direct HIPAA violation independent of any breach. OCR enforcement data shows BAA deficiencies are among the most commonly cited violations in HIPAA audits and settlement agreements. Penalties range from $100 to $50,000 per violation per calendar year under the tiered structure at 45 CFR §160.404."
+frameworks:
+  - id: "HIPAA 45 CFR §164.504(e)"
+    text: "Business Associate Agreement required for all BAs creating, receiving, maintaining, or transmitting PHI"
+  - id: "HIPAA 45 CFR §160.404"
+    text: "Civil money penalties — BAA violations subject to tiered per-violation penalties"
+  - id: "HIPAA 45 CFR §164.308(b)"
+    text: "Administrative safeguard — written contracts or other arrangements with business associates"
+  - id: "GDPR Art. 28"
+    text: "Processor contract requirements — analogous to BAA for EU personal data"
+  - id: "NIST Privacy Framework PR.PO-P5"
+    text: "Privacy policies, processes, and procedures are maintained and applied across the organization"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 2.0
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Identify every vendor, contractor, or partner that has access to PHI and ensure a current, signed BAA is in place with each one. Review BAAs at least annually and update them whenever the scope of PHI access changes."
+remediation_technical: "1. Conduct a business associate inventory: map every entity that creates, receives, maintains, or transmits PHI on your behalf. 2. For each BA, verify a signed BAA is on file that meets the required elements of 45 CFR §164.504(e)(2). 3. Implement a BAA lifecycle tracker with review alerts: at minimum annual review and change-triggered review. 4. Ensure BAAs include required provisions: permitted uses/disclosures, BA security obligations, breach notification to covered entity, termination and data return/destruction clauses. 5. Terminate data sharing with any BA that refuses to sign a compliant BAA."

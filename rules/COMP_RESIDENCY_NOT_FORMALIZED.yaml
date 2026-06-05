@@ -1,0 +1,32 @@
+id: COMP_RESIDENCY_NOT_FORMALIZED
+domain: compliance
+severity: medium
+default_weight: 0.45
+detect:
+  questionnaire:
+    - Q-COMP-019 == informal_expectation
+title: "Data residency expectation exists but is not formally captured"
+description_short: "There is an informal expectation of data residency compliance but no formal documentation of requirements or controls."
+description_long: "When residency expectations exist informally — teams understand that data should stay in a particular region but this is not documented in contracts, policies, or technical controls — the organisation is exposed to a contractual and regulatory gap. If a customer performs an audit and finds data outside the expected region, the informal expectation provides no legal defence. If regulatory guidance requires documented residency controls, the absence of formalised requirements means the organisation cannot demonstrate compliance. Informal expectations also drift over time: staff changes, new services are adopted without region consideration, and the expectation gradually becomes disconnected from operational reality."
+frameworks:
+  - id: "GDPR Ch. V"
+    text: "Transfers of personal data to third countries — transfer mechanisms and documentation requirements"
+  - id: "ISO 27001 A.18.1.4"
+    text: "Privacy and protection of personally identifiable information — formalise data handling obligations"
+  - id: "SOC 2 Availability / Confidentiality TSC"
+    text: "System boundaries and data handling obligations must be formally documented"
+industry_overlays:
+  government:
+    weight_multiplier: 1.5
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.4
+  manufacturing:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Formalise your data residency requirements — document which data types must stay in which regions, and make those requirements explicit in your customer contracts and internal policies."
+remediation_technical: "Conduct a residency requirements workshop: identify all data categories subject to residency obligations, document the source of each obligation (customer contract clause, regulatory requirement, or internal policy), and produce a residency control matrix. Embed residency requirements in new customer contract templates. Update data classification and handling policies to include residency obligations by data category. Assign a named owner to maintain the residency requirements documentation. Translate documented requirements into technical control specifications and track implementation status."

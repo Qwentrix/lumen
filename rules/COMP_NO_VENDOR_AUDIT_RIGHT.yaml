@@ -1,0 +1,32 @@
+id: COMP_NO_VENDOR_AUDIT_RIGHT
+domain: compliance
+severity: medium
+default_weight: 0.50
+detect:
+  questionnaire:
+    - Q-COMP-DD-022 == no_audit_right
+title: "Vendor contracts contain no right to audit security controls"
+description_short: "Vendor contracts do not include a right to audit the vendor's security posture or request their compliance reports."
+description_long: "Without a contractual audit right, an organisation cannot independently verify that a vendor continues to meet its security obligations after onboarding. If the vendor's security posture deteriorates — they lose their ISO 27001 certificate, their SOC 2 has material exceptions, or they experience a breach — there is no contractual mechanism to require disclosure or remediation. For healthcare organisations, HIPAA requires BAAs to include provisions enabling HHS oversight. For financial and government organisations, regulators increasingly expect audit rights to be included in data-handling contracts. Without this provision, the organisation is entirely dependent on voluntary disclosure by the vendor — a weak assurance posture."
+frameworks:
+  - id: "PCI DSS Req 12.8.4"
+    text: "Monitor service provider compliance status — require the ability to obtain proof of compliance status"
+  - id: "ISO 27001 A.15.2.1"
+    text: "Monitoring and review of supplier services — retain the right to review and audit supplier controls"
+  - id: "HIPAA 164.308(b)(4)"
+    text: "Business associate contracts must include provisions for HHS access for oversight purposes"
+  - id: "SOC 2 CC9.2"
+    text: "Vendor management — obtain and review evidence of vendor compliance"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Renegotiate vendor contracts for critical data-handling vendors to include the right to request their current SOC 2 or ISO 27001 report annually, and to conduct an audit if you have reason for concern."
+remediation_technical: "Include an audit right clause in all new data-handling vendor contracts: the right to request compliance certification reports annually, conduct security questionnaire reviews, and perform a direct audit with reasonable notice for cause. For existing contracts, add an amendment at the next renewal. Maintain a record of which vendors have audit right provisions. Exercise the right annually for Tier-1 vendors by at minimum requesting their current SOC 2 or ISO 27001 certificate and reviewing it for material exceptions or scope exclusions relevant to your data."

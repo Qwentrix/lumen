@@ -1,0 +1,34 @@
+id: VULN_NO_EOL_MIGRATION_PLAN
+domain: vulnerabilities
+severity: high
+default_weight: 0.65
+detect:
+  questionnaire:
+    - Q-VULN-013 == no_plan
+title: "No plan to migrate or decommission end-of-life systems"
+description_short: "No documented plan exists to migrate or decommission production systems running end-of-life software."
+description_long: "The absence of a migration plan for EOL systems means they will remain in production indefinitely, accumulating unpatched CVE exposure with no defined endpoint. Regulators do not accept 'we plan to migrate eventually' as a satisfactory response to EOL findings — they require a documented plan with milestones, owners, and committed dates. NIST SP 800-53 SA-22 explicitly requires organisations to develop plans for transitioning from unsupported system components. PCI DSS scoping rules mean EOL systems in cardholder data scope create ongoing compliance findings until migrated. Without a plan, EOL systems are typically never prioritized for migration because there is no forcing function."
+frameworks:
+  - id: "NIST SP 800-53 SA-22"
+    text: "Unsupported System Components — document a plan and timeline for transitioning to supported alternatives"
+  - id: "PCI DSS Req 6.3.3"
+    text: "All system components must be protected — requires documented migration plans for EOL components in scope"
+  - id: "ISO 27001 A.12.6.1"
+    text: "Management of technical vulnerabilities — requires a formal process including remediation planning for unsupported software"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  manufacturing:
+    weight_multiplier: 1.4
+  energy:
+    weight_multiplier: 1.5
+  education:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Create a formal migration plan for every EOL system with a committed date, an assigned owner, and executive sign-off. Without a plan, EOL systems stay forever — and every month they stay is a month of unmanaged breach risk."
+remediation_technical: "For each EOL system identified in your EOL inventory, create a migration project record containing: business justification for continued operation, compensating controls currently in place, migration target platform, milestone dates (design, test, cutover), resource allocation, and approving executive sign-off. Add each record to your risk register. Include EOL migration status in your monthly security governance review. Set a programme-level target to clear all EOL systems from production within 18 months, with quarterly reviews of progress."

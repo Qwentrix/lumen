@@ -1,0 +1,32 @@
+id: COMP_DATA_FLOW_MAP_INCOMPLETE
+domain: compliance
+severity: medium
+default_weight: 0.50
+detect:
+  questionnaire:
+    - Q-COMP-017 == partial_map
+title: "Sensitive data flow map is incomplete"
+description_short: "Only some systems or data types are covered in the data flow map — significant gaps remain in understanding where sensitive data resides and moves."
+description_long: "A partial data flow map creates blind spots where sensitive data — PHI, PII, cardholder data, CUI — resides or moves without the controls that would apply if the organisation knew about it. GDPR Art. 30 requires a complete record of processing activities. HIPAA requires understanding data flows to assess risk under the Security Risk Analysis (164.308(a)(1)). PCI DSS Req 1.3 requires documentation of all cardholder data flows. An incomplete map means the compliance scope is undefined for unmapped systems, rendering those systems both unprotected and ungoverned. Incomplete maps are consistently identified in breach investigations as a contributing factor to delayed detection and failed containment."
+frameworks:
+  - id: "GDPR Art. 30"
+    text: "Records of processing activities — complete documentation of data flows"
+  - id: "HIPAA 164.308(a)(1)"
+    text: "Security risk analysis — requires identifying all ePHI flows"
+  - id: "PCI DSS Req 1.3"
+    text: "Prohibit direct public access between internet and cardholder data environment"
+  - id: "ISO 27001 A.8.1.1"
+    text: "Inventory of assets — identifying assets associated with information"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.3
+  legal:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Extend your data flow map to cover all systems and data types — do not leave gaps. A map that covers only some systems gives a false sense of compliance scope."
+remediation_technical: "Conduct a full data discovery scan using tooling (Spirion, BigID, Microsoft Purview) to identify sensitive data stores not in the current map. Supplement automated discovery with interviews covering each business function that creates, receives, or transmits sensitive data. Update the GDPR Art. 30 Record of Processing Activities. Validate the completed map against your compliance scope definition. Re-run discovery quarterly to catch new data stores."

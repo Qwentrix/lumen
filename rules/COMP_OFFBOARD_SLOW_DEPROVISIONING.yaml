@@ -1,0 +1,34 @@
+id: COMP_OFFBOARD_SLOW_DEPROVISIONING
+domain: compliance
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-COMP-DD-016 == more_than_week_or_unknown
+title: "Access deprovisioning takes more than a week or timing is unknown"
+description_short: "Departing employees retain access for more than a week, or the deprovisioning timeline is unknown."
+description_long: "Access that persists beyond a week after an employee departure — or where the timeline is unknown — represents a significant insider threat and compliance gap. Extended active credentials are a primary vector for post-employment data theft, revenge-based sabotage, and opportunistic access by external attackers who have already harvested the credential. When the timeline is unknown, the organisation has no visibility into whether departed employees' accounts are still active — a state that is categorically unacceptable under HIPAA access termination requirements, PCI DSS Req 8.3.4, and basic security hygiene. Unknown deprovisioning timelines often reveal that the process is entirely manual with no systematic enforcement."
+frameworks:
+  - id: "HIPAA 164.312(a)(1)"
+    text: "Access control — procedures for terminating access when employment relationship ends"
+  - id: "PCI DSS Req 8.3.4"
+    text: "Inactive user accounts — deactivate accounts within 90 days; immediate upon termination"
+  - id: "SOC 2 CC6.3"
+    text: "Logical access removed promptly when no longer authorised — extended access is a control failure"
+  - id: "ISO 27001 A.7.3.1"
+    text: "Termination or change of employment — information security responsibilities that remain in force"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.6
+  government:
+    weight_multiplier: 1.6
+  technology:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.4
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Fix your offboarding process immediately — you need to know exactly when and how accounts are disabled when people leave. Accounts that stay active after departure are a standing breach waiting to happen."
+remediation_technical: "Conduct an immediate audit: pull all active accounts from your IdP and cross-reference with current employee roster from HR. Disable all accounts belonging to departed employees. Then implement a systematic fix: integrate HR with IdP via SCIM provisioning to automate account suspension on the termination date. Define deprovisioning SLAs: privileged accounts same-day, standard accounts same or next business day. Establish a monthly reconciliation process to catch any accounts that slip through. For unknown timelines, implement continuous access certification tooling (Saviynt, SailPoint, or IdP access reviews) to surface stale accounts proactively."

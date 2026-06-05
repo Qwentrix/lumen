@@ -1,0 +1,37 @@
+id: PRIV_NO_RIGHT_TO_AUDIT
+domain: privacy
+severity: medium
+default_weight: 0.55
+detect:
+  questionnaire:
+    - Q-PRIV-043 == no
+    - Q-PRIV-043 == yes_some
+title: "Processor contracts lack right-to-audit clauses — processor compliance cannot be independently verified"
+description_short: "Processor contracts do not consistently include the right to audit the processor's compliance with data protection obligations, making it impossible to verify processors are meeting their contractual commitments."
+description_long: "GDPR Art. 28(3)(h) requires processor contracts to mandate that processors 'make available to the controller all information necessary to demonstrate compliance with the obligations laid down in this Article and allow for and contribute to audits and inspections conducted by the controller or another auditor mandated by the controller.' Without this clause, the controller has no contractual basis to conduct or commission audits of the processor's data protection practices. This is a mandatory DPA term — not optional. Where right-to-audit exists in only some contracts (Q-PRIV-043 == yes_some), processors without the clause cannot be audited if a compliance concern arises. During regulatory investigations, supervisory authorities expect controllers to be able to evidence processor compliance — which requires having exercised or having the contractual ability to exercise audit rights."
+frameworks:
+  - id: "GDPR Art. 28(3)(h)"
+    text: "Mandatory DPA term — processor must allow and contribute to audits by controller or mandated auditor"
+  - id: "GDPR Art. 28(1)"
+    text: "Controller must use only processors providing sufficient guarantees — unauditable processors cannot demonstrate sufficiency"
+  - id: "HIPAA 45 CFR §164.504(e)(2)(ii)(G)"
+    text: "BAA must authorize covered entity to terminate contract if business associate violates material term"
+  - id: "ISO 27018 §6"
+    text: "Cloud service agreements should include audit rights and transparency reporting for personal data processing"
+  - id: "CCPA §1798.140(w)"
+    text: "Service provider must process data only as directed — audit rights support enforcement"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Ensure every processor contract includes the right to audit their data protection practices. Without this clause, you have no contractual way to verify your processors are protecting your users' data as they are supposed to."
+remediation_technical: "1. Audit all processor contracts for the presence of an Art. 28(3)(h) audit right clause. 2. For contracts missing this clause, issue DPA amendments to add the required audit right provisions. 3. For new contracts, include audit right language in the DPA template: right to request compliance documentation, right to conduct or commission audits with reasonable notice, processor must cooperate with and contribute to audits. 4. Establish an audit exercise schedule: at minimum, request compliance documentation (security certifications, penetration test summaries) annually from critical processors. 5. For processors that refuse to include audit rights, document the risk and consider whether they can continue to be engaged for personal data processing. 6. Conduct actual audits or commission third-party audits for high-risk processors (those handling sensitive data, large data volumes, or with prior compliance concerns)."

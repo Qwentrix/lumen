@@ -22,6 +22,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/spf13/cobra"
 
@@ -32,6 +33,7 @@ import (
 	"github.com/Qwentrix/lumen/internal/keys"
 	"github.com/Qwentrix/lumen/internal/manifest"
 	"github.com/Qwentrix/lumen/internal/probes/ai_governance"
+	cloudprobe "github.com/Qwentrix/lumen/internal/probes/cloud"
 	"github.com/Qwentrix/lumen/internal/probes/common"
 	"github.com/Qwentrix/lumen/internal/probes/compliance"
 	"github.com/Qwentrix/lumen/internal/probes/privacy"
@@ -43,15 +45,17 @@ import (
 
 func newScanCmd() *cobra.Command {
 	var (
-		domain          string
-		hybridFlag      bool
-		hybridServer    string
-		insecureServer  bool
-		output          string
-		industry        string
-		companySize     string
-		skipConsent     bool
-		includePrivacy  bool
+		domain         string
+		hybridFlag     bool
+		hybridServer   string
+		insecureServer bool
+		output         string
+		industry       string
+		companySize    string
+		skipConsent    bool
+		includePrivacy bool
+		includeCloud   bool
+		cloudProviders string
 	)
 
 	cmd := &cobra.Command{
@@ -68,7 +72,7 @@ Run 'lumen consent' before scanning to review and accept the access manifest.
 The privacy probe (~/Documents PII scan) is opt-in and DISABLED by default.
 Enable with --include-privacy after reviewing the access manifest.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return runScan(cmd.Context(), domain, hybridFlag, hybridServer, insecureServer, output, industry, companySize, skipConsent, includePrivacy)
+			return runScan(cmd.Context(), domain, hybridFlag, hybridServer, insecureServer, output, industry, companySize, skipConsent, includePrivacy, includeCloud, cloudProviders)
 		},
 	}
 
@@ -87,6 +91,13 @@ Enable with --include-privacy after reviewing the access manifest.`,
 	cmd.Flags().BoolVar(&includePrivacy, "include-privacy", false,
 		"Enable the privacy probe: scan ~/Documents for PII (SSN, credit cards). "+
 			"OFF by default. Only enable after reviewing the access manifest with 'lumen consent'.")
+	cmd.Flags().BoolVar(&includeCloud, "include-cloud", false,
+		"Enable the cloud-config probe: read-only API calls to cloud providers (AWS by default). "+
+			"OFF by default. Uses your existing local cloud credentials — no credentials are stored. "+
+			"Requires prior consent to the 'cloud' domain via 'lumen consent'.")
+	cmd.Flags().StringVar(&cloudProviders, "cloud", "aws",
+		"Comma-separated list of cloud providers to probe when --include-cloud is set. "+
+			"Supported: aws, azure, gcp. Default: aws. Azure/GCP are framework-ready stubs in v1.")
 
 	return cmd
 }
@@ -168,7 +179,7 @@ func validateOutputPath(raw string) (string, error) {
 	return abs, nil
 }
 
-func runScan(ctx context.Context, domain string, hybridFlag bool, hybridServer string, insecureServer bool, outputPath, industry, companySize string, skipConsent bool, includePrivacy bool) error {
+func runScan(ctx context.Context, domain string, hybridFlag bool, hybridServer string, insecureServer bool, outputPath, industry, companySize string, skipConsent bool, includePrivacy bool, includeCloud bool, cloudProviders string) error {
 	fmt.Println("Lumen scan starting...")
 
 	// H-4: Reject non-https:// destination unless --insecure-server is set.
@@ -277,6 +288,24 @@ func runScan(ctx context.Context, domain string, hybridFlag bool, hybridServer s
 		privacyFn = privacy.RunWithPrivacy
 	}
 
+	// Cloud probe consent gate.
+	// --include-cloud is a NETWORKED, opt-in path (ENT-118). It requires explicit
+	// consent to the "cloud" domain (mirrors the --include-privacy double-gate).
+	// The cloud probe is NOT added to the probes slice below — it runs in a
+	// separate guarded block after BuildScannerFindings to preserve the zero-network
+	// invariant for default scans (TestNoDefaultNetworkCalls stays green).
+	if includeCloud {
+		if !skipConsent && !isDomainConsented("cloud") {
+			return fmt.Errorf(
+				"--include-cloud requires explicit consent to the 'cloud' domain.\n" +
+					"Run 'lumen consent' and accept the cloud domain to enable cloud-config probing.\n" +
+					"Cloud probes make read-only API calls to your cloud provider using your existing\n" +
+					"local credentials (AWS default credential chain / Azure CLI / GCP ADC).")
+		}
+		fmt.Fprintln(os.Stderr, "NOTE: --include-cloud enabled. Read-only cloud-config API calls will be made.")
+		fmt.Fprintln(os.Stderr, "NOTE: Uses your existing local cloud credentials. No credentials are stored.")
+	}
+
 	probes := []struct {
 		name string
 		fn   func(context.Context) (*common.ProbeResult, error)
@@ -309,6 +338,46 @@ func runScan(ctx context.Context, domain string, hybridFlag bool, hybridServer s
 	// pre-built struct guarantees score-parity: the server receives the exact same
 	// ScannerFindings that produced the local score.
 	scannerFindings := scoring.BuildScannerFindings(results)
+
+	// Cloud probe — NETWORKED, SEPARATE PATH (ENT-118).
+	// CRITICAL: this block is reached ONLY via the explicit --include-cloud flag.
+	// The cloud probe is NEVER in the probes slice above and NEVER in the netcheck
+	// runs slice, preserving the zero-network invariant (TestNoDefaultNetworkCalls).
+	// This mirrors the --hybrid networked-path exemption pattern exactly.
+	if includeCloud {
+		// Parse the --cloud provider list (comma-separated).
+		providerList := strings.Split(cloudProviders, ",")
+		cleaned := make([]string, 0, len(providerList))
+		for _, p := range providerList {
+			if t := strings.TrimSpace(p); t != "" {
+				cleaned = append(cleaned, t)
+			}
+		}
+		if len(cleaned) == 0 {
+			cleaned = []string{"aws"}
+		}
+
+		// Record cloud network calls in the runtime manifest.
+		cloudManifest := cloudprobe.Manifest()
+		for _, nc := range cloudManifest.NetworkCalls {
+			manifest.Default.RecordNetwork(nc)
+		}
+
+		// H-2: Wrap cloud invocation with a 60-second deadline so a hung endpoint
+		// cannot block the scan forever. The parent ctx is inherited for cancellation.
+		cloudCtx, cloudCancel := context.WithTimeout(ctx, 60*time.Second)
+		defer cloudCancel()
+
+		// Run the cloud probe. Graceful skip if no credentials found.
+		cloudFindings, cloudErr := cloudprobe.Run(cloudCtx, cleaned)
+		if cloudErr != nil {
+			fmt.Fprintf(os.Stderr, "WARNING: cloud probe returned error: %v\n", cloudErr)
+			// Non-fatal: continue with zero cloud findings.
+		} else if cloudFindings != nil && len(cloudFindings.ProvidersScanned) > 0 {
+			scannerFindings.Cloud = *cloudFindings
+			fmt.Printf("Cloud providers scanned: %v\n", cloudFindings.ProvidersScanned)
+		}
+	}
 
 	// Score results using the pre-built ScannerFindings (single build, score-parity guaranteed).
 	payload, err := scoring.ScoreScanWithFindings(scannerFindings, industry, companySize)

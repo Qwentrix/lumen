@@ -1,0 +1,39 @@
+id: SECPOS_NO_EXEC_REPORTING
+domain: security_posture
+severity: medium
+default_weight: 0.40
+detect:
+  questionnaire:
+    - Q-SECPOS-055 == not_reported_to_exec
+    - Q-SECPOS-055 == reported_ad_hoc
+    - Q-SECPOS-DD-047 == no_ti_sharing
+    - Q-SECPOS-DD-048 == no_roadmap
+title: "Security risk not formally reported to executive leadership"
+description_short: "Security programme status, risk posture, and control gaps are not regularly reported to executive leadership or the board."
+description_long: "When security risk is not surfaced to executive leadership, strategic risk decisions are made without accurate security context. This creates a structural accountability gap: security teams cannot obtain resources for identified gaps without executive visibility, and the board cannot fulfil its governance duty of care if it has no view of the organisation's cyber risk posture. Post-breach regulatory inquiries (SEC, ICO, HIPAA OCR) increasingly examine whether board-level oversight of cybersecurity was exercised. The SEC's 2023 cybersecurity disclosure rules require public companies to disclose material cybersecurity risks and the board's role in cybersecurity oversight."
+frameworks:
+  - id: "NIST CSF GV.RR-02"
+    text: "Roles, responsibilities, and authorities for cybersecurity are established, communicated, and enforced"
+  - id: "CIS Control 17.1"
+    text: "Designate personnel to manage incident handling — with executive accountability"
+  - id: "ISO 27001:2022 A.5.4"
+    text: "Management responsibilities — security performance review by management"
+  - id: "SOC 2 CC1.4"
+    text: "Management and the board demonstrate a commitment to security — oversight"
+  - id: "FedRAMP CA-7"
+    text: "Ongoing assessment and authorisation — executive oversight"
+  - id: "CISA Zero Trust Pillar: Governance"
+    text: "Executive sponsorship and accountability as Zero Trust programme requirement"
+industry_overlays:
+  financial:
+    weight_multiplier: 1.4
+  healthcare:
+    weight_multiplier: 1.3
+  government:
+    weight_multiplier: 1.4
+  manufacturing:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Establish a quarterly security briefing for executive leadership covering: open control gaps, recent incidents, programme investment status, and key risk metrics. Executives cannot support what they cannot see. A single-page risk dashboard is enough to start."
+remediation_technical: "Define a quarterly security reporting package for executive leadership and board (where applicable) covering: MTTD/MTTR trend, open critical/high findings with remediation status, recent incidents and lessons learned, compliance posture against applicable frameworks, security programme roadmap progress, and upcoming regulatory or threat landscape changes. Use a risk quantification framework (FAIR or equivalent) to express security risk in financial terms that resonate with board members. For public companies, align disclosure practices with SEC cybersecurity rules (17 CFR 229.106). Consider participating in an industry ISAC for threat intelligence context to enrich executive briefings."

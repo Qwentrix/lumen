@@ -1,0 +1,28 @@
+id: COMP_FEDRAMP_PARTIAL_ENV
+domain: compliance
+severity: high
+default_weight: 0.80
+detect:
+  questionnaire:
+    - Q-COMP-DD-029 == partial_authorized
+title: "Some workloads processing federal data are outside the authorised FedRAMP boundary"
+description_short: "Some workloads or data stores processing federal or CUI data are outside the authorised FedRAMP or GovCloud environment boundary."
+description_long: "A partially authorised FedRAMP environment — where some workloads reside inside the boundary and others do not — represents an incomplete authorisation that may violate the terms of the ATO and the federal contract. FedRAMP boundaries must be clearly defined and every system component that processes, stores, or transmits federal data must be inside the boundary or explicitly excluded in the System Security Plan (SSP). Workloads outside the boundary without explicit exclusion constitute unauthorised processing. CMMC similarly requires that all CUI be within the assessed system boundary. Partial boundaries also create complexity in continuous monitoring obligations and increase the attack surface of the authorised system."
+frameworks:
+  - id: "FedRAMP Rev. 5 — System Security Plan (SSP)"
+    text: "System boundary definition — all components handling federal data must be in-scope"
+  - id: "CMMC Level 2 AC.L2-3.1.3"
+    text: "Control CUI flow in accordance with approved authorisations"
+  - id: "NIST SP 800-37 Rev. 2"
+    text: "Risk Management Framework — authorisation boundary completeness"
+industry_overlays:
+  government:
+    weight_multiplier: 1.5
+  it_services:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Identify every workload handling federal data and confirm it is either inside your authorised FedRAMP boundary or has an approved exclusion. Move out-of-boundary workloads into the authorised environment or scope them properly."
+remediation_technical: "Review the System Security Plan (SSP) boundary definition against your actual infrastructure topology. Enumerate all data stores, processing components, and network paths that handle federal or CUI data. For each component outside the boundary: either migrate it into an authorised environment, explicitly exclude it from the boundary with documented risk acceptance from the AO, or remove it from the data flow. Update the SSP and notify your authorising official of boundary changes. Complete boundary reconciliation before the next continuous monitoring cycle."

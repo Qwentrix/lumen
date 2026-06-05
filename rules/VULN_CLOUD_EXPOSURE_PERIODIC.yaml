@@ -1,0 +1,34 @@
+id: VULN_CLOUD_EXPOSURE_PERIODIC
+domain: vulnerabilities
+severity: medium
+default_weight: 0.45
+detect:
+  questionnaire:
+    - Q-VULN-019 == periodic_audit
+title: "Cloud storage and database public-exposure audits are only periodic, not continuous"
+description_short: "Cloud buckets and databases are audited for public accessibility only periodically, leaving windows of undetected exposure."
+description_long: "Periodic manual or scripted audits of cloud storage and database public accessibility create time gaps during which a misconfigured bucket or database may be publicly reachable. Cloud environments change continuously — new resources are provisioned, IAM policies are modified, and bucket configurations can be inadvertently altered by automation. A periodic audit cadence means new exposures can persist for days or weeks before detection. CIS Control 7 and NIST CSF ID.AM-3 require continuous visibility over externally accessible assets. Cloud data exposure incidents frequently stem from buckets misconfigured between audit cycles."
+frameworks:
+  - id: "CIS Control 7"
+    text: "Continuous vulnerability management — monitor cloud asset exposure continuously"
+  - id: "NIST CSF ID.AM-3"
+    text: "External information systems and assets are catalogued and monitored"
+  - id: "PCI DSS Req 1.3"
+    text: "Prohibit direct public access between internet and cardholder data environment"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.4
+  financial:
+    weight_multiplier: 1.4
+  government:
+    weight_multiplier: 1.3
+  retail:
+    weight_multiplier: 1.3
+  technology:
+    weight_multiplier: 1.2
+  it_services:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Move from periodic audits to continuous automated monitoring — a misconfigured bucket exposed for a week before your next audit can result in a reportable data breach."
+remediation_technical: "Deploy a CSPM tool (Wiz, Prisma Cloud, AWS Security Hub, or equivalent) configured to alert in real time on any storage bucket or database instance with public ACLs or overly permissive policies. Ensure alerts trigger on resource creation and policy change events via CloudTrail/CloudWatch or equivalent, not just scheduled scans."

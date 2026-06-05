@@ -1,0 +1,36 @@
+id: PRIV_NO_GEO_FENCED_CUSTODY
+domain: privacy
+severity: high
+default_weight: 0.70
+detect:
+  questionnaire:
+    - Q-PRIV-DD-030 == no_geo_fencing
+title: "No geo-fenced key custody — encryption keys not jurisdictionally bound to the data they protect"
+description_short: "Personal data is encrypted but encryption keys are not restricted to the same jurisdiction as the data, meaning the data could be decrypted by a party outside the intended jurisdiction — including under foreign government compulsion."
+description_long: "Region-locking cloud storage prevents the data itself from moving, but if the encryption keys are accessible outside the data's jurisdiction, the data can be decrypted by anyone who can access those keys — including foreign government agencies exercising legal compulsion (CLOUD Act, national security letters). Geo-fenced key custody (keeping encryption keys in a KMS that is itself geographically and legally restricted to the data's jurisdiction) ensures that even if storage is accessed, decryption requires keys that are physically and legally inaccessible outside the jurisdiction. This is the standard expected for EU data sovereignty requirements, French HDS (health data hosting), German C5, and sector-specific requirements like HIPAA for US-based health data. For organizations subject to conflicting jurisdictional demands (EU GDPR vs. US CLOUD Act), geo-fenced key custody is a technical control that can evidence data protection against foreign compulsion."
+frameworks:
+  - id: "GDPR Art. 44–46"
+    text: "Cross-border transfer restrictions — geo-fenced key custody supports technical enforcement of transfer limitations"
+  - id: "GDPR Art. 32"
+    text: "Security of processing — appropriate technical measures include jurisdictionally bound key management"
+  - id: "HIPAA 45 CFR §164.312(a)(2)(iv)"
+    text: "Encryption of ePHI — key management practices affect the jurisdictional security of PHI"
+  - id: "ISO 27018 §5.4"
+    text: "Cloud customers should know where their data and encryption keys are located"
+  - id: "NIST Privacy Framework PR.AC-P"
+    text: "Access to personal data is controlled consistent with privacy policies — jurisdictional key controls enforce this"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.7
+  financial:
+    weight_multiplier: 1.6
+  government:
+    weight_multiplier: 1.8
+  legal:
+    weight_multiplier: 1.6
+  technology:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Storing data in a region-locked cloud bucket is not the same as keeping it sovereign — if your encryption keys are accessible outside the jurisdiction, the data can be decrypted from anywhere. Implement a key management solution that keeps encryption keys physically and legally within the same jurisdiction as the data."
+remediation_technical: "1. Assess whether GDPR sovereignty obligations, sector-specific requirements (HDS, C5, FedRAMP), or contractual commitments require geo-fenced key custody. 2. Deploy a jurisdiction-specific KMS instance (AWS KMS in-region, Azure Key Vault with geographic restriction, dedicated HSM cluster) for each jurisdiction where sovereign custody is required. 3. Ensure the KMS service provider has no cross-border access capabilities — review DPA, service terms, and sub-processor list for the KMS. 4. Configure application services to use the jurisdiction-specific KMS instance for encryption/decryption operations on jurisdiction-tagged data. 5. Document geo-fenced key custody in the ROPA and DPIA as a technical safeguard for cross-border transfer risk mitigation. 6. Test: attempt to decrypt jurisdiction-tagged data from outside the jurisdiction and verify it fails."

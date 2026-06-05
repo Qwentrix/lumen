@@ -1,0 +1,28 @@
+id: VULN_MTTR_NOT_TARGET_DRIVEN
+domain: vulnerabilities
+severity: low
+default_weight: 0.25
+detect:
+  questionnaire:
+    - Q-VULN-029 == tracked_informally
+title: "MTTR tracked informally — not tied to improvement targets"
+description_short: "Remediation time is tracked but without formal improvement targets or leadership review."
+description_long: "Tracking MTTR without setting targets and reviewing trends provides data without accountability. A vulnerability management program that measures remediation time but does not define improvement goals has no mechanism to drive faster remediation over time. CIS Control 7 and NIST SP 800-137 both require that monitoring data be used to drive corrective action — measurement alone is insufficient. Leadership review of MTTR trends is also a common evidence request in SOC 2 and ISO 27001 audits."
+frameworks:
+  - id: "CIS Control 7"
+    text: "Continuous Vulnerability Management — target-driven improvement"
+  - id: "NIST SP 800-137"
+    text: "Continuous monitoring metrics connected to corrective action"
+  - id: "ISO 27001 A.12.6.1"
+    text: "Management of technical vulnerabilities"
+industry_overlays:
+  financial:
+    weight_multiplier: 1.2
+  government:
+    weight_multiplier: 1.2
+  healthcare:
+    weight_multiplier: 1.1
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Set formal MTTR targets for each severity level and review progress in a regular leadership meeting so that slow remediation trends trigger corrective action."
+remediation_technical: "Define MTTR SLA targets per severity tier (e.g., critical: 3 days, high: 14 days, medium: 30 days). Track against targets in your vulnerability management platform's reporting module. Include MTTR vs target charts in a monthly or quarterly security metrics review with management. Use the data to identify teams or asset types with the worst remediation lag and allocate additional resources."

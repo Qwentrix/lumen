@@ -1,0 +1,44 @@
+id: PRIV_72H_DEADLINE_RISK
+domain: privacy
+severity: high
+default_weight: 0.80
+detect:
+  questionnaire:
+    - Q-PRIV-037 == no_assessment
+    - Q-PRIV-039 == never_tested
+    - Q-PRIV-DD-037 == no_template
+    - Q-PRIV-DD-038 == no
+    - Q-PRIV-DD-038 == primary_jurisdiction_only
+title: "Breach notification process unlikely to meet 72-hour GDPR deadline"
+description_short: "The organization lacks a tested, template-ready breach notification process that can reliably meet GDPR's 72-hour supervisory-authority reporting window."
+description_long: "GDPR Art. 33 requires notification to the supervisory authority within 72 hours of becoming aware of a personal-data breach. Without a tested severity-assessment framework, pre-drafted notification templates, and maintained supervisory-authority contact lists per jurisdiction, organizations routinely miss this window. HIPAA's Breach Notification Rule (45 CFR §164.400–414) requires covered entities to notify affected individuals within 60 days of discovery. CCPA §1798.150 triggers civil liability for unreasonable delays. Missing these deadlines is separately prosecutable from the underlying breach and results in enhanced regulatory scrutiny."
+frameworks:
+  - id: "GDPR Art. 33"
+    text: "Notification to supervisory authority within 72 hours of breach awareness"
+  - id: "GDPR Art. 34"
+    text: "Communication of breach to data subjects without undue delay"
+  - id: "HIPAA 45 CFR §164.400–414"
+    text: "HIPAA Breach Notification Rule — 60-day notification requirement for covered entities"
+  - id: "CCPA §1798.150"
+    text: "Private right of action for unreasonable delay in breach notification"
+  - id: "ISO 27018 §9.3"
+    text: "Breach notification obligations for cloud service providers handling personal data"
+  - id: "NIST Privacy Framework RS.CO-1"
+    text: "Response communications are coordinated and shared with appropriate stakeholders"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.5
+  legal:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  retail:
+    weight_multiplier: 1.2
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Build and test a breach notification playbook that includes: a severity triage checklist, pre-approved notification templates for supervisory authorities and data subjects, and a contact list for every jurisdiction where you process personal data. Run at least one tabletop exercise annually to verify you can execute within 72 hours."
+remediation_technical: "1. Document breach severity tiers mapped to GDPR Art. 33 notification thresholds. 2. Maintain per-jurisdiction supervisory authority contacts (ICO, CNIL, BfDI, etc.) with submission portal URLs. 3. Draft and legally approve notification templates for both SA and data-subject communications. 4. Integrate breach detection tooling with a workflow system that auto-triggers the notification runbook. 5. Run annual tabletop exercises simulating breach scenarios with time-bounded decision gates. 6. Store all templates and contacts in a location accessible during an incident (not solely in SIEM or IR tooling that may itself be compromised)."

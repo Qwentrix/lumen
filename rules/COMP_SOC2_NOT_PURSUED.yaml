@@ -1,0 +1,28 @@
+id: COMP_SOC2_NOT_PURSUED
+domain: compliance
+severity: medium
+default_weight: 0.50
+detect:
+  questionnaire:
+    - Q-COMP-022 == not_pursuing
+title: "SOC 2 Type II not being pursued"
+description_short: "The organisation is not currently pursuing SOC 2 Type II certification despite operating in a sector where customers typically require it."
+description_long: "For technology, IT services, and financial sector organisations, SOC 2 Type II has become a de facto baseline requirement expected by enterprise customers, procurement processes, and security questionnaires. Organisations that are not pursuing it are increasingly excluded from enterprise RFPs and face competitive disadvantage. The absence of SOC 2 also signals to prospects that security controls have not been independently validated — a risk factor that enterprise buyers are trained to scrutinise. This finding is strongest for technology and IT services providers where SOC 2 is a near-universal customer demand."
+frameworks:
+  - id: "SOC 2 Type II (AICPA)"
+    text: "Trust Services Criteria for Security, Availability, Processing Integrity, Confidentiality, and Privacy"
+  - id: "ISO 27001"
+    text: "Alternative certification framework accepted by many enterprise buyers"
+industry_overlays:
+  technology:
+    weight_multiplier: 1.6
+  it_services:
+    weight_multiplier: 1.6
+  financial:
+    weight_multiplier: 1.4
+  legal:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Start your SOC 2 journey — even if full Type II is 12-18 months away, beginning the programme demonstrates commitment to enterprise buyers and unlocks deals that require proof of audit-readiness."
+remediation_technical: "Engage a readiness assessor to perform a SOC 2 gap assessment against the Trust Services Criteria (TSC). Select a compliance automation platform (Vanta, Drata, Secureframe) to reduce evidence collection burden. Target a Type I report within 6 months and Type II within 12-18 months. Prioritise the Security TSC category first as it is required for all SOC 2 engagements. Ensure your IRP, access control, change management, and monitoring controls meet TSC requirements before committing to an audit date."

@@ -1,0 +1,34 @@
+id: VULN_NO_HARDENING_BASELINE
+domain: vulnerabilities
+severity: high
+default_weight: 0.75
+detect:
+  questionnaire:
+    - Q-VULN-026 == no_hardening_baseline
+title: "No hardening baseline — default configurations contain known exploitable weaknesses"
+description_short: "Systems run on vendor defaults that include enabled unnecessary services, weak credentials, and missing security settings — all documented in public CVE databases and exploit toolkits."
+description_long: "Default operating system and application configurations are designed for compatibility and ease-of-use, not security. They ship with services enabled that are unnecessary in most deployments, default credentials that are documented publicly, permissive file permissions, and disabled authentication features. These known default weaknesses are catalogued in CVE databases and embedded in automated exploit frameworks (Metasploit, Shodan fingerprinting, Nuclei templates). Threat actors scan for and exploit default configurations at industrial scale — attackers are not discovering new vulnerabilities, they are exploiting known misconfigurations that organisations have simply never remediated. Unhardened cloud images expose default open ports and insecure metadata endpoints that are the first checks in any cloud-targeting attack playbook. Without a hardening baseline, every system provisioned in the environment starts its life with a predictable and documented set of vulnerabilities."
+frameworks:
+  - id: "CIS Benchmarks"
+    text: "Configuration hardening baselines for operating systems and cloud services"
+  - id: "NIST SP 800-70"
+    text: "National Checklist Program for IT Products"
+  - id: "NIST SP 800-53 CM-6"
+    text: "Configuration Settings"
+  - id: "FedRAMP SC-28 / CM-6"
+    text: "Baseline configuration enforcement"
+industry_overlays:
+  government:
+    weight_multiplier: 1.5
+  healthcare:
+    weight_multiplier: 1.3
+  financial:
+    weight_multiplier: 1.3
+  energy:
+    weight_multiplier: 1.4
+  manufacturing:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Run a CIS Benchmark assessment against your most critical servers and cloud resources today. The findings will show you which default settings are exploitable right now. Fix the highest-severity findings on internet-facing and privileged systems first."
+remediation_technical: "Conduct an immediate exploit-surface assessment: run CIS-CAT Pro or Lynis against representative hosts to identify which default configurations are present. Prioritise findings that map to known CVEs or active exploit toolkits — specifically: disable unnecessary services (telnet, rsh, FTP, unused web servers), change all default credentials on appliances and management interfaces, enforce authentication on database bind addresses, disable cloud metadata IMDSv1 endpoints in favour of IMDSv2. For containers, run Trivy or Grype to identify base images with known CVE-tagged default configurations. Integrate benchmark scanning into your CI/CD build pipeline to block deployment of images that fail CIS Benchmark Level 1 checks, preventing new systems from being provisioned in a vulnerable state."

@@ -1,0 +1,38 @@
+id: SECPOS_NO_UEBA
+domain: security_posture
+severity: medium
+default_weight: 0.50
+detect:
+  questionnaire:
+    - Q-SECPOS-028 == no_data_movement_alerting
+    - Q-SECPOS-DD-020 == vendor_defaults_only
+    - Q-SECPOS-DD-021 == no_ueba
+title: "No UEBA — no behavioural baseline or insider-threat detection"
+description_short: "No user and entity behaviour analytics capability — anomalous data access and insider threats are undetected."
+description_long: "UEBA establishes baselines for user behaviour — what data they access, when, from where, at what volume — and alerts when deviations occur. Without UEBA, insider threats (malicious or accidental data exfiltration) and compromised accounts that mimic legitimate user patterns are invisible to rule-based detection. IBM CODB 2024 found that insider-threat incidents have a significantly longer mean time to detect than external attacks. UEBA is especially critical in regulated industries where data sovereignty and breach notification obligations make late detection of insider access catastrophic."
+frameworks:
+  - id: "NIST CSF DE.AE-02"
+    text: "Potentially adverse events are analysed to better characterise them"
+  - id: "CIS Control 8.11"
+    text: "Conduct audit log reviews — detect anomalous data access"
+  - id: "ISO 27001:2022 A.8.16"
+    text: "Monitoring activities — detection of unauthorised data access"
+  - id: "SOC 2 CC7.3"
+    text: "Evaluation of security events to identify security incidents"
+  - id: "FedRAMP SI-4(22)"
+    text: "System monitoring — detect unusual or unauthorised activities or conditions"
+  - id: "CISA Zero Trust Pillar: Visibility and Analytics"
+    text: "User and entity behaviour analytics informing access decisions"
+industry_overlays:
+  healthcare:
+    weight_multiplier: 1.5
+  financial:
+    weight_multiplier: 1.5
+  government:
+    weight_multiplier: 1.4
+  technology:
+    weight_multiplier: 1.3
+  default:
+    weight_multiplier: 1.0
+remediation_plain: "Deploy UEBA capability — either a dedicated tool or a SIEM module — to establish what normal user data access looks like and alert when someone accesses unusual amounts or types of data. This is the primary defence against insider threats and compromised accounts."
+remediation_technical: "Enable UEBA via your SIEM (Microsoft Sentinel UEBA, Splunk UBA, Elastic ML) or a dedicated platform (Varonis, Securonix, Exabeam). Configure behavioural baselines per user cohort for: data access volume, access time, accessed resource types, geographic location, and authentication patterns. Define anomaly score thresholds triggering alerts for: bulk download >10x baseline, access to sensitive data classes outside role, access from new geographic location with unusual time, bulk copy to cloud storage or removable media. Tune over 60–90 days to reduce false positives below 5%."
