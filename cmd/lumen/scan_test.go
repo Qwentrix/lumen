@@ -15,15 +15,26 @@
 package main
 
 import (
+	"bytes"
 	"context"
+	"encoding/hex"
 	"encoding/json"
+	"fmt"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 	"time"
 
+	"crypto/ed25519"
+	"crypto/rand"
+
+	lstypes "github.com/Qwentrix/lumen-scoring/pkg/types"
+
 	"github.com/Qwentrix/lumen/internal/consent"
+	"github.com/Qwentrix/lumen/internal/hybrid"
 	"github.com/Qwentrix/lumen/internal/manifest"
 )
 
@@ -328,4 +339,179 @@ func TestConsentGate(t *testing.T) {
 		}
 		_ = os.Remove(outputPath)
 	})
+}
+
+// ---------------------------------------------------------------------------
+// Stage-2 Task 7: revealURL helper + hybrid reveal-link output
+// ---------------------------------------------------------------------------
+
+// TestRevealURL is a pure unit test for the revealURL helper.
+// It verifies that:
+//  1. The site origin is kept and /lumen/scan/<id> is appended.
+//  2. Any /api prefix (and path after it) is stripped so the result is a web
+//     route, not an API route.
+//  3. A trailing slash on the base does not produce a double slash.
+func TestRevealURL(t *testing.T) {
+	tests := []struct {
+		name         string
+		base         string
+		assessmentID string
+		want         string
+	}{
+		{
+			name:         "production default base",
+			base:         "https://lumen.micelium.com",
+			assessmentID: "abc-123",
+			want:         "https://lumen.micelium.com/lumen/scan/abc-123",
+		},
+		{
+			name:         "base with trailing slash",
+			base:         "https://lumen.micelium.com/",
+			assessmentID: "abc-123",
+			want:         "https://lumen.micelium.com/lumen/scan/abc-123",
+		},
+		{
+			name:         "base that still has /api prefix — strips it",
+			base:         "https://lumen.micelium.com/api/v1/lumen/scanner/ingest",
+			assessmentID: "def-456",
+			want:         "https://lumen.micelium.com/lumen/scan/def-456",
+		},
+		{
+			name:         "base with /api only — strips /api",
+			base:         "https://staging.example.com/api",
+			assessmentID: "ghi-789",
+			want:         "https://staging.example.com/lumen/scan/ghi-789",
+		},
+		{
+			name:         "localhost insecure override",
+			base:         "http://localhost:8125",
+			assessmentID: "local-99",
+			want:         "http://localhost:8125/lumen/scan/local-99",
+		},
+		{
+			name:         "custom staging server",
+			base:         "https://lumen-staging.internal.example.com",
+			assessmentID: "stg-001",
+			want:         "https://lumen-staging.internal.example.com/lumen/scan/stg-001",
+		},
+	}
+
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			got := revealURL(tc.base, tc.assessmentID)
+			if got != tc.want {
+				t.Errorf("revealURL(%q, %q)\n got  %q\n want %q", tc.base, tc.assessmentID, got, tc.want)
+			}
+			// Invariant: result must always contain /lumen/scan/ + assessmentID.
+			if !strings.Contains(got, "/lumen/scan/"+tc.assessmentID) {
+				t.Errorf("result %q does not contain /lumen/scan/%s", got, tc.assessmentID)
+			}
+		})
+	}
+}
+
+// TestHybridPrintsRevealURL verifies that doHybridUpload prints a line
+// containing "/lumen/scan/<assessment_id>" after a successful upload.
+//
+// Strategy: spin up an httptest.Server that returns a canned IngestResponse,
+// then call doHybridUpload with a stub PreviewAndConfirm input (piped "y\n"),
+// capture stdout, and assert the reveal URL is present.
+func TestHybridPrintsRevealURL(t *testing.T) {
+	const wantAssessmentID = "test-assess-reveal-007"
+
+	// Stub ingest server that returns a valid IngestResponse.
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/api/v1/lumen/scanner/ingest" {
+			http.Error(w, "not found", http.StatusNotFound)
+			return
+		}
+		resp := hybrid.IngestResponse{
+			AssessmentID: wantAssessmentID,
+			SummaryURL:   fmt.Sprintf("%s/r/%s", r.Host, wantAssessmentID),
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(resp)
+	}))
+	defer srv.Close()
+
+	// Build a minimal ScannerFindings (all zeros — scoring still works).
+	sf := lstypes.ScannerFindings{}
+
+	// Generate a fresh keypair so keys.EnsureInstallKey works without touching
+	// ~/.lumen. We achieve this by pointing HOME at a fresh temp dir and
+	// pre-creating the key files there.
+	fakeHome := t.TempDir()
+	t.Setenv("HOME", fakeHome)
+
+	// Pre-generate and write the install key so EnsureInstallKey picks it up.
+	// keys.EnsureInstallKey format:
+	//   install.key  — full 64-byte ed25519 private key as hex (no newline)
+	//   install.pub  — 32-byte public key as hex (no newline)
+	lumenKeyDir := filepath.Join(fakeHome, ".lumen")
+	if err := os.MkdirAll(lumenKeyDir, 0700); err != nil {
+		t.Fatalf("mkdir .lumen: %v", err)
+	}
+	pub, priv, err := ed25519.GenerateKey(rand.Reader)
+	if err != nil {
+		t.Fatalf("generate keypair: %v", err)
+	}
+	// Full 64-byte private key hex (no newline) — matches hex.EncodeToString(priv) in keygen.go.
+	privHex := hex.EncodeToString([]byte(priv))
+	pubHex := hex.EncodeToString(pub)
+	if err := os.WriteFile(filepath.Join(lumenKeyDir, "install.key"), []byte(privHex), 0600); err != nil {
+		t.Fatalf("write install.key: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(lumenKeyDir, "install.pub"), []byte(pubHex), 0600); err != nil {
+		t.Fatalf("write install.pub: %v", err)
+	}
+
+	// Capture stdout by redirecting os.Stdout.
+	origStdout := os.Stdout
+	pr, pw, err := os.Pipe()
+	if err != nil {
+		t.Fatalf("os.Pipe: %v", err)
+	}
+	os.Stdout = pw
+
+	// Pipe "y\n" into os.Stdin so PreviewAndConfirm auto-confirms.
+	origStdin := os.Stdin
+	stdinR, stdinW, err := os.Pipe()
+	if err != nil {
+		pw.Close()
+		os.Stdout = origStdout
+		t.Fatalf("os.Pipe stdin: %v", err)
+	}
+	os.Stdin = stdinR
+	_, _ = stdinW.WriteString("y\n")
+	stdinW.Close()
+
+	uploadErr := doHybridUpload(context.Background(), sf, "", "smb", srv.URL)
+
+	// Restore stdout/stdin and collect output.
+	pw.Close()
+	os.Stdout = origStdout
+	os.Stdin = origStdin
+
+	var outBuf bytes.Buffer
+	_, _ = outBuf.ReadFrom(pr)
+	pr.Close()
+
+	if uploadErr != nil {
+		t.Fatalf("doHybridUpload returned error: %v", uploadErr)
+	}
+
+	printed := outBuf.String()
+
+	// The printed output must contain the reveal URL pattern.
+	wantSubstring := "/lumen/scan/" + wantAssessmentID
+	if !strings.Contains(printed, wantSubstring) {
+		t.Errorf("doHybridUpload output does not contain reveal path %q.\nFull output:\n%s", wantSubstring, printed)
+	}
+
+	// The full reveal URL (origin + path) must appear.
+	wantReveal := srv.URL + "/lumen/scan/" + wantAssessmentID
+	if !strings.Contains(printed, wantReveal) {
+		t.Errorf("doHybridUpload output does not contain full reveal URL %q.\nFull output:\n%s", wantReveal, printed)
+	}
 }

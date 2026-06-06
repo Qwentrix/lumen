@@ -480,8 +480,38 @@ func doHybridUpload(ctx context.Context, sf lstypes.ScannerFindings, industry, c
 	fmt.Printf("Upload successful.\n")
 	fmt.Printf("  Assessment ID: %s\n", result.AssessmentID)
 	fmt.Printf("  Summary URL:   %s\n", result.SummaryURL)
+	fmt.Printf("\n✓ Scan complete. See what we found & get your report → %s\n",
+		revealURL(effectiveURL, result.AssessmentID))
 
 	return nil
+}
+
+// revealURL derives the web reveal URL from the gateway base URL and an
+// assessment ID. It returns <siteOrigin>/lumen/scan/<assessmentID>.
+//
+// "Site origin" means the scheme + host (+ port) only. Any path that starts
+// with "/api" (the API route prefix) is stripped so the result is a web route
+// that points the user at the Stage-2 reveal page, not an API endpoint.
+//
+// Examples:
+//
+//	revealURL("https://lumen.micelium.com", "abc-123")
+//	  → "https://lumen.micelium.com/lumen/scan/abc-123"
+//
+//	revealURL("https://lumen.micelium.com/api/v1/lumen/scanner/ingest", "def-456")
+//	  → "https://lumen.micelium.com/lumen/scan/def-456"
+func revealURL(base, assessmentID string) string {
+	// Trim trailing slash for uniform handling.
+	origin := strings.TrimRight(base, "/")
+
+	// Strip any /api… suffix so we get the pure site origin.
+	// This handles the case where the caller passes the full ingest URL
+	// (e.g. resolved from hybrid.DefaultGatewayBaseURL + ingestPath).
+	if idx := strings.Index(origin, "/api"); idx != -1 {
+		origin = origin[:idx]
+	}
+
+	return origin + "/lumen/scan/" + assessmentID
 }
 
 // lastScanPath returns the path where the cached scan payload is stored.
