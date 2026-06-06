@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lumen Security Report — 43 (F)</title>
+  <style>/* Lumen Report Stylesheet — fully inlined, no external resources.
+   All CSS is embedded via go:embed and written into a <style> block.
+   Print-friendly: single self-contained file, works offline and as PDF. */
+
+/* ---- Reset / base -------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #1a202c;
+  background: #f7fafc;
+  padding: 0;
+}
+
+.page-wrap {
+  max-width: 980px;
+  margin: 0 auto;
+  background: #fff;
+  padding: 40px 48px 60px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.08);
+}
+
+/* ---- Typography ---------------------------------------------------- */
+h1 { font-size: 1.8rem; font-weight: 700; color: #1a202c; margin-bottom: 4px; }
+h2 { font-size: 1.2rem; font-weight: 700; color: #2d3748; margin-top: 36px; margin-bottom: 12px;
+     padding-bottom: 6px; border-bottom: 2px solid #e2e8f0; }
+h3 { font-size: 1rem; font-weight: 600; color: #4a5568; margin-top: 20px; margin-bottom: 6px; }
+p  { margin-bottom: 8px; }
+code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+       font-size: 0.85em; background: #edf2f7; padding: 1px 5px; border-radius: 3px; }
+
+/* ---- Header / score block ----------------------------------------- */
+.report-header { display: flex; align-items: flex-start; justify-content: space-between;
+                 gap: 24px; flex-wrap: wrap; margin-bottom: 32px; }
+.report-title { flex: 1; }
+.report-meta  { font-size: 0.82rem; color: #718096; margin-top: 4px; }
+.report-meta span { display: inline-block; margin-right: 16px; }
+
+.overall-score-card {
+  display: flex; align-items: center; gap: 20px;
+  background: #ebf8ff; border: 1px solid #bee3f8; border-radius: 10px;
+  padding: 18px 24px; min-width: 220px;
+}
+.score-circle {
+  width: 72px; height: 72px; border-radius: 50%; display: flex;
+  flex-direction: column; align-items: center; justify-content: center;
+  font-weight: 700; flex-shrink: 0;
+}
+.score-circle .num  { font-size: 1.5rem; line-height: 1; }
+.score-circle .lbl  { font-size: 0.7rem; text-transform: uppercase; letter-spacing: .05em; }
+.score-grade { font-size: 2.4rem; font-weight: 800; }
+.score-desc  { font-size: 0.82rem; color: #4a5568; margin-top: 2px; }
+
+/* Grade colours */
+.grade-A { background: #c6f6d5; color: #22543d; }
+.grade-A .score-grade { color: #276749; }
+.grade-B { background: #e9f5d0; color: #2f5116; }
+.grade-B .score-grade { color: #3a6013; }
+.grade-C { background: #fefcbf; color: #744210; }
+.grade-C .score-grade { color: #b7791f; }
+.grade-D { background: #feebc8; color: #7b341e; }
+.grade-D .score-grade { color: #c05621; }
+.grade-F { background: #fed7d7; color: #63171b; }
+.grade-F .score-grade { color: #c53030; }
+
+/* ---- Scanner mode badge -------------------------------------------- */
+.scanner-badge {
+  display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 2px 8px;
+  border-radius: 999px; letter-spacing: 0.04em; vertical-align: middle; margin-left: 8px;
+}
+.scanner-badge.active   { background: #9ae6b4; color: #22543d; }
+.scanner-badge.inactive { background: #e2e8f0; color: #4a5568; }
+
+/* ---- Domain score grid -------------------------------------------- */
+.domain-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+               gap: 12px; margin: 16px 0; }
+.domain-card {
+  border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 14px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.domain-card .d-name   { font-size: 0.78rem; font-weight: 600; color: #718096;
+                          text-transform: uppercase; letter-spacing: 0.05em; }
+.domain-card .d-score  { font-size: 1.5rem; font-weight: 700; }
+.domain-card .d-grade  { font-size: 0.85rem; font-weight: 600; }
+.domain-card .d-count  { font-size: 0.78rem; color: #718096; }
+.domain-card.grade-A { border-color: #9ae6b4; }
+.domain-card.grade-B { border-color: #c6e17a; }
+.domain-card.grade-C { border-color: #f6e05e; }
+.domain-card.grade-D { border-color: #f6ad55; }
+.domain-card.grade-F { border-color: #fc8181; }
+
+/* ---- Score bar chart (SVG) ----------------------------------------- */
+.domain-bar-chart { margin: 16px 0; }
+
+/* ---- Findings ------------------------------------------------------ */
+.findings-section { margin-top: 8px; }
+.finding-card {
+  border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px;
+  margin-bottom: 10px; background: #fff;
+}
+.finding-header { display: flex; align-items: flex-start; gap: 10px; flex-wrap: wrap; }
+.finding-title  { font-weight: 600; font-size: 0.95rem; color: #2d3748; }
+.finding-id     { font-size: 0.72rem; color: #718096; font-family: monospace; }
+.severity-badge {
+  display: inline-block; font-size: 0.7rem; font-weight: 700; padding: 1px 8px;
+  border-radius: 999px; text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap;
+}
+.sev-critical { background: #fc8181; color: #63171b; }
+.sev-high     { background: #f6ad55; color: #7b341e; }
+.sev-medium   { background: #f6e05e; color: #744210; }
+.sev-low      { background: #bee3f8; color: #2a4365; }
+
+.finding-contrib { font-size: 0.78rem; color: #718096; }
+.finding-remediation { margin-top: 8px; font-size: 0.88rem; color: #4a5568; }
+.finding-remediation strong { color: #2d3748; }
+
+.frameworks-list { margin-top: 8px; }
+.frameworks-list .fw-label { font-size: 0.72rem; font-weight: 600; color: #718096;
+                               text-transform: uppercase; letter-spacing: 0.05em; }
+.framework-item { font-size: 0.8rem; color: #4a5568; margin-left: 12px; margin-top: 2px; }
+.framework-item .fw-id { font-weight: 600; color: #2b6cb0; }
+
+.micelium-products { margin-top: 6px; }
+.micelium-products .mp-label { font-size: 0.72rem; font-weight: 600; color: #718096;
+                                 text-transform: uppercase; letter-spacing: 0.05em; }
+.mp-tag {
+  display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 1px 7px;
+  border-radius: 999px; background: #e9d8fd; color: #44337a; margin: 2px 2px 0;
+}
+
+/* ---- Explain / Why trace ------------------------------------------ */
+.explain-section { margin-top: 12px; }
+.explain-toggle  { font-size: 0.82rem; color: #2b6cb0; cursor: default; font-weight: 600; }
+.explain-box {
+  background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 6px;
+  padding: 12px 14px; margin-top: 8px; font-size: 0.82rem;
+}
+.explain-formula { font-size: 0.78rem; color: #718096; margin-bottom: 8px; font-family: monospace; }
+.explain-step { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+.explain-step .es-rule  { font-family: monospace; font-size: 0.8rem; color: #553c9a; min-width: 220px; }
+.explain-step .es-calc  { font-size: 0.78rem; color: #4a5568; }
+.explain-step .es-result { font-weight: 600; color: #1a202c; }
+.explain-totals { margin-top: 8px; font-size: 0.8rem; border-top: 1px dashed #e2e8f0;
+                  padding-top: 6px; color: #4a5568; }
+
+/* ---- What to fix first -------------------------------------------- */
+.fix-first-list { list-style: none; padding: 0; }
+.fix-first-item {
+  counter-increment: fix-counter;
+  display: flex; align-items: flex-start; gap: 12px;
+  background: #fff; border: 1px solid #e2e8f0; border-radius: 8px;
+  padding: 12px 14px; margin-bottom: 8px;
+}
+.fix-first-list { counter-reset: fix-counter; }
+.fix-rank {
+  width: 26px; height: 26px; border-radius: 50%; background: #2b6cb0;
+  color: #fff; font-size: 0.78rem; font-weight: 700; display: flex;
+  align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+}
+.fix-body .fix-title    { font-weight: 600; font-size: 0.92rem; color: #2d3748; }
+.fix-body .fix-domain   { font-size: 0.75rem; color: #718096; margin-bottom: 4px; }
+.fix-body .fix-text     { font-size: 0.85rem; color: #4a5568; }
+.fix-body .fix-contrib  { font-size: 0.75rem; color: #718096; margin-top: 4px; }
+
+/* Micelium alignment badge on fix item */
+.micelium-align { font-size: 0.72rem; font-weight: 600; color: #553c9a; margin-left: 6px; }
+
+/* ---- Framework summary -------------------------------------------- */
+.framework-summary { }
+.fw-group { margin-bottom: 14px; }
+.fw-group-name { font-size: 0.82rem; font-weight: 700; color: #2d3748;
+                 text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+.fw-control { font-size: 0.82rem; color: #4a5568; padding: 2px 0 2px 12px;
+              border-left: 2px solid #bee3f8; margin-bottom: 3px; }
+.fw-control .fw-cid { font-weight: 600; color: #2b6cb0; }
+
+/* ---- Footer -------------------------------------------------------- */
+footer {
+  margin-top: 56px; padding-top: 16px; border-top: 2px solid #e2e8f0;
+  font-size: 0.78rem; color: #a0aec0;
+  display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between;
+}
+footer p { margin: 0; }
+
+/* ---- Print --------------------------------------------------------- */
+@media print {
+  body { background: #fff; }
+  .page-wrap { box-shadow: none; padding: 20px 24px 32px; }
+  .finding-card, .fix-first-item { break-inside: avoid; }
+  h2 { break-after: avoid; }
+}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  
+  <div class="report-header">
+    <div class="report-title">
+      <h1>Lumen Security Report<span class="scanner-badge active">SCANNER</span></h1>
+      <div class="report-meta">
+        <span>Assessment ID: <code>c7c32ee0-4dfb-43db-a867-f0f921be3119</code></span>
+        <span>Generated: 2026-06-05 06:30:02 UTC</span><span>Industry: technology</span>
+        <span>Company size: smb</span>
+      </div>
+    </div>
+    <div class="overall-score-card grade-F">
+      <div class="score-circle grade-F">
+        <span class="num">43</span>
+        <span class="lbl">/100</span>
+      </div>
+      <div>
+        <div class="score-grade">F</div>
+        <div class="score-desc">Critical issues</div>
+      </div>
+    </div>
+  </div>
+
+  
+  <h2>Domain Scores</h2>
+  <div class="domain-grid">
+    <div class="domain-card grade-F">
+      <div class="d-name">Vulnerabilities</div>
+      <div class="d-score grade-F" style="color:#fc8181">0</div>
+      <div class="d-grade">Grade F</div>
+      <div class="d-count">2 finding(s)</div>
+    </div>
+    <div class="domain-card grade-F">
+      <div class="d-name">AI Governance</div>
+      <div class="d-score grade-F" style="color:#fc8181">0</div>
+      <div class="d-grade">Grade F</div>
+      <div class="d-count">16 finding(s)</div>
+    </div>
+    <div class="domain-card grade-A">
+      <div class="d-name">Security Posture</div>
+      <div class="d-score grade-A" style="color:#48bb78">100</div>
+      <div class="d-grade">Grade A</div>
+      <div class="d-count">0 finding(s)</div>
+    </div>
+    <div class="domain-card grade-F">
+      <div class="d-name">Compliance</div>
+      <div class="d-score grade-F" style="color:#fc8181">32</div>
+      <div class="d-grade">Grade F</div>
+      <div class="d-count">2 finding(s)</div>
+    </div>
+    <div class="domain-card grade-A">
+      <div class="d-name">Privacy</div>
+      <div class="d-score grade-A" style="color:#48bb78">100</div>
+      <div class="d-grade">Grade A</div>
+      <div class="d-count">0 finding(s)</div>
+    </div>
+  </div>
+
+  
+  <div class="domain-bar-chart">
+    <svg viewBox="0 0 680 216" style="width:100%;max-width:680px;display:block;margin:8px 0" role="img" aria-label="Domain score bar chart"><title>Domain score bar chart</title><rect x="160" y="10" width="440" height="28" rx="4" fill="#edf2f7"/><text x="152" y="24" text-anchor="end" dominant-baseline="middle" font-family="system-ui,sans-serif" font-size="12" fill="#4a5568">Vulnerabilities</text><text x="608" y="24" dominant-baseline="middle" font-family="system-ui,sans-serif" font-size="12" font-weight="600" fill="#2d3748">0 (F)</text><rect x="160" y="52" width="440" height="28" rx="4" fill="#edf2f7"/><text x="152" y="66" text-anchor="end" dominant-baseline="middle" font-family="system-ui,sans-serif" font-size="12" fill="#4a5568">AI Governance</text><text x="608" y="66" dominant-baseline="middle" font-family="system-ui,sans-serif" font-size="12" font-weight="600" fill="#2d3748">0 (F)</text><rect x="160" y="94" width="440" height="28" rx="4" fill="#edf2f7"/><rect x="160" y="94" width="440" height="28" rx="4" fill="#48bb78"/><text x="152" y="108" text-anchor="end" dominant-baseline="middle" font-family="system-ui,sans-serif" font-size="12" fill="#4a5568">Security Posture</text><text x="608" y="108" dominant-baseline="middle" font-family="system-ui,sans-serif" font-size="12" font-weight="600" fill="#2d3748">100 (A)</text><rect x="160" y="136" width="440" height="28" rx="4" fill="#edf2f7"/><rect x="160" y="136" width="140" height="28" rx="4" fill="#fc8181"/><text x="152" y="150" text-anchor="end" dominant-baseline="middle" font-family="system-ui,sans-serif" font-size="12" fill="#4a5568">Compliance</text><text x="608" y="150" dominant-baseline="middle" font-family="system-ui,sans-serif" font-size="12" font-weight="600" fill="#2d3748">32 (F)</text><rect x="160" y="178" width="440" height="28" rx="4" fill="#edf2f7"/><rect x="160" y="178" width="440" height="28" rx="4" fill="#48bb78"/><text x="152" y="192" text-anchor="end" dominant-baseline="middle" font-family="system-ui,sans-serif" font-size="12" fill="#4a5568">Privacy</text><text x="608" y="192" dominant-baseline="middle" font-family="system-ui,sans-serif" font-size="12" font-weight="600" fill="#2d3748">100 (A)</text></svg>
+  </div>
+
+  
+  <h2>What to Fix First</h2>
+  <ol class="fix-first-list">
+    <li class="fix-first-item">
+      <div class="fix-rank">1</div>
+      <div class="fix-body">
+        <div class="fix-title">No technical egress controls for AI endpoints — all data classifications can reach external AI<span class="micelium-align">&#9733; Micelium</span></div>
+        <div class="fix-domain">AI Governance &mdash; contribution: 1.00</div>
+        <div class="fix-text">Block all AI API traffic at the network level immediately for any data-sensitive environment. Then implement proper content inspection before reopening access to approved AI services.</div>
+      </div>
+    </li>
+    <li class="fix-first-item">
+      <div class="fix-rank">2</div>
+      <div class="fix-body">
+        <div class="fix-title">Sensitive data submitted to external AI services without controls<span class="micelium-align">&#9733; Micelium</span></div>
+        <div class="fix-domain">AI Governance &mdash; contribution: 0.95</div>
+        <div class="fix-text">Stop submitting sensitive data to AI services immediately. Require all AI tool usage to go through approved enterprise instances with DPAs in place.</div>
+      </div>
+    </li>
+    <li class="fix-first-item">
+      <div class="fix-rank">3</div>
+      <div class="fix-body">
+        <div class="fix-title">Widespread shadow AI usage<span class="micelium-align">&#9733; Micelium</span></div>
+        <div class="fix-domain">AI Governance &mdash; contribution: 0.90</div>
+        <div class="fix-text">Audit which AI tools employees are using, block unapproved ones, and provide approved alternatives that meet your data-handling requirements.</div>
+      </div>
+    </li>
+    <li class="fix-first-item">
+      <div class="fix-rank">4</div>
+      <div class="fix-body">
+        <div class="fix-title">Critical patches applied in over a month<span class="micelium-align">&#9733; Micelium</span></div>
+        <div class="fix-domain">Vulnerabilities &mdash; contribution: 0.90</div>
+        <div class="fix-text">Define SLA tiers: critical (CVSS &gt;= 9) must be patched within 24 hours; high (CVSS 7–8.9) within 7 days.</div>
+      </div>
+    </li>
+    <li class="fix-first-item">
+      <div class="fix-rank">5</div>
+      <div class="fix-body">
+        <div class="fix-title">No formal AI model registry or approved-tools list<span class="micelium-align">&#9733; Micelium</span></div>
+        <div class="fix-domain">AI Governance &mdash; contribution: 0.90</div>
+        <div class="fix-text">Create and maintain an approved-tools list of all AI tools employees may use, and a model registry for all AI systems running in production. Review both at least quarterly.</div>
+      </div>
+    </li>
+  </ol>
+
+  
+  <h2>Findings by Domain</h2>
+  <h3>Vulnerabilities &mdash; Score 0 (F) &mdash; 2 issue(s) detected in vulnerabilities — grade F.</h3>
+
+  
+  <div class="explain-section">
+    <div class="explain-toggle">Why this score?</div>
+    <div class="explain-box">
+      <div class="explain-formula">Formula: 100 * (1 - min(1.0, Σ contributions))</div>
+      <div class="explain-step">
+        <span class="es-rule">VULN_SLOW_CRITICAL_PATCH</span>
+        <span class="es-calc">weight 0.90 &times; overlay 1.00 &times; severity 1.00</span>
+        <span class="es-result">&minus;0.90</span>
+      </div>
+      <div class="explain-step">
+        <span class="es-rule">VULN_CVE_SLOW_HIGH</span>
+        <span class="es-calc">weight 0.80 &times; overlay 1.00 &times; severity 0.80</span>
+        <span class="es-result">&minus;0.64</span>
+      </div>
+      <div class="explain-totals">
+        Raw loss: 1.5400 &rarr; Capped: 1.0000 &rarr; Score: 0
+      </div>
+    </div>
+  </div>
+
+  <div class="findings-section">
+    <div class="finding-card">
+      <div class="finding-header">
+        <span class="severity-badge sev-critical">critical</span>
+        <div>
+          <div class="finding-title">Critical patches applied in over a month</div>
+          <div class="finding-id">VULN_SLOW_CRITICAL_PATCH</div>
+        </div>
+        <span class="finding-contrib">contribution: 0.90</span>
+      </div>
+      <div class="finding-remediation"><strong>Fix:</strong> Define SLA tiers: critical (CVSS &gt;= 9) must be patched within 24 hours; high (CVSS 7–8.9) within 7 days.</div>
+      <div class="frameworks-list">
+        <div class="fw-label">Framework citations</div>
+        <div class="framework-item"><span class="fw-id">NIST CSF RS.MI-3</span> &mdash; Newly identified vulnerabilities are mitigated or documented as accepted risks</div>
+        <div class="framework-item"><span class="fw-id">PCI DSS Req 6.3.3</span> &mdash; All system components are protected from known vulnerabilities by installing applicable security patches</div>
+      </div>
+      <div class="micelium-products">
+        <span class="mp-label">Addressed by Micelium</span>
+        <span class="mp-tag">Sense</span>
+      </div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-header">
+        <span class="severity-badge sev-high">high</span>
+        <div>
+          <div class="finding-title">High-severity CVEs not remediated within 90 days</div>
+          <div class="finding-id">VULN_CVE_SLOW_HIGH</div>
+        </div>
+        <span class="finding-contrib">contribution: 0.64</span>
+      </div>
+      <div class="finding-remediation"><strong>Fix:</strong> Set a firm 30-day SLA for high-severity CVEs and enforce it — more than 90 days is an extended window attackers actively exploit. Investigate and eliminate whatever is causing remediation backlogs.</div>
+      <div class="frameworks-list">
+        <div class="fw-label">Framework citations</div>
+        <div class="framework-item"><span class="fw-id">NIST SP 800-53 SI-2</span> &mdash; Flaw Remediation — timely correction of information system flaws</div>
+        <div class="framework-item"><span class="fw-id">CISA BOD 22-01</span> &mdash; Known Exploited Vulnerabilities — 14-day SLA for exploited CVEs</div>
+        <div class="framework-item"><span class="fw-id">CIS Control 7.7</span> &mdash; Remediate detected vulnerabilities — timely based on risk rating</div>
+        <div class="framework-item"><span class="fw-id">ISO 27001 A.12.6.1</span> &mdash; Management of technical vulnerabilities — timely patching</div>
+      </div>
+      <div class="micelium-products">
+        <span class="mp-label">Addressed by Micelium</span>
+        <span class="mp-tag">Sense</span>
+        <span class="mp-tag">Pulse</span>
+      </div>
+    </div>
+  </div>
+  <h3>AI Governance &mdash; Score 0 (F) &mdash; 16 issue(s) detected in ai_governance — grade F.</h3>
+
+  
+  <div class="explain-section">
+    <div class="explain-toggle">Why this score?</div>
+    <div class="explain-box">
+      <div class="explain-formula">Formula: 100 * (1 - min(1.0, Σ contributions))</div>
+      <div class="explain-step">
+        <span class="es-rule">AIGOV_NO_AI_EGRESS_CONTROL</span>
+        <span class="es-calc">weight 0.90 &times; overlay 1.30 &times; severity 1.00</span>
+        <span class="es-result">&minus;1.00</span>
+      </div>
+      <div class="explain-step">
+        <span class="es-rule">AIGOV_DATA_LEAKAGE_AI</span>
+        <span class="es-calc">weight 0.95 &times; overlay 1.00 &times; severity 1.00</span>
+        <span class="es-result">&minus;0.95</span>
+      </div>
+      <div class="explain-step">
+        <span class="es-rule">AIGOV_SHADOW_AI_HIGH</span>
+        <span class="es-calc">weight 0.90 &times; overlay 1.00 &times; severity 1.00</span>
+        <span class="es-result">&minus;0.90</span>
+      </div>
+      <div class="explain-step">
+        <span class="es-rule">AIGOV_NO_AI_REGISTRY</span>
+        <span class="es-calc">weight 0.80 &times; overlay 1.40 &times; severity 0.80</span>
+        <span class="es-result">&minus;0.90</span>
+      </div>
+      <div class="explain-step">
+        <span class="es-rule">AIGOV_AI_INTEGRATION_UNGOVERNED</span>
+        <span class="es-calc">weight 0.70 &times; overlay 1.40 &times; severity 0.80</span>
+        <span class="es-result">&minus;0.78</span>
+      </div>
+      <div class="explain-step">
+        <span class="es-rule">AIGOV_NO_AI_DLP</span>
+        <span class="es-calc">weight 0.75 &times; overlay 1.30 &times; severity 0.80</span>
+        <span class="es-result">&minus;0.78</span>
+      </div>
+      <div class="explain-step">
+        <span class="es-rule">AIGOV_NO_AI_RISK_FRAMEWORK</span>
+        <span class="es-calc">weight 0.70 &times; overlay 1.30 &times; severity 0.80</span>
+        <span class="es-result">&minus;0.73</span>
+      </div>
+      <div class="explain-step">
+        <span class="es-rule">AIGOV_THIRD_PARTY_AI_UNGOVERNED</span>
+        <span class="es-calc">weight 0.70 &times; overlay 1.30 &times; severity 0.80</span>
+        <span class="es-result">&minus;0.73</span>
+      </div>
+      <div class="explain-step">
+        <span class="es-rule">AIGOV_NO_MODEL_INVENTORY</span>
+        <span class="es-calc">weight 0.65 &times; overlay 1.30 &times; severity 0.80</span>
+        <span class="es-result">&minus;0.68</span>
+      </div>
+      <div class="explain-step">
+        <span class="es-rule">AIGOV_NO_AUP</span>
+        <span class="es-calc">weight 0.70 &times; overlay 1.00 &times; severity 0.80</span>
+        <span class="es-result">&minus;0.56</span>
+      </div>
+      <div class="explain-step">
+        <span class="es-rule">AIGOV_VENDOR_DATA_RETENTION_GAP</span>
+        <span class="es-calc">weight 0.65 &times; overlay 1.00 &times; severity 0.80</span>
+        <span class="es-result">&minus;0.52</span>
+      </div>
+      <div class="explain-step">
+        <span class="es-rule">AIGOV_AUP_GENAI_GAP</span>
+        <span class="es-calc">weight 0.50 &times; overlay 1.40 &times; severity 0.50</span>
+        <span class="es-result">&minus;0.35</span>
+      </div>
+      <div class="explain-step">
+        <span class="es-rule">AIGOV_AI_DATA_AUDIT_GAP</span>
+        <span class="es-calc">weight 0.55 &times; overlay 1.20 &times; severity 0.50</span>
+        <span class="es-result">&minus;0.33</span>
+      </div>
+      <div class="explain-step">
+        <span class="es-rule">AIGOV_AUP_ENFORCEMENT_GAP</span>
+        <span class="es-calc">weight 0.45 &times; overlay 1.00 &times; severity 0.50</span>
+        <span class="es-result">&minus;0.23</span>
+      </div>
+      <div class="explain-step">
+        <span class="es-rule">AIGOV_SHADOW_AI_LOW</span>
+        <span class="es-calc">weight 0.45 &times; overlay 1.00 &times; severity 0.50</span>
+        <span class="es-result">&minus;0.23</span>
+      </div>
+      <div class="explain-step">
+        <span class="es-rule">AIGOV_PARTIAL_AUP</span>
+        <span class="es-calc">weight 0.40 &times; overlay 1.00 &times; severity 0.50</span>
+        <span class="es-result">&minus;0.20</span>
+      </div>
+      <div class="explain-totals">
+        Raw loss: 9.8520 &rarr; Capped: 1.0000 &rarr; Score: 0
+      </div>
+    </div>
+  </div>
+
+  <div class="findings-section">
+    <div class="finding-card">
+      <div class="finding-header">
+        <span class="severity-badge sev-critical">critical</span>
+        <div>
+          <div class="finding-title">No technical egress controls for AI endpoints — all data classifications can reach external AI</div>
+          <div class="finding-id">AIGOV_NO_AI_EGRESS_CONTROL</div>
+        </div>
+        <span class="finding-contrib">contribution: 1.00</span>
+      </div>
+      <div class="finding-remediation"><strong>Fix:</strong> Block all AI API traffic at the network level immediately for any data-sensitive environment. Then implement proper content inspection before reopening access to approved AI services.</div>
+      <div class="frameworks-list">
+        <div class="fw-label">Framework citations</div>
+        <div class="framework-item"><span class="fw-id">GDPR Art. 32</span> &mdash; Appropriate technical measures for data security — unrestricted AI egress is a direct breach of this obligation for personal data controllers</div>
+        <div class="framework-item"><span class="fw-id">EU AI Act Art. 26(5)</span> &mdash; Deployers shall implement appropriate technical and organisational measures — zero technical controls is non-compliant</div>
+        <div class="framework-item"><span class="fw-id">NIST AI RMF MANAGE-4.1</span> &mdash; Residual risks are monitored and managed with commensurate controls</div>
+        <div class="framework-item"><span class="fw-id">HIPAA 164.312(e)(2)(ii)</span> &mdash; Encryption and decryption of ePHI in transmission — AI API transmission without controls fails this safeguard</div>
+        <div class="framework-item"><span class="fw-id">OWASP LLM Top 10 LLM06</span> &mdash; Sensitive Information Disclosure — absence of technical controls is the highest-risk scenario</div>
+      </div>
+      <div class="micelium-products">
+        <span class="mp-label">Addressed by Micelium</span>
+        <span class="mp-tag">Sigil</span>
+        <span class="mp-tag">Sypher</span>
+        <span class="mp-tag">Sense</span>
+      </div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-header">
+        <span class="severity-badge sev-critical">critical</span>
+        <div>
+          <div class="finding-title">Sensitive data submitted to external AI services without controls</div>
+          <div class="finding-id">AIGOV_DATA_LEAKAGE_AI</div>
+        </div>
+        <span class="finding-contrib">contribution: 0.95</span>
+      </div>
+      <div class="finding-remediation"><strong>Fix:</strong> Stop submitting sensitive data to AI services immediately. Require all AI tool usage to go through approved enterprise instances with DPAs in place.</div>
+      <div class="frameworks-list">
+        <div class="fw-label">Framework citations</div>
+        <div class="framework-item"><span class="fw-id">GDPR Art. 28</span> &mdash; Processing by a processor must be governed by a contract</div>
+        <div class="framework-item"><span class="fw-id">HIPAA 164.308(b)</span> &mdash; Business associate contracts and other arrangements</div>
+        <div class="framework-item"><span class="fw-id">EU AI Act Art. 26(1)</span> &mdash; Deployers shall use AI systems in accordance with instructions of use and implement appropriate technical and organisational measures to ensure data governance and prevent unauthorised processing</div>
+      </div>
+      <div class="micelium-products">
+        <span class="mp-label">Addressed by Micelium</span>
+        <span class="mp-tag">Sigil</span>
+        <span class="mp-tag">Share</span>
+      </div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-header">
+        <span class="severity-badge sev-critical">critical</span>
+        <div>
+          <div class="finding-title">Widespread shadow AI usage</div>
+          <div class="finding-id">AIGOV_SHADOW_AI_HIGH</div>
+        </div>
+        <span class="finding-contrib">contribution: 0.90</span>
+      </div>
+      <div class="finding-remediation"><strong>Fix:</strong> Audit which AI tools employees are using, block unapproved ones, and provide approved alternatives that meet your data-handling requirements.</div>
+      <div class="frameworks-list">
+        <div class="fw-label">Framework citations</div>
+        <div class="framework-item"><span class="fw-id">GDPR Art. 28</span> &mdash; Processor must be bound by a contract protecting data subject rights</div>
+        <div class="framework-item"><span class="fw-id">NIST AI RMF GOVERN-1.1</span> &mdash; Policies, processes, procedures, and practices across the organisation related to the mapping, measuring, and managing of AI risks are in place</div>
+      </div>
+      <div class="micelium-products">
+        <span class="mp-label">Addressed by Micelium</span>
+        <span class="mp-tag">Sigil</span>
+        <span class="mp-tag">Sense</span>
+      </div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-header">
+        <span class="severity-badge sev-high">high</span>
+        <div>
+          <div class="finding-title">No formal AI model registry or approved-tools list</div>
+          <div class="finding-id">AIGOV_NO_AI_REGISTRY</div>
+        </div>
+        <span class="finding-contrib">contribution: 0.90</span>
+      </div>
+      <div class="finding-remediation"><strong>Fix:</strong> Create and maintain an approved-tools list of all AI tools employees may use, and a model registry for all AI systems running in production. Review both at least quarterly.</div>
+      <div class="frameworks-list">
+        <div class="fw-label">Framework citations</div>
+        <div class="framework-item"><span class="fw-id">NIST AI RMF GOVERN-1.1</span> &mdash; Organisational policies and practices are in place to foster a critical AI risk culture — a registry anchors accountability</div>
+        <div class="framework-item"><span class="fw-id">NIST AI RMF MAP-1.1</span> &mdash; Context is established for framing AI risks — requires knowing which AI systems exist</div>
+        <div class="framework-item"><span class="fw-id">ISO 42001 A.6.2</span> &mdash; AI system inventory — organisations shall maintain an inventory of AI systems</div>
+        <div class="framework-item"><span class="fw-id">EU AI Act Art. 9</span> &mdash; Risk management system for high-risk AI — requires identification of all in-scope systems</div>
+      </div>
+      <div class="micelium-products">
+        <span class="mp-label">Addressed by Micelium</span>
+        <span class="mp-tag">Sigil</span>
+        <span class="mp-tag">Sovera</span>
+      </div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-header">
+        <span class="severity-badge sev-high">high</span>
+        <div>
+          <div class="finding-title">Integrated AI tools (Copilot, Gemini Workspace, etc.) lack dedicated governance</div>
+          <div class="finding-id">AIGOV_AI_INTEGRATION_UNGOVERNED</div>
+        </div>
+        <span class="finding-contrib">contribution: 0.78</span>
+      </div>
+      <div class="finding-remediation"><strong>Fix:</strong> Treat AI tools that connect to your email, files, or CRM separately from standalone AI tools. Review what data access they have, reduce it to the minimum needed, and audit their activity on a regular schedule.</div>
+      <div class="frameworks-list">
+        <div class="fw-label">Framework citations</div>
+        <div class="framework-item"><span class="fw-id">EU AI Act Art. 26</span> &mdash; Deployers shall implement appropriate technical and organisational measures — integrated AI with broad data access requires dedicated controls</div>
+        <div class="framework-item"><span class="fw-id">GDPR Art. 25</span> &mdash; Data protection by design — integrated AI must be configured to access only the minimum necessary data</div>
+        <div class="framework-item"><span class="fw-id">NIST AI RMF MAP-5.1</span> &mdash; AI system risks — integrated AI tools create unique risk pathways that must be explicitly mapped</div>
+        <div class="framework-item"><span class="fw-id">OWASP LLM Top 10 LLM08</span> &mdash; Excessive Agency — integrated AI systems with broad data access and action scope amplify the consequences of model errors</div>
+      </div>
+      <div class="micelium-products">
+        <span class="mp-label">Addressed by Micelium</span>
+        <span class="mp-tag">Sigil</span>
+        <span class="mp-tag">Sypher</span>
+        <span class="mp-tag">Sense</span>
+      </div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-header">
+        <span class="severity-badge sev-high">high</span>
+        <div>
+          <div class="finding-title">No AI-specific DLP controls — sensitive data can reach external AI endpoints</div>
+          <div class="finding-id">AIGOV_NO_AI_DLP</div>
+        </div>
+        <span class="finding-contrib">contribution: 0.78</span>
+      </div>
+      <div class="finding-remediation"><strong>Fix:</strong> Put technical controls in place — not just policy — to stop sensitive data from being submitted to AI services. At a minimum, log what data is being sent and alert when it looks sensitive.</div>
+      <div class="frameworks-list">
+        <div class="fw-label">Framework citations</div>
+        <div class="framework-item"><span class="fw-id">GDPR Art. 32</span> &mdash; Technical and organisational measures for data security — AI egress without DLP fails the &#39;appropriate technical measures&#39; test</div>
+        <div class="framework-item"><span class="fw-id">NIST AI RMF MANAGE-2.4</span> &mdash; Risk controls are in place to manage AI-related data privacy and security risks</div>
+        <div class="framework-item"><span class="fw-id">EU AI Act Art. 26(5)</span> &mdash; Deployers shall implement appropriate technical and organisational measures to ensure AI use complies with instructions for use</div>
+        <div class="framework-item"><span class="fw-id">OWASP LLM Top 10 LLM06</span> &mdash; Sensitive Information Disclosure — requires technical controls beyond policy guidance</div>
+        <div class="framework-item"><span class="fw-id">HIPAA 164.312(a)(1)</span> &mdash; Technical access controls and transmission security for PHI — applies to AI API transmission of health data</div>
+      </div>
+      <div class="micelium-products">
+        <span class="mp-label">Addressed by Micelium</span>
+        <span class="mp-tag">Sigil</span>
+        <span class="mp-tag">Sypher</span>
+        <span class="mp-tag">Sense</span>
+      </div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-header">
+        <span class="severity-badge sev-high">high</span>
+        <div>
+          <div class="finding-title">No structured AI risk assessment framework — NIST AI RMF or equivalent absent</div>
+          <div class="finding-id">AIGOV_NO_AI_RISK_FRAMEWORK</div>
+        </div>
+        <span class="finding-contrib">contribution: 0.73</span>
+      </div>
+      <div class="finding-remediation"><strong>Fix:</strong> Adopt a recognized AI risk framework — NIST AI RMF is a practical starting point. Map your AI systems, identify who they affect, and assess the risks in each deployment context before adding controls.</div>
+      <div class="frameworks-list">
+        <div class="fw-label">Framework citations</div>
+        <div class="framework-item"><span class="fw-id">EU AI Act Art. 9</span> &mdash; Risk management system — operators of high-risk AI must establish, document, and maintain a risk management system covering the full lifecycle</div>
+        <div class="framework-item"><span class="fw-id">NIST AI RMF MAP</span> &mdash; MAP function — AI system context is established, AI risks are identified and categorized in a structured way</div>
+        <div class="framework-item"><span class="fw-id">NIST AI RMF MEASURE</span> &mdash; MEASURE function — AI risks are analyzed, assessed, and tracked using quantitative or qualitative methods</div>
+      </div>
+      <div class="micelium-products">
+        <span class="mp-label">Addressed by Micelium</span>
+        <span class="mp-tag">Sigil</span>
+      </div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-header">
+        <span class="severity-badge sev-high">high</span>
+        <div>
+          <div class="finding-title">Third-party AI tool use not governed — contractors or vendor AI uncontrolled</div>
+          <div class="finding-id">AIGOV_THIRD_PARTY_AI_UNGOVERNED</div>
+        </div>
+        <span class="finding-contrib">contribution: 0.73</span>
+      </div>
+      <div class="finding-remediation"><strong>Fix:</strong> Update contracts with contractors and vendors to require compliance with your AI acceptable use policy. Include a clause prohibiting the use of unapproved AI tools on your systems or with your data.</div>
+      <div class="frameworks-list">
+        <div class="fw-label">Framework citations</div>
+        <div class="framework-item"><span class="fw-id">EU AI Act Art. 25</span> &mdash; Obligations of deployers — responsibility applies regardless of whether the AI system is built in-house or procured</div>
+        <div class="framework-item"><span class="fw-id">NIST AI RMF GOVERN-6.1</span> &mdash; AI supply-chain and third-party risks are included in the organisation&#39;s AI risk governance</div>
+        <div class="framework-item"><span class="fw-id">NIST AI RMF GOVERN-6.2</span> &mdash; Policies and procedures are in place for AI supply-chain risk management</div>
+        <div class="framework-item"><span class="fw-id">ISO 42001 A.6.1.3</span> &mdash; AI supply chain — AI risks from suppliers and partners are assessed and managed</div>
+      </div>
+      <div class="micelium-products">
+        <span class="mp-label">Addressed by Micelium</span>
+        <span class="mp-tag">Sigil</span>
+        <span class="mp-tag">Sovera</span>
+        <span class="mp-tag">Sypher</span>
+      </div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-header">
+        <span class="severity-badge sev-high">high</span>
+        <div>
+          <div class="finding-title">No AI model inventory</div>
+          <div class="finding-id">AIGOV_NO_MODEL_INVENTORY</div>
+        </div>
+        <span class="finding-contrib">contribution: 0.68</span>
+      </div>
+      <div class="finding-remediation"><strong>Fix:</strong> Create a model registry listing each AI/ML model in production: use case, data inputs, risk tier, owner, and last review date.</div>
+      <div class="frameworks-list">
+        <div class="fw-label">Framework citations</div>
+        <div class="framework-item"><span class="fw-id">EU AI Act Art. 13</span> &mdash; Transparency and provision of information to deployers</div>
+        <div class="framework-item"><span class="fw-id">NIST AI RMF MAP-1.1</span> &mdash; Context is established for the AI risk assessment, including the organisation, system, and use case</div>
+      </div>
+      <div class="micelium-products">
+        <span class="mp-label">Addressed by Micelium</span>
+        <span class="mp-tag">Sigil</span>
+      </div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-header">
+        <span class="severity-badge sev-high">high</span>
+        <div>
+          <div class="finding-title">No AI acceptable use policy</div>
+          <div class="finding-id">AIGOV_NO_AUP</div>
+        </div>
+        <span class="finding-contrib">contribution: 0.56</span>
+      </div>
+      <div class="finding-remediation"><strong>Fix:</strong> Publish an AI acceptable use policy that defines approved tools, prohibited uses (e.g. submitting PII to public LLMs), and consequences for non-compliance.</div>
+      <div class="frameworks-list">
+        <div class="fw-label">Framework citations</div>
+        <div class="framework-item"><span class="fw-id">NIST AI RMF GOVERN-1.1</span> &mdash; Policies, processes, procedures, and practices across the organisation related to the mapping, measuring, and managing of AI risks are in place</div>
+        <div class="framework-item"><span class="fw-id">EU AI Act Art. 4</span> &mdash; AI literacy — providers and deployers shall ensure their staff have sufficient AI literacy to operate and oversee AI tools</div>
+      </div>
+      <div class="micelium-products">
+        <span class="mp-label">Addressed by Micelium</span>
+        <span class="mp-tag">Sigil</span>
+      </div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-header">
+        <span class="severity-badge sev-high">high</span>
+        <div>
+          <div class="finding-title">AI vendor data-retention terms not reviewed — submitted data may be retained indefinitely or used for training</div>
+          <div class="finding-id">AIGOV_VENDOR_DATA_RETENTION_GAP</div>
+        </div>
+        <span class="finding-contrib">contribution: 0.52</span>
+      </div>
+      <div class="finding-remediation"><strong>Fix:</strong> Find out from each AI vendor whether they keep the data you submit and for how long. Confirm that they are not using it to train their models. Get this in writing and check it is still true at each contract renewal.</div>
+      <div class="frameworks-list">
+        <div class="fw-label">Framework citations</div>
+        <div class="framework-item"><span class="fw-id">GDPR Art. 5(1)(e)</span> &mdash; Storage limitation — personal data shall not be kept longer than necessary; AI vendor retention terms must be reviewed to verify compliance</div>
+        <div class="framework-item"><span class="fw-id">GDPR Art. 28</span> &mdash; Processor obligations — the controller must confirm the processor&#39;s data-retention practices meet GDPR requirements</div>
+        <div class="framework-item"><span class="fw-id">EU AI Act Art. 26(5)</span> &mdash; Deployers shall implement appropriate technical and organisational measures including understanding of data flows to AI systems</div>
+        <div class="framework-item"><span class="fw-id">NIST AI RMF GOVERN-6.1</span> &mdash; Supply-chain risks including vendor data-handling practices are identified and assessed</div>
+      </div>
+      <div class="micelium-products">
+        <span class="mp-label">Addressed by Micelium</span>
+        <span class="mp-tag">Sigil</span>
+        <span class="mp-tag">Sovera</span>
+        <span class="mp-tag">Sypher</span>
+      </div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-header">
+        <span class="severity-badge sev-medium">medium</span>
+        <div>
+          <div class="finding-title">AI acceptable use policy does not address generative AI or autonomous agents</div>
+          <div class="finding-id">AIGOV_AUP_GENAI_GAP</div>
+        </div>
+        <span class="finding-contrib">contribution: 0.35</span>
+      </div>
+      <div class="finding-remediation"><strong>Fix:</strong> Update your AI acceptable use policy to explicitly cover generative AI tools (ChatGPT, Copilot, Gemini, Claude, etc.) and autonomous agents — including what data must never be submitted and what to do if an AI output seems wrong.</div>
+      <div class="frameworks-list">
+        <div class="fw-label">Framework citations</div>
+        <div class="framework-item"><span class="fw-id">EU AI Act Art. 4</span> &mdash; AI literacy — deployers must ensure employees have sufficient knowledge of GenAI and agent capabilities and risks</div>
+        <div class="framework-item"><span class="fw-id">NIST AI RMF GOVERN-5.1</span> &mdash; Organisational teams are committed to governance policies that address the specific risks of AI technologies in use</div>
+        <div class="framework-item"><span class="fw-id">OWASP LLM Top 10 LLM01</span> &mdash; Prompt Injection — specific to generative AI interfaces; requires explicit policy coverage</div>
+        <div class="framework-item"><span class="fw-id">OWASP LLM Top 10 LLM06</span> &mdash; Sensitive Information Disclosure — data submitted in generative AI prompts requires explicit policy controls</div>
+      </div>
+      <div class="micelium-products">
+        <span class="mp-label">Addressed by Micelium</span>
+        <span class="mp-tag">Sigil</span>
+        <span class="mp-tag">Sense</span>
+      </div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-header">
+        <span class="severity-badge sev-medium">medium</span>
+        <div>
+          <div class="finding-title">No audit trail for AI data submissions — AI egress logging absent or incomplete</div>
+          <div class="finding-id">AIGOV_AI_DATA_AUDIT_GAP</div>
+        </div>
+        <span class="finding-contrib">contribution: 0.33</span>
+      </div>
+      <div class="finding-remediation"><strong>Fix:</strong> Start logging who uses which AI tools, what kind of data they submit, and when. Make sure these logs are stored securely and kept long enough that you can use them during an investigation.</div>
+      <div class="frameworks-list">
+        <div class="fw-label">Framework citations</div>
+        <div class="framework-item"><span class="fw-id">EU AI Act Art. 12</span> &mdash; Logging capabilities — deployers of high-risk AI systems must retain logs generated by the system</div>
+        <div class="framework-item"><span class="fw-id">GDPR Art. 33</span> &mdash; Notification of personal data breach — requires ability to characterise what data was involved; AI logs are essential evidence</div>
+        <div class="framework-item"><span class="fw-id">NIST AI RMF MEASURE-2.5</span> &mdash; AI system operation is monitored for data and performance drift — requires logging as prerequisite</div>
+        <div class="framework-item"><span class="fw-id">ISO 42001 A.9.4</span> &mdash; Logging and monitoring of AI systems — events related to AI system operation shall be recorded</div>
+      </div>
+      <div class="micelium-products">
+        <span class="mp-label">Addressed by Micelium</span>
+        <span class="mp-tag">Sigil</span>
+        <span class="mp-tag">Sense</span>
+        <span class="mp-tag">Proof</span>
+      </div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-header">
+        <span class="severity-badge sev-medium">medium</span>
+        <div>
+          <div class="finding-title">AI acceptable use policy not enforced — no acknowledgement tracking or defined consequences</div>
+          <div class="finding-id">AIGOV_AUP_ENFORCEMENT_GAP</div>
+        </div>
+        <span class="finding-contrib">contribution: 0.23</span>
+      </div>
+      <div class="finding-remediation"><strong>Fix:</strong> Require every employee and contractor to acknowledge the AI acceptable use policy with a digital signature. Track completion so you can show auditors who has and has not acknowledged it. Define what happens if someone violates the policy.</div>
+      <div class="frameworks-list">
+        <div class="fw-label">Framework citations</div>
+        <div class="framework-item"><span class="fw-id">NIST AI RMF GOVERN-2.2</span> &mdash; The risk or impact assessment processes and outcomes are communicated to relevant AI actors — requires demonstrated distribution and acknowledgement</div>
+        <div class="framework-item"><span class="fw-id">EU AI Act Art. 26(6)</span> &mdash; Deployers shall ensure relevant staff have been trained — training completion records are implied as evidence</div>
+        <div class="framework-item"><span class="fw-id">ISO 42001 A.7.2</span> &mdash; AI awareness and training — organisations shall ensure personnel understand AI policy obligations</div>
+      </div>
+      <div class="micelium-products">
+        <span class="mp-label">Addressed by Micelium</span>
+        <span class="mp-tag">Sigil</span>
+        <span class="mp-tag">Proof</span>
+      </div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-header">
+        <span class="severity-badge sev-medium">medium</span>
+        <div>
+          <div class="finding-title">Known shadow AI usage not addressed</div>
+          <div class="finding-id">AIGOV_SHADOW_AI_LOW</div>
+        </div>
+        <span class="finding-contrib">contribution: 0.23</span>
+      </div>
+      <div class="finding-remediation"><strong>Fix:</strong> Address known shadow AI usage through a combination of employee communication, technical controls, and policy enforcement.</div>
+      <div class="frameworks-list">
+        <div class="fw-label">Framework citations</div>
+        <div class="framework-item"><span class="fw-id">GDPR Art. 5(1)(f)</span> &mdash; Integrity and confidentiality principle</div>
+        <div class="framework-item"><span class="fw-id">NIST AI RMF GOVERN-6.1</span> &mdash; Policies and procedures are in place for AI incident escalation</div>
+      </div>
+      <div class="micelium-products">
+        <span class="mp-label">Addressed by Micelium</span>
+        <span class="mp-tag">Sigil</span>
+      </div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-header">
+        <span class="severity-badge sev-medium">medium</span>
+        <div>
+          <div class="finding-title">AI acceptable use policy not formally enforced</div>
+          <div class="finding-id">AIGOV_PARTIAL_AUP</div>
+        </div>
+        <span class="finding-contrib">contribution: 0.20</span>
+      </div>
+      <div class="finding-remediation"><strong>Fix:</strong> Formalise AI guidelines into an enforceable policy with training, acknowledgement sign-off, and technical controls.</div>
+      <div class="frameworks-list">
+        <div class="fw-label">Framework citations</div>
+        <div class="framework-item"><span class="fw-id">EU AI Act Art. 26</span> &mdash; Obligations of deployers of high-risk AI systems</div>
+        <div class="framework-item"><span class="fw-id">NIST AI RMF GOVERN-1.2</span> &mdash; Accountability structures are in place so that appropriate teams are responsible for AI risks</div>
+      </div>
+      <div class="micelium-products">
+        <span class="mp-label">Addressed by Micelium</span>
+        <span class="mp-tag">Sigil</span>
+      </div>
+    </div>
+  </div>
+  <h3>Security Posture &mdash; Score 100 (A)</h3>
+  <p style="color:#718096; font-size:0.88rem; margin-left:4px;">No findings for this domain.</p>
+  <h3>Compliance &mdash; Score 32 (F) &mdash; 2 issue(s) detected in compliance — grade F.</h3>
+
+  
+  <div class="explain-section">
+    <div class="explain-toggle">Why this score?</div>
+    <div class="explain-box">
+      <div class="explain-formula">Formula: 100 * (1 - min(1.0, Σ contributions))</div>
+      <div class="explain-step">
+        <span class="es-rule">COMP_NO_HOST_FIREWALL</span>
+        <span class="es-calc">weight 0.60 &times; overlay 1.00 &times; severity 0.80</span>
+        <span class="es-result">&minus;0.48</span>
+      </div>
+      <div class="explain-step">
+        <span class="es-rule">COMP_NO_SCREEN_LOCK</span>
+        <span class="es-calc">weight 0.40 &times; overlay 1.00 &times; severity 0.50</span>
+        <span class="es-result">&minus;0.20</span>
+      </div>
+      <div class="explain-totals">
+        Raw loss: 0.6800 &rarr; Capped: 0.6800 &rarr; Score: 32
+      </div>
+    </div>
+  </div>
+
+  <div class="findings-section">
+    <div class="finding-card">
+      <div class="finding-header">
+        <span class="severity-badge sev-high">high</span>
+        <div>
+          <div class="finding-title">Host firewall disabled on endpoint</div>
+          <div class="finding-id">COMP_NO_HOST_FIREWALL</div>
+        </div>
+        <span class="finding-contrib">contribution: 0.48</span>
+      </div>
+      <div class="finding-remediation"><strong>Fix:</strong> Turn the operating system&#39;s built-in firewall back on for every laptop and workstation, and prevent users from disabling it. On macOS enable the Application Firewall; on Linux enable ufw or firewalld; on Windows keep Windows Defender Firewall on for all profiles.</div>
+      <div class="frameworks-list">
+        <div class="fw-label">Framework citations</div>
+        <div class="framework-item"><span class="fw-id">CIS Controls v8 4.5</span> &mdash; Implement and manage a host-based firewall or port-filtering tool on end-user devices</div>
+        <div class="framework-item"><span class="fw-id">NIST 800-53 SC-7</span> &mdash; Boundary protection — monitor and control communications at external and key internal boundaries</div>
+        <div class="framework-item"><span class="fw-id">PCI DSS Req 1.5</span> &mdash; Risks to the cardholder data environment from computing devices that connect to both untrusted networks and the CDE are mitigated</div>
+        <div class="framework-item"><span class="fw-id">ISO 27001:2022 A.8.20</span> &mdash; Network security — securing networks and network devices</div>
+      </div>
+      <div class="micelium-products">
+        <span class="mp-label">Addressed by Micelium</span>
+        <span class="mp-tag">Sovera</span>
+        <span class="mp-tag">Sense</span>
+      </div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-header">
+        <span class="severity-badge sev-medium">medium</span>
+        <div>
+          <div class="finding-title">Automatic screen lock not configured</div>
+          <div class="finding-id">COMP_NO_SCREEN_LOCK</div>
+        </div>
+        <span class="finding-contrib">contribution: 0.20</span>
+      </div>
+      <div class="finding-remediation"><strong>Fix:</strong> Set every laptop and workstation to lock automatically after a few minutes of inactivity and require a password to unlock. Enforce this through device management so users cannot turn it off.</div>
+      <div class="frameworks-list">
+        <div class="fw-label">Framework citations</div>
+        <div class="framework-item"><span class="fw-id">CIS Controls v8 4.3</span> &mdash; Configure automatic session locking on enterprise assets after a defined period of inactivity</div>
+        <div class="framework-item"><span class="fw-id">NIST 800-53 AC-11</span> &mdash; Session lock — prevent further access by initiating a device lock after inactivity</div>
+        <div class="framework-item"><span class="fw-id">HIPAA 164.312(a)(2)(iii)</span> &mdash; Automatic logoff — terminate an electronic session after a predetermined time of inactivity</div>
+        <div class="framework-item"><span class="fw-id">PCI DSS Req 8.2.8</span> &mdash; Re-authenticate a session that has been idle for more than 15 minutes</div>
+        <div class="framework-item"><span class="fw-id">ISO 27001:2022 A.7.7</span> &mdash; Clear desk and clear screen — protect unattended information</div>
+      </div>
+      <div class="micelium-products">
+        <span class="mp-label">Addressed by Micelium</span>
+        <span class="mp-tag">Sovera</span>
+        <span class="mp-tag">Proof</span>
+      </div>
+    </div>
+  </div>
+  <h3>Privacy &mdash; Score 100 (A)</h3>
+  <p style="color:#718096; font-size:0.88rem; margin-left:4px;">No findings for this domain.</p>
+
+  
+  <h2>Triggered Framework Controls</h2>
+  <div class="framework-summary">
+    <div class="fw-group">
+      <div class="fw-group-name">CIS</div>
+      <div class="fw-control"><span class="fw-cid">CIS Control 7.7</span> &mdash; Remediate detected vulnerabilities — timely based on risk rating</div>
+      <div class="fw-control"><span class="fw-cid">CIS Controls v8 4.3</span> &mdash; Configure automatic session locking on enterprise assets after a defined period of inactivity</div>
+      <div class="fw-control"><span class="fw-cid">CIS Controls v8 4.5</span> &mdash; Implement and manage a host-based firewall or port-filtering tool on end-user devices</div>
+    </div>
+    <div class="fw-group">
+      <div class="fw-group-name">CISA</div>
+      <div class="fw-control"><span class="fw-cid">CISA BOD 22-01</span> &mdash; Known Exploited Vulnerabilities — 14-day SLA for exploited CVEs</div>
+    </div>
+    <div class="fw-group">
+      <div class="fw-group-name">EU AI Act</div>
+      <div class="fw-control"><span class="fw-cid">EU AI Act Art. 12</span> &mdash; Logging capabilities — deployers of high-risk AI systems must retain logs generated by the system</div>
+      <div class="fw-control"><span class="fw-cid">EU AI Act Art. 13</span> &mdash; Transparency and provision of information to deployers</div>
+      <div class="fw-control"><span class="fw-cid">EU AI Act Art. 25</span> &mdash; Obligations of deployers — responsibility applies regardless of whether the AI system is built in-house or procured</div>
+      <div class="fw-control"><span class="fw-cid">EU AI Act Art. 26</span> &mdash; Obligations of deployers of high-risk AI systems</div>
+      <div class="fw-control"><span class="fw-cid">EU AI Act Art. 26(1)</span> &mdash; Deployers shall use AI systems in accordance with instructions of use and implement appropriate technical and organisational measures to ensure data governance and prevent unauthorised processing</div>
+      <div class="fw-control"><span class="fw-cid">EU AI Act Art. 26(5)</span> &mdash; Deployers shall implement appropriate technical and organisational measures including understanding of data flows to AI systems</div>
+      <div class="fw-control"><span class="fw-cid">EU AI Act Art. 26(6)</span> &mdash; Deployers shall ensure relevant staff have been trained — training completion records are implied as evidence</div>
+      <div class="fw-control"><span class="fw-cid">EU AI Act Art. 4</span> &mdash; AI literacy — deployers must ensure employees have sufficient knowledge of GenAI and agent capabilities and risks</div>
+      <div class="fw-control"><span class="fw-cid">EU AI Act Art. 9</span> &mdash; Risk management system — operators of high-risk AI must establish, document, and maintain a risk management system covering the full lifecycle</div>
+    </div>
+    <div class="fw-group">
+      <div class="fw-group-name">GDPR</div>
+      <div class="fw-control"><span class="fw-cid">GDPR Art. 25</span> &mdash; Data protection by design — integrated AI must be configured to access only the minimum necessary data</div>
+      <div class="fw-control"><span class="fw-cid">GDPR Art. 28</span> &mdash; Processor obligations — the controller must confirm the processor&#39;s data-retention practices meet GDPR requirements</div>
+      <div class="fw-control"><span class="fw-cid">GDPR Art. 32</span> &mdash; Technical and organisational measures for data security — AI egress without DLP fails the &#39;appropriate technical measures&#39; test</div>
+      <div class="fw-control"><span class="fw-cid">GDPR Art. 33</span> &mdash; Notification of personal data breach — requires ability to characterise what data was involved; AI logs are essential evidence</div>
+      <div class="fw-control"><span class="fw-cid">GDPR Art. 5(1)(e)</span> &mdash; Storage limitation — personal data shall not be kept longer than necessary; AI vendor retention terms must be reviewed to verify compliance</div>
+      <div class="fw-control"><span class="fw-cid">GDPR Art. 5(1)(f)</span> &mdash; Integrity and confidentiality principle</div>
+    </div>
+    <div class="fw-group">
+      <div class="fw-group-name">HIPAA</div>
+      <div class="fw-control"><span class="fw-cid">HIPAA 164.308(b)</span> &mdash; Business associate contracts and other arrangements</div>
+      <div class="fw-control"><span class="fw-cid">HIPAA 164.312(a)(1)</span> &mdash; Technical access controls and transmission security for PHI — applies to AI API transmission of health data</div>
+      <div class="fw-control"><span class="fw-cid">HIPAA 164.312(a)(2)(iii)</span> &mdash; Automatic logoff — terminate an electronic session after a predetermined time of inactivity</div>
+      <div class="fw-control"><span class="fw-cid">HIPAA 164.312(e)(2)(ii)</span> &mdash; Encryption and decryption of ePHI in transmission — AI API transmission without controls fails this safeguard</div>
+    </div>
+    <div class="fw-group">
+      <div class="fw-group-name">ISO</div>
+      <div class="fw-control"><span class="fw-cid">ISO 27001 A.12.6.1</span> &mdash; Management of technical vulnerabilities — timely patching</div>
+      <div class="fw-control"><span class="fw-cid">ISO 27001:2022 A.7.7</span> &mdash; Clear desk and clear screen — protect unattended information</div>
+      <div class="fw-control"><span class="fw-cid">ISO 27001:2022 A.8.20</span> &mdash; Network security — securing networks and network devices</div>
+      <div class="fw-control"><span class="fw-cid">ISO 42001 A.6.1.3</span> &mdash; AI supply chain — AI risks from suppliers and partners are assessed and managed</div>
+      <div class="fw-control"><span class="fw-cid">ISO 42001 A.6.2</span> &mdash; AI system inventory — organisations shall maintain an inventory of AI systems</div>
+      <div class="fw-control"><span class="fw-cid">ISO 42001 A.7.2</span> &mdash; AI awareness and training — organisations shall ensure personnel understand AI policy obligations</div>
+      <div class="fw-control"><span class="fw-cid">ISO 42001 A.9.4</span> &mdash; Logging and monitoring of AI systems — events related to AI system operation shall be recorded</div>
+    </div>
+    <div class="fw-group">
+      <div class="fw-group-name">NIST 800-53</div>
+      <div class="fw-control"><span class="fw-cid">NIST 800-53 AC-11</span> &mdash; Session lock — prevent further access by initiating a device lock after inactivity</div>
+      <div class="fw-control"><span class="fw-cid">NIST 800-53 SC-7</span> &mdash; Boundary protection — monitor and control communications at external and key internal boundaries</div>
+    </div>
+    <div class="fw-group">
+      <div class="fw-group-name">NIST AI</div>
+      <div class="fw-control"><span class="fw-cid">NIST AI RMF GOVERN-1.1</span> &mdash; Policies, processes, procedures, and practices across the organisation related to the mapping, measuring, and managing of AI risks are in place</div>
+      <div class="fw-control"><span class="fw-cid">NIST AI RMF GOVERN-1.2</span> &mdash; Accountability structures are in place so that appropriate teams are responsible for AI risks</div>
+      <div class="fw-control"><span class="fw-cid">NIST AI RMF GOVERN-2.2</span> &mdash; The risk or impact assessment processes and outcomes are communicated to relevant AI actors — requires demonstrated distribution and acknowledgement</div>
+      <div class="fw-control"><span class="fw-cid">NIST AI RMF GOVERN-5.1</span> &mdash; Organisational teams are committed to governance policies that address the specific risks of AI technologies in use</div>
+      <div class="fw-control"><span class="fw-cid">NIST AI RMF GOVERN-6.1</span> &mdash; Policies and procedures are in place for AI incident escalation</div>
+      <div class="fw-control"><span class="fw-cid">NIST AI RMF GOVERN-6.2</span> &mdash; Policies and procedures are in place for AI supply-chain risk management</div>
+      <div class="fw-control"><span class="fw-cid">NIST AI RMF MANAGE-2.4</span> &mdash; Risk controls are in place to manage AI-related data privacy and security risks</div>
+      <div class="fw-control"><span class="fw-cid">NIST AI RMF MANAGE-4.1</span> &mdash; Residual risks are monitored and managed with commensurate controls</div>
+      <div class="fw-control"><span class="fw-cid">NIST AI RMF MAP</span> &mdash; MAP function — AI system context is established, AI risks are identified and categorized in a structured way</div>
+      <div class="fw-control"><span class="fw-cid">NIST AI RMF MAP-1.1</span> &mdash; Context is established for the AI risk assessment, including the organisation, system, and use case</div>
+      <div class="fw-control"><span class="fw-cid">NIST AI RMF MAP-5.1</span> &mdash; AI system risks — integrated AI tools create unique risk pathways that must be explicitly mapped</div>
+      <div class="fw-control"><span class="fw-cid">NIST AI RMF MEASURE</span> &mdash; MEASURE function — AI risks are analyzed, assessed, and tracked using quantitative or qualitative methods</div>
+      <div class="fw-control"><span class="fw-cid">NIST AI RMF MEASURE-2.5</span> &mdash; AI system operation is monitored for data and performance drift — requires logging as prerequisite</div>
+    </div>
+    <div class="fw-group">
+      <div class="fw-group-name">NIST CSF</div>
+      <div class="fw-control"><span class="fw-cid">NIST CSF RS.MI-3</span> &mdash; Newly identified vulnerabilities are mitigated or documented as accepted risks</div>
+    </div>
+    <div class="fw-group">
+      <div class="fw-group-name">NIST SP</div>
+      <div class="fw-control"><span class="fw-cid">NIST SP 800-53 SI-2</span> &mdash; Flaw Remediation — timely correction of information system flaws</div>
+    </div>
+    <div class="fw-group">
+      <div class="fw-group-name">OWASP</div>
+      <div class="fw-control"><span class="fw-cid">OWASP LLM Top 10 LLM01</span> &mdash; Prompt Injection — specific to generative AI interfaces; requires explicit policy coverage</div>
+      <div class="fw-control"><span class="fw-cid">OWASP LLM Top 10 LLM06</span> &mdash; Sensitive Information Disclosure — data submitted in generative AI prompts requires explicit policy controls</div>
+      <div class="fw-control"><span class="fw-cid">OWASP LLM Top 10 LLM08</span> &mdash; Excessive Agency — integrated AI systems with broad data access and action scope amplify the consequences of model errors</div>
+    </div>
+    <div class="fw-group">
+      <div class="fw-group-name">PCI</div>
+      <div class="fw-control"><span class="fw-cid">PCI DSS Req 1.5</span> &mdash; Risks to the cardholder data environment from computing devices that connect to both untrusted networks and the CDE are mitigated</div>
+      <div class="fw-control"><span class="fw-cid">PCI DSS Req 6.3.3</span> &mdash; All system components are protected from known vulnerabilities by installing applicable security patches</div>
+      <div class="fw-control"><span class="fw-cid">PCI DSS Req 8.2.8</span> &mdash; Re-authenticate a session that has been idle for more than 15 minutes</div>
+    </div>
+  </div>
+
+  
+  <footer>
+    <p>This report was generated locally on your device. No data was sent to Micelium.</p>
+    <p>NVD data: curated subset (CVSS &ge; 7.0). Run <code>lumen update</code> for the full feed (coming soon).</p>
+    <p>Scanner version: dev | Assessed: 2026-06-05</p>
+  </footer>
+
+</div>
+</body>
+</html>
